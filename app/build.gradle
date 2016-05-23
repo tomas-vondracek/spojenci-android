@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'kotlin-android'
+
+ext {
+    SUPPORT_VERSION = "23.4.0"
+    GMS_VERSION = "9.0.0"
+    DAGGER_VERSION = "2.2"
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "cz.spojenci.android"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    dexOptions {
+        incremental true
+        preDexLibraries = true
+        javaMaxHeapSize "2g"
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+
+    compile "com.google.android.gms:play-services-identity:${GMS_VERSION}"
+    compile "com.google.android.gms:play-services-base:${GMS_VERSION}"
+    compile "com.google.android.gms:play-services-analytics:${GMS_VERSION}"
+    compile "com.google.android.gms:play-services-auth:${GMS_VERSION}"
+    compile "com.google.android.gms:play-services-fitness:${GMS_VERSION}"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+
+    compile "com.google.dagger:dagger:${DAGGER_VERSION}"
+    apt "com.google.dagger:dagger-compiler:${DAGGER_VERSION}"
+    compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'io.reactivex:rxjava:1.1.5'
+    compile 'com.jakewharton.timber:timber:4.1.2'
+    compile 'javax.annotation:jsr250-api:1.0'
+    compile 'com.android.support:design:23.4.0'
+}
+
+apply plugin: "com.google.gms.google-services"
