@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'kotlin-android'
 
 ext {
@@ -50,12 +49,16 @@ dependencies {
 
 
     compile "com.google.dagger:dagger:${DAGGER_VERSION}"
-    apt "com.google.dagger:dagger-compiler:${DAGGER_VERSION}"
+    kapt "com.google.dagger:dagger-compiler:${DAGGER_VERSION}"
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'
     compile 'com.jakewharton.timber:timber:4.1.2'
     compile 'javax.annotation:jsr250-api:1.0'
     compile 'com.android.support:design:23.4.0'
+}
+
+kapt {
+    generateStubs = true
 }
 
 apply plugin: "com.google.gms.google-services"
