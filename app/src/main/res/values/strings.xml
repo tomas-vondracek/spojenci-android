@@ -18,4 +18,8 @@
 	<string name="account_disconnect">disconnect</string>
 	<string name="account_status_connected">Connected</string>
 	<string name="account_status_disconnected">Disconnected</string>
+
+	<string name="main_connect_google_fit">Connect with Google Fit</string>
+	<string name="main_challenges">Challenges</string>
+	<string name="main_activity">Activity</string>
 </resources>

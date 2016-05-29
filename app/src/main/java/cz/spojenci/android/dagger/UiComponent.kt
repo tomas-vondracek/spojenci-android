@@ -10,6 +10,7 @@ interface UiComponent {
 	fun injectActivity(activity: MainActivity): Unit
 }
 
-fun MainActivity.injectSelf() = {
-	(this.application as Application).uiComponent.injectActivity(this)
+fun MainActivity.injectSelf() {
+	val uiComponent = (this.application as Application).uiComponent
+	uiComponent.injectActivity(this)
 }
