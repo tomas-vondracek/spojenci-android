@@ -2,24 +2,23 @@
 	<string name="app_name">Spojenci</string>
 	<string name="title_activity_login">Sign in</string>
 
-	<!-- Strings related to login -->
-	<string name="prompt_email">Email</string>
-	<string name="prompt_password">Password (optional)</string>
-	<string name="action_sign_in">Sign in or register</string>
-	<string name="action_sign_in_short">Sign in</string>
+	<!-- login page -->
+	<string name="login_email_description"><![CDATA[Sign In with Email & Password]]></string>
+	<string name="login_revoke">Revoke access</string>
+	<string name="login_disconnect">disconnect</string>
+	<string name="login_status_connected">Signed In</string>
+	<string name="login_prompt_email">Email</string>
+	<string name="login_prompt_password">Password</string>
+	<string name="login_action_sign_in">Sign in with Email</string>
+	<string name="login_action_sign_in_short">Sign in</string>
 	<string name="error_invalid_email">This email address is invalid</string>
 	<string name="error_invalid_password">This password is too short</string>
 	<string name="error_incorrect_password">This password is incorrect</string>
 	<string name="error_field_required">This field is required</string>
-	<string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-
-	<!-- social login page -->
-	<string name="account_revoke">Revoke access</string>
-	<string name="account_disconnect">disconnect</string>
-	<string name="account_status_connected">Connected</string>
-	<string name="account_status_disconnected">Disconnected</string>
 
 	<string name="main_connect_google_fit">Connect with Google Fit</string>
 	<string name="main_challenges">Challenges</string>
 	<string name="main_activity">Activity</string>
+	<string name="login_in_process">Signing in...</string>
+
 </resources>

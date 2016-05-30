@@ -5,6 +5,9 @@ import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
 import android.view.View
 import cz.spojenci.android.R
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 var View.visible: Boolean
 	get() = visibility == View.VISIBLE
@@ -20,4 +23,9 @@ fun Activity.snackbar(message: String,
                       length: Int = Snackbar.LENGTH_LONG) {
 	Snackbar.make(findViewById(layoutId) as View, message, length)
 			.show();
+}
+
+fun <T> Observable<T>.withSchedulers(): Observable<T> {
+	return observeOn(AndroidSchedulers.mainThread())
+			.subscribeOn(Schedulers.io())
 }

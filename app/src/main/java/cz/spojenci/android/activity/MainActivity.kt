@@ -15,7 +15,6 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import cz.spojenci.android.BR
-import cz.spojenci.android.PreferencesProvider
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.FitSession
@@ -23,6 +22,8 @@ import cz.spojenci.android.data.IFitRepository
 import cz.spojenci.android.databinding.ActivityMainBinding
 import cz.spojenci.android.databinding.ItemFitActivityBinding
 import cz.spojenci.android.databinding.ItemHeaderBinding
+import cz.spojenci.android.pref.AppPreferences
+import cz.spojenci.android.pref.UserPreferences
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import timber.log.Timber
@@ -31,7 +32,8 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
 	@Inject lateinit var fitRepo: IFitRepository
-	@Inject lateinit var pref: PreferencesProvider
+	@Inject lateinit var appPrefs: AppPreferences
+	@Inject lateinit var userPrefs: UserPreferences
 
 	private val apiClient: GoogleApiClient by lazy {
 		GoogleApiClient.Builder(this)
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
 					override fun onConnected(bundle: Bundle?) {
 						Timber.d("Fit API connected")
-						pref.isFitConnected = true
+						appPrefs.isFitConnected = true
 						readFitData()
 					}
 				})
@@ -55,21 +57,19 @@ class MainActivity : AppCompatActivity() {
 				.build()
 	}
 
-	private val binding: ActivityMainBinding by lazy {
-		DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-	}
+	private lateinit var binding: ActivityMainBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		injectSelf()
 
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
 		binding.mainFitList.layoutManager = LinearLayoutManager(this)
 		binding.mainConnectFit.setOnClickListener { btn ->
 			connectFit()
 		}
-
-		binding.mainEmailLogin.setOnClickListener { EmailLoginActivity.start(this) }
-		binding.mainSocialLogin.setOnClickListener { SocialLoginActivity.start(this) }
+		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this)}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onStart() {
 		super.onStart()
-		val isFitConnected = pref.isFitConnected
+		val isFitConnected = appPrefs.isFitConnected
 		binding.mainConnectFit.visible = !isFitConnected
 		binding.mainFitList.visible = isFitConnected
 
@@ -88,8 +88,24 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
+	override fun onResume() {
+		super.onResume()
+		updateUserUi()
+	}
+
 	override fun onStop() {
 		super.onStop()
+	}
+
+	private fun updateUserUi() {
+		val user = userPrefs.user
+		val isUserAvailable = user != null
+
+		binding.mainUser.visible = isUserAvailable
+		binding.mainConnectAccount.visible = ! isUserAvailable
+		if (isUserAvailable) {
+			binding.setVariable(BR.user, user)
+		}
 	}
 
 	private fun connectFit() {
@@ -127,7 +143,7 @@ class MainActivity : AppCompatActivity() {
 			message = "Failed to access Google Fit: ${result.errorMessage}"
 		}
 
-		pref.isFitConnected = false
+		appPrefs.isFitConnected = false
 		binding.mainConnectFit.visible = true
 		binding.mainFitProgress.visible = false
 		snackbar(message)
