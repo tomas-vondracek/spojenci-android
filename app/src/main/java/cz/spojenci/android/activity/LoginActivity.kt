@@ -11,6 +11,11 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.FacebookSdk
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
@@ -48,9 +53,13 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 	private lateinit var googleApiClient: GoogleApiClient
 	private lateinit var binding: ActivityLoginBinding
 
+	private lateinit var callbackManager: CallbackManager
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		injectSelf()
+
+		FacebookSdk.sdkInitialize(applicationContext);
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 		// Configure sign-in to request the user's ID, email address, and basic
@@ -69,6 +78,28 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		signInButton.setSize(SignInButton.SIZE_STANDARD);
 		signInButton.setScopes(gso.scopeArray);
 		signInButton.setOnClickListener { signInWithGoogle() }
+
+		callbackManager = com.facebook.CallbackManager.Factory.create()
+		binding.loginFacebook.setReadPermissions("public_profile", "email");
+		binding.loginFacebook.registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
+			override fun onError(error: FacebookException?) {
+				Timber.w(error, "Facebook login failed")
+				snackbar(error?.message ?: "Facebook error")
+				updateUI(false)
+			}
+
+			override fun onCancel() {
+				Timber.d("Facebook login canceled")
+				snackbar("Facebook canceled")
+				updateUI(false)
+			}
+
+			override fun onSuccess(result: LoginResult) {
+				Timber.d("Facebook login result: " + result)
+				showProgress(true)
+				singInOnServer(result.accessToken.token, LoginType.FACEBOOK)
+			}
+		});
 
 		binding.password.setOnEditorActionListener(TextView.OnEditorActionListener { textView, id, keyEvent ->
 			if (id == R.id.email_login || id == EditorInfo.IME_NULL) {
@@ -90,6 +121,8 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		if (requestCode == Companion.RC_GOOGLE_SIGN_IN) {
 			val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
 			handleGoogleSignInResult(result)
+		} else {
+			callbackManager.onActivityResult(requestCode, resultCode, data);
 		}
 	}
 
@@ -115,6 +148,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			// Signed in successfully, show authenticated UI.
 			val account = result.signInAccount;
 			Timber.d("signed in with google account " + account)
+			showProgress(true)
 			singInOnServer(idToken, LoginType.GOOGLE)
 		} else {
 			if (result.status.isCanceled) {
@@ -193,6 +227,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.withSchedulers()
 				.subscribe({ user ->
 					Timber.i("Successfully signed in as user " + user)
+					prefs.user = user
 					updateUI(true)
 				}, { ex ->
 					Timber.e(ex, "Login failed")

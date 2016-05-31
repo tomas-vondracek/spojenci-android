@@ -28,7 +28,13 @@
 					android:layout_height="wrap_content"
 					android:layout_marginTop="@dimen/activity_vertical_margin"
 					android:layout_gravity="start"
-					android:text="@string/login_action_sign_in"/>
+					android:text="@string/login_action_sign_in_short"/>
+
+				<com.facebook.login.widget.LoginButton
+					android:id="@+id/login_facebook"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal" />
 
 				<com.google.android.gms.common.SignInButton
 					android:id="@+id/login_google"
