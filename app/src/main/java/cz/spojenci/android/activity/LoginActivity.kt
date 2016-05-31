@@ -67,6 +67,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 				.requestEmail()
 				.requestProfile()
+				.requestIdToken(getString(R.string.google_client_id))
 				.build();
 
 		googleApiClient = GoogleApiClient.Builder(this)
@@ -118,7 +119,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-		if (requestCode == Companion.RC_GOOGLE_SIGN_IN) {
+		if (requestCode == RC_GOOGLE_SIGN_IN) {
 			val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
 			handleGoogleSignInResult(result)
 		} else {
@@ -136,7 +137,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 	private fun signInWithGoogle() {
 		val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-		startActivityForResult(signInIntent, Companion.RC_GOOGLE_SIGN_IN);
+		startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
 
 		showProgress(false)
 	}
