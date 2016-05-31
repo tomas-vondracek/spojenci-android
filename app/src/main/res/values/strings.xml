@@ -11,6 +11,7 @@
 	<string name="login_prompt_password">Password</string>
 	<string name="login_action_sign_in">Sign in with Email</string>
 	<string name="login_action_sign_in_short">Sign in</string>
+	<string name="login_in_process">Signing in…</string>
 	<string name="error_invalid_email">This email address is invalid</string>
 	<string name="error_invalid_password">This password is too short</string>
 	<string name="error_incorrect_password">This password is incorrect</string>
@@ -19,6 +20,8 @@
 	<string name="main_connect_google_fit">Connect with Google Fit</string>
 	<string name="main_challenges">Challenges</string>
 	<string name="main_activity">Activity</string>
-	<string name="login_in_process">Signing in...</string>
+	<string name="main_permission_location_rationale">Location permission is required to access the Google Fit data.</string>
+	<string name="main_permission_location_denied">Permission hasn\'t been granted. Can\'t connect to the Google Fit.</string>
+
 
 </resources>

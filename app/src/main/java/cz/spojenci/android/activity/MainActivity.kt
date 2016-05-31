@@ -1,14 +1,18 @@
 package cz.spojenci.android.activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
@@ -30,6 +34,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
+
+	companion object {
+		const val REQUEST_PERMISSION_LOCATION = 1
+	}
 
 	@Inject lateinit var fitRepo: IFitRepository
 	@Inject lateinit var appPrefs: AppPreferences
@@ -69,12 +77,25 @@ class MainActivity : AppCompatActivity() {
 		binding.mainConnectFit.setOnClickListener { btn ->
 			connectFit()
 		}
-		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this)}
+		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		Timber.d("Activity result: $resultCode for request $requestCode")
+	}
+
+	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+		if (requestCode == REQUEST_PERMISSION_LOCATION) {
+			if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				Timber.d("location permission has been granted, connecting the Google Fit")
+				connectFit()
+			} else {
+				snackbar(getString(R.string.main_permission_location_denied))
+			}
+		} else {
+			super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+		}
 	}
 
 	override fun onStart() {
@@ -102,17 +123,24 @@ class MainActivity : AppCompatActivity() {
 		val isUserAvailable = user != null
 
 		binding.mainUser.visible = isUserAvailable
-		binding.mainConnectAccount.visible = ! isUserAvailable
+		binding.mainConnectAccount.visible = !isUserAvailable
 		if (isUserAvailable) {
 			binding.setVariable(BR.user, user)
 		}
 	}
 
 	private fun connectFit() {
-		binding.mainConnectFit.visible = false
-		binding.mainFitProgress.visible = true
-
-		apiClient.connect()
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+			binding.mainConnectFit.visible = false
+			binding.mainFitProgress.visible = true
+			apiClient.connect()
+		} else {
+			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+				Toast.makeText(this, R.string.main_permission_location_rationale, Toast.LENGTH_LONG)
+						.show()
+			}
+			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION);
+		}
 	}
 
 	private fun readFitData() {
@@ -172,7 +200,7 @@ class FitDataAdapter(private val context: Context,
 		if (viewType == R.layout.item_fit_activity) {
 			val binding = DataBindingUtil.inflate<ItemFitActivityBinding>(inflater, viewType, parent, false)
 			holder = FitViewHolder(binding)
-		} else if (viewType == R.layout.item_header){
+		} else if (viewType == R.layout.item_header) {
 			val binding = DataBindingUtil.inflate<ItemHeaderBinding>(inflater, viewType, parent, false)
 			holder = TitleViewHolder(binding)
 		} else {

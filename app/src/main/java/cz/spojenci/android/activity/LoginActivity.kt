@@ -214,15 +214,15 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 	private fun singInOnServer(email: String, password: String) {
 		val signInObservable = service.signInWithEmail(email, password)
-		doSignIn(signInObservable)
+		doSignInOnServer(signInObservable)
 	}
 
 	private fun singInOnServer(token: String, loginType: LoginType) {
 		val signInObservable = service.signInWithSocial(token, loginType)
-		doSignIn(signInObservable)
+		doSignInOnServer(signInObservable)
 	}
 
-	private fun doSignIn(signInObservable: Observable<User>) {
+	private fun doSignInOnServer(signInObservable: Observable<User>) {
 		signInObservable
 				.withSchedulers()
 				.subscribe({ user ->
