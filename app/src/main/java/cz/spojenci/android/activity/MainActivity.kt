@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
 	companion object {
 		const val REQUEST_PERMISSION_LOCATION = 1
+		const val REQUEST_FIT_RESOLUTION = 2
 	}
 
 	@Inject lateinit var fitRepo: IFitRepository
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 					override fun onConnected(bundle: Bundle?) {
 						Timber.d("Fit API connected")
 						appPrefs.isFitConnected = true
-						readFitData()
+						onFitAccessAvailable()
 					}
 				})
 				.enableAutoManage(this, 0, { result ->
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
 		binding.mainFitList.layoutManager = LinearLayoutManager(this)
 		binding.mainConnectFit.setOnClickListener { btn ->
-			connectFit()
+			connectFitApiClient()
 		}
 		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }
 	}
@@ -83,13 +84,17 @@ class MainActivity : AppCompatActivity() {
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		Timber.d("Activity result: $resultCode for request $requestCode")
+
+		if (requestCode == REQUEST_FIT_RESOLUTION && resultCode == RESULT_OK) {
+			onFitAccessAvailable()
+		}
 	}
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 		if (requestCode == REQUEST_PERMISSION_LOCATION) {
 			if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				Timber.d("location permission has been granted, connecting the Google Fit")
-				connectFit()
+				connectFitApiClient()
 			} else {
 				snackbar(getString(R.string.main_permission_location_denied))
 			}
@@ -105,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 		binding.mainFitList.visible = isFitConnected
 
 		if (isFitConnected) {
-			connectFit()
+			connectFitApiClient()
 		}
 	}
 
@@ -129,7 +134,7 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun connectFit() {
+	private fun connectFitApiClient() {
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 			binding.mainConnectFit.visible = false
 			binding.mainFitProgress.visible = true
@@ -143,14 +148,14 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun readFitData() {
+	private fun onFitAccessAvailable() {
 		fitRepo.sessions(apiClient)
 				.subscribe({ result ->
 					binding.mainFitProgress.visible = false
 					if (!result.status.isSuccess) {
 						Timber.i("no data from Fit: " + result.status)
 						if (result.status.hasResolution()) {
-							result.status.startResolutionForResult(this, 0)
+							result.status.startResolutionForResult(this, REQUEST_FIT_RESOLUTION)
 						}
 					}
 					Timber.d("Fit sessions: " + result.sessions)
