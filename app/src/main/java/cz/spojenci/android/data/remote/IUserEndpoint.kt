@@ -22,5 +22,5 @@ interface IUserEndpoint {
 	fun me(): Observable<UserResponse>
 
 	@POST("user/logout")
-	fun logout()
+	fun logout(): Observable<Void>
 }

@@ -17,7 +17,11 @@ abstract class Preferences(context: Context, name: String) {
 		putBoolean(pair.first, pair.second)
 	}
 
-	fun SharedPreferences.Editor.setString(pair: Pair<String, String>) {
+	fun SharedPreferences.Editor.setString(pair: Pair<String, String?>) {
 		putString(pair.first, pair.second)
+	}
+
+	fun clear() {
+		pref.edit().clear().apply()
 	}
 }

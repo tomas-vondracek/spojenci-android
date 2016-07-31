@@ -28,7 +28,6 @@ import cz.spojenci.android.data.LoginType
 import cz.spojenci.android.data.User
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.databinding.ActivityLoginBinding
-import cz.spojenci.android.pref.UserPreferences
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
@@ -47,7 +46,6 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		}
 	}
 
-	@Inject lateinit var prefs: UserPreferences
 	@Inject lateinit var service: UserService
 
 	private lateinit var googleApiClient: GoogleApiClient
@@ -80,6 +78,8 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		signInButton.setScopes(gso.scopeArray)
 		signInButton.setOnClickListener { signInWithGoogle() }
 
+		binding.loginSignOut.setOnClickListener { signOut() }
+
 		callbackManager = com.facebook.CallbackManager.Factory.create()
 		binding.loginFacebook.setReadPermissions("public_profile", "email")
 		binding.loginFacebook.registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
@@ -97,7 +97,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 			override fun onSuccess(result: LoginResult) {
 				Timber.d("Facebook login result: " + result)
-				showProgress(true)
+				showProgress(true, { binding.loginContainer.visible = false })
 				singInOnServer(result.accessToken.token, LoginType.FACEBOOK)
 			}
 		})
@@ -112,8 +112,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 		binding.loginEmailSignInButton.setOnClickListener { signInWithEmail() }
 
-		val isSignedIn = prefs.user != null
-		updateUI(isSignedIn)
+		updateUI(service.isSignedIn)
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -128,18 +127,18 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 	}
 
 	override fun onConnectionFailed(result: ConnectionResult) {
-		Timber.i("Google Play services connection failed. Cause: " + result.toString())
+		Timber.i("Google Play services connection failed. Cause: %s", result.toString())
 		Snackbar.make(
 				findViewById(R.id.activity_container) as View,
 				"Exception while connecting to Google Play services: " + result.errorMessage,
-				Snackbar.LENGTH_INDEFINITE).show()
+				Snackbar.LENGTH_LONG).show()
 	}
 
 	private fun signInWithGoogle() {
 		val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient)
 		startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
 
-		showProgress(false)
+		showProgress(false, { binding.loginContainer.visible = true })
 	}
 
 	private fun handleGoogleSignInResult(result: GoogleSignInResult) {
@@ -148,8 +147,8 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		if (result.isSuccess && idToken != null) {
 			// Signed in successfully, show authenticated UI.
 			val account = result.signInAccount
-			Timber.d("signed in with google account " + account)
-			showProgress(true)
+			Timber.d("signed in with google account %s", account)
+			showProgress(true, { binding.loginContainer.visible = false })
 			singInOnServer(idToken, LoginType.GOOGLE)
 		} else {
 			if (result.status.isCanceled) {
@@ -157,6 +156,27 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			}
 			// Signed out, show unauthenticated UI.
 			updateUI(false)
+		}
+	}
+
+	private fun signOut() {
+		val loginType = service.userLoginType
+		if (loginType != null) {
+			if (loginType == LoginType.FACEBOOK) {
+				TODO()
+			} else if (loginType == LoginType.GOOGLE) {
+				Auth.GoogleSignInApi.signOut(googleApiClient)
+			}
+
+			service.signOut().withSchedulers()
+				.subscribe({
+					updateUI(false)
+				}, { ex ->
+					Timber.e(ex, "Sign Out failed")
+					snackbar("Failed to sign out - " + ex.message)
+
+					updateUI(true)
+				})
 		}
 	}
 
@@ -206,7 +226,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			// form field with an error.
 			focusView?.requestFocus()
 		} else {
-			showProgress(true)
+			showProgress(true, { binding.loginContainer.visible = false })
 
 			singInOnServer(email, password)
 
@@ -228,7 +248,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.withSchedulers()
 				.subscribe({ user ->
 					Timber.i("Successfully signed in as user %s", user)
-					prefs.user = user
+
 					updateUI(true)
 				}, { ex ->
 					Timber.e(ex, "Login failed")
@@ -251,17 +271,18 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		showProgress(false)
 		if (signedIn) {
 			binding.loginContainer.visible = false
-			binding.loginSignOut.visible = true
+			binding.loginSignOutContainer.visible = true
 		} else {
 			binding.loginContainer.visible = true
-			binding.loginSignOut.visible = false
+			binding.loginSignOutContainer.visible = false
 		}
 	}
 
 	/**
 	 * Shows the progress UI and hides the login form.
 	 */
-	private fun showProgress(showProgress: Boolean) {
+	private fun showProgress(showProgress: Boolean,
+	                         animationCallback: () -> Unit = { }) {
 		if (binding.loginProgress.visible == showProgress) {
 			return
 		}
@@ -274,7 +295,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.alpha((if (showProgress) 0 else 1).toFloat())
 				.setListener(object : AnimatorListenerAdapter() {
 					override fun onAnimationEnd(animation: Animator) {
-						binding.loginContainer.visible = !showProgress
+						animationCallback()
 					}
 				})
 

@@ -20,16 +20,12 @@ import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.BR
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
-import cz.spojenci.android.data.Challenge
-import cz.spojenci.android.data.ChallengesRepository
-import cz.spojenci.android.data.FitSession
-import cz.spojenci.android.data.IFitRepository
+import cz.spojenci.android.data.*
 import cz.spojenci.android.databinding.ActivityMainBinding
 import cz.spojenci.android.databinding.ItemChallengeBinding
 import cz.spojenci.android.databinding.ItemFitActivityBinding
 import cz.spojenci.android.databinding.ItemHeaderBinding
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.pref.UserPreferences
 import cz.spojenci.android.utils.RecyclerAdapter
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
@@ -47,7 +43,7 @@ class MainActivity : BaseActivity() {
 	@Inject lateinit var fitRepo: IFitRepository
 	@Inject lateinit var challengesRepo: ChallengesRepository
 	@Inject lateinit var appPrefs: AppPreferences
-	@Inject lateinit var userPrefs: UserPreferences
+	@Inject lateinit var userService: UserService
 
 	private val apiClient: GoogleApiClient by lazy {
 		GoogleApiClient.Builder(this)
@@ -83,7 +79,9 @@ class MainActivity : BaseActivity() {
 		binding.mainConnectFit.setOnClickListener { btn ->
 			connectFitApiClient()
 		}
+
 		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }
+		binding.mainUser.setOnClickListener { LoginActivity.start(this) }
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -129,7 +127,7 @@ class MainActivity : BaseActivity() {
 	}
 
 	private fun updateUserUi() {
-		val user = userPrefs.user
+		val user = userService.user
 		val isUserAvailable = user != null
 
 		binding.mainUser.visible = isUserAvailable
