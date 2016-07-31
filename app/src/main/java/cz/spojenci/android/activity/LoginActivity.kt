@@ -24,9 +24,9 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
-import cz.spojenci.android.data.IUserService
 import cz.spojenci.android.data.LoginType
 import cz.spojenci.android.data.User
+import cz.spojenci.android.data.UserService
 import cz.spojenci.android.databinding.ActivityLoginBinding
 import cz.spojenci.android.pref.UserPreferences
 import cz.spojenci.android.utils.snackbar
@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 	}
 
 	@Inject lateinit var prefs: UserPreferences
-	@Inject lateinit var service: IUserService
+	@Inject lateinit var service: UserService
 
 	private lateinit var googleApiClient: GoogleApiClient
 	private lateinit var binding: ActivityLoginBinding
@@ -59,7 +59,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		super.onCreate(savedInstanceState)
 		injectSelf()
 
-		FacebookSdk.sdkInitialize(applicationContext);
+		FacebookSdk.sdkInitialize(applicationContext)
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 		// Configure sign-in to request the user's ID, email address, and basic
@@ -68,7 +68,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.requestEmail()
 				.requestProfile()
 				.requestIdToken(getString(R.string.google_client_id))
-				.build();
+				.build()
 
 		googleApiClient = GoogleApiClient.Builder(this)
 				.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
@@ -76,12 +76,12 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.build()
 
 		val signInButton = binding.loginGoogle
-		signInButton.setSize(SignInButton.SIZE_STANDARD);
-		signInButton.setScopes(gso.scopeArray);
+		signInButton.setSize(SignInButton.SIZE_STANDARD)
+		signInButton.setScopes(gso.scopeArray)
 		signInButton.setOnClickListener { signInWithGoogle() }
 
 		callbackManager = com.facebook.CallbackManager.Factory.create()
-		binding.loginFacebook.setReadPermissions("public_profile", "email");
+		binding.loginFacebook.setReadPermissions("public_profile", "email")
 		binding.loginFacebook.registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
 			override fun onError(error: FacebookException?) {
 				Timber.w(error, "Facebook login failed")
@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				showProgress(true)
 				singInOnServer(result.accessToken.token, LoginType.FACEBOOK)
 			}
-		});
+		})
 
 		binding.password.setOnEditorActionListener(TextView.OnEditorActionListener { textView, id, keyEvent ->
 			if (id == R.id.email_login || id == EditorInfo.IME_NULL) {
@@ -118,36 +118,36 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+		// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...)
 		if (requestCode == RC_GOOGLE_SIGN_IN) {
 			val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
 			handleGoogleSignInResult(result)
 		} else {
-			callbackManager.onActivityResult(requestCode, resultCode, data);
+			callbackManager.onActivityResult(requestCode, resultCode, data)
 		}
 	}
 
 	override fun onConnectionFailed(result: ConnectionResult) {
-		Timber.i("Google Play services connection failed. Cause: " + result.toString());
+		Timber.i("Google Play services connection failed. Cause: " + result.toString())
 		Snackbar.make(
 				findViewById(R.id.activity_container) as View,
 				"Exception while connecting to Google Play services: " + result.errorMessage,
-				Snackbar.LENGTH_INDEFINITE).show();
+				Snackbar.LENGTH_INDEFINITE).show()
 	}
 
 	private fun signInWithGoogle() {
-		val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-		startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+		val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient)
+		startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
 
 		showProgress(false)
 	}
 
 	private fun handleGoogleSignInResult(result: GoogleSignInResult) {
-		Timber.d("handleSignInResult:" + result.status);
+		Timber.d("handleSignInResult:" + result.status)
 		val idToken = result.signInAccount?.idToken
 		if (result.isSuccess && idToken != null) {
 			// Signed in successfully, show authenticated UI.
-			val account = result.signInAccount;
+			val account = result.signInAccount
 			Timber.d("signed in with google account " + account)
 			showProgress(true)
 			singInOnServer(idToken, LoginType.GOOGLE)
@@ -156,7 +156,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				snackbar("Google sign in request canceled")
 			}
 			// Signed out, show unauthenticated UI.
-			updateUI(false);
+			updateUI(false)
 		}
 	}
 
@@ -202,7 +202,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		}
 
 		if (cancel) {
-			// There was an error; don't attempt login and focus the first
+			// There was an error don't attempt login and focus the first
 			// form field with an error.
 			focusView?.requestFocus()
 		} else {
@@ -227,7 +227,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		signInObservable
 				.withSchedulers()
 				.subscribe({ user ->
-					Timber.i("Successfully signed in as user " + user)
+					Timber.i("Successfully signed in as user %s", user)
 					prefs.user = user
 					updateUI(true)
 				}, { ex ->
@@ -263,7 +263,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 	 */
 	private fun showProgress(showProgress: Boolean) {
 		if (binding.loginProgress.visible == showProgress) {
-			return;
+			return
 		}
 
 		val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime)

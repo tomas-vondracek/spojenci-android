@@ -2,14 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 ext {
-    SUPPORT_VERSION = "23.4.0"
-    GMS_VERSION = "9.0.1"
+    SUPPORT_VERSION = "24.1.1"
+    GMS_VERSION = "9.2.1"
     DAGGER_VERSION = "2.4"
+    RETROFIT_VERSION = "2.1.0"
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 24
+    buildToolsVersion "23.0.3"
 
     dataBinding {
         enabled true
@@ -38,11 +39,21 @@ android {
         preDexLibraries = true
         javaMaxHeapSize "2g"
     }
+
+    productFlavors {
+        mock {
+            buildConfigField "String", "SERVER_URL", "\"http://private-c8c93-spojenci.apiary-mock.com\""
+        }
+        prod {
+            buildConfigField "String", "SERVER_URL", "\"http://api.spojenci.cz\""
+        }
+    }
 }
 
 dependencies {
     testCompile 'junit:junit:4.12'
     compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
+    compile "com.android.support:design:${SUPPORT_VERSION}"
 
     compile "com.google.android.gms:play-services-identity:${GMS_VERSION}"
     compile "com.google.android.gms:play-services-base:${GMS_VERSION}"
@@ -54,14 +65,24 @@ dependencies {
 
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 
+    // Retrofit + okhttp
+    compile "com.squareup.retrofit2:retrofit:${RETROFIT_VERSION}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${RETROFIT_VERSION}"
+    compile "com.squareup.retrofit2:converter-gson:${RETROFIT_VERSION}"
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    compile 'com.google.code.gson:gson:2.6.2'
+
+    // dagger
     compile "com.google.dagger:dagger:${DAGGER_VERSION}"
     kapt "com.google.dagger:dagger-compiler:${DAGGER_VERSION}"
+    // rx
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'
+    compile 'com.trello:rxlifecycle-kotlin:0.6.1'
+
     compile 'com.jakewharton.timber:timber:4.1.2'
     compile 'javax.annotation:jsr250-api:1.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.avast:android-styled-dialogs:2.3.3'
 
     // Data Binding
     kapt 'com.android.databinding:compiler:2.0.0'
