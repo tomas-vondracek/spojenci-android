@@ -10,7 +10,7 @@ import rx.Observable
  */
 interface IChallengesEndpoint {
 
-	@GET("challenge/{userId}")
+	@GET("challenge/user/{userId}")
 	fun challengesForUser(@Path("userId") userId: String): Observable<List<Challenge>>
 
 	@GET("challenge/all")

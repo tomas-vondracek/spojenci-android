@@ -21,8 +21,8 @@ var View.visible: Boolean
 fun Activity.snackbar(message: String,
                       @LayoutRes layoutId: Int = R.id.activity_container,
                       length: Int = Snackbar.LENGTH_LONG) {
-	Snackbar.make(findViewById(layoutId) as View, message, length)
-			.show();
+	Snackbar.make(findViewById(layoutId), message, length)
+			.show()
 }
 
 fun <T> Observable<T>.withSchedulers(): Observable<T> {

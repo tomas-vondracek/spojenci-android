@@ -7,8 +7,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
-abstract class RecyclerAdapter<VH : RecyclerView.ViewHolder, T>(protected val context: Context,
-                                                                protected val items: List<T>) : RecyclerView.Adapter<VH>() {
+abstract class RecyclerAdapter<VH : RecyclerView.ViewHolder, out T>(protected val context: Context,
+                                                                    protected val items: List<T>) : RecyclerView.Adapter<VH>() {
 
 	private val inflater = LayoutInflater.from(context)
 
@@ -24,5 +24,5 @@ abstract class RecyclerAdapter<VH : RecyclerView.ViewHolder, T>(protected val co
 		return items.size
 	}
 
-	open class BoundViewHolder<B : ViewDataBinding>(val binding: B) : RecyclerView.ViewHolder(binding.root)
+	open class BoundViewHolder<out B : ViewDataBinding>(val binding: B) : RecyclerView.ViewHolder(binding.root)
 }

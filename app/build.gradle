@@ -42,10 +42,10 @@ android {
 
     productFlavors {
         mock {
-            buildConfigField "String", "SERVER_URL", "\"http://private-c8c93-spojenci.apiary-mock.com\""
+            buildConfigField "String", "SERVER_URL", "\"http://private-c8c93-spojenci.apiary-mock.com/\""
         }
         prod {
-            buildConfigField "String", "SERVER_URL", "\"http://api.spojenci.cz\""
+            buildConfigField "String", "SERVER_URL", "\"http://www.spojenci.cz/api/\""
         }
     }
 }

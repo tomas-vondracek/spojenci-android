@@ -96,9 +96,11 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			}
 
 			override fun onSuccess(result: LoginResult) {
-				Timber.d("Facebook login result: " + result)
+				val accessToken = result.accessToken
+				Timber.d("Facebook login result: $accessToken for user id ${accessToken.userId} " +
+						"from source ${accessToken.source} with expiration ${accessToken.expires}")
 				showProgress(true, { binding.loginContainer.visible = false })
-				singInOnServer(result.accessToken.token, LoginType.FACEBOOK)
+				singInOnServer(accessToken.token, LoginType.FACEBOOK)
 			}
 		})
 

@@ -18,8 +18,8 @@ data class LoginResponse(val newRegistration: Boolean)
 // requests:
 
 data class AccountLogin(val login: String, val password: String)
-data class SocialLogin(val token: String, val type: String)
-data class LoginRequest private constructor(val account: AccountLogin?, val socialLogin: SocialLogin?) {
+data class Social(val token: String, val type: String)
+data class LoginRequest private constructor(val account: AccountLogin?, val social: Social?) {
 
 	companion object {
 		fun account(login: String, password: String): LoginRequest {
@@ -27,7 +27,7 @@ data class LoginRequest private constructor(val account: AccountLogin?, val soci
 		}
 
 		fun social(token: String, type: LoginType): LoginRequest {
-			return LoginRequest(null, SocialLogin(token, type.name))
+			return LoginRequest(null, Social(token, type.name))
 		}
 	}
 }

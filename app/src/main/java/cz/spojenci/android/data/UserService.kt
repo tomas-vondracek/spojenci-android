@@ -52,7 +52,13 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		return request
 				.flatMap { endpoint.me() }
 				.map { it.user }
-				.doOnNext { user -> prefs.user = user; prefs.loginType = type }
+				.doOnNext { user ->
+					if (user == null || user.id.isNullOrEmpty()) {
+						throw IllegalArgumentException("illegal user $user")
+					}
+
+					prefs.user = user; prefs.loginType = type
+				}
 	}
 
 
