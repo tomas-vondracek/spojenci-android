@@ -1,5 +1,10 @@
 package cz.spojenci.android.dagger
 
+import android.content.Context
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
+import com.franmontiel.persistentcookiejar.PersistentCookieJar
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import cz.spojenci.android.BuildConfig
 import cz.spojenci.android.data.remote.IChallengesEndpoint
 import cz.spojenci.android.data.remote.IUserEndpoint
@@ -28,10 +33,16 @@ class ServerModule() {
 
 	@Provides
 	@Singleton
-	fun provideRetrofit(): Retrofit {
+	fun provideCookieJar(context: Context): ClearableCookieJar {
+		return PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
+	}
 
+	@Provides
+	@Singleton
+	fun provideRetrofit(cookieJar: ClearableCookieJar): Retrofit {
 		val httpClient = OkHttpClient.Builder()
 				.addInterceptor(log)
+				.cookieJar(cookieJar)
 				.build()
 
 		val retrofit = Retrofit.Builder()

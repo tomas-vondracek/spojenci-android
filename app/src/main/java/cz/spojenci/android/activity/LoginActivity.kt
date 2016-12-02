@@ -75,7 +75,6 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 		val signInButton = binding.loginGoogle
 		signInButton.setSize(SignInButton.SIZE_STANDARD)
-		signInButton.setScopes(gso.scopeArray)
 		signInButton.setOnClickListener { signInWithGoogle() }
 
 		binding.loginSignOut.setOnClickListener { signOut() }

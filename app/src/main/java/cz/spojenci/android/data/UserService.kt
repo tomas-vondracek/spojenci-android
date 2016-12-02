@@ -1,5 +1,6 @@
 package cz.spojenci.android.data
 
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import cz.spojenci.android.data.remote.IUserEndpoint
 import cz.spojenci.android.pref.UserPreferences
 import rx.Observable
@@ -15,7 +16,8 @@ enum class LoginType {
 
 @Singleton
 class UserService @Inject constructor(private val endpoint: IUserEndpoint,
-                                      private val prefs: UserPreferences) {
+                                      private val prefs: UserPreferences,
+                                      private val cookieJar: ClearableCookieJar) {
 
 	val userLoginType: LoginType?
 		get() = prefs.loginType
@@ -64,7 +66,7 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 
 	fun signOut(): Observable<Void> {
 		return endpoint.logout()
-				.doOnNext { prefs.clear() }
+				.doOnNext { prefs.clear(); cookieJar.clear() }
 	}
 
 }
