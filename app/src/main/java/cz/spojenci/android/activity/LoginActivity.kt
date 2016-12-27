@@ -15,6 +15,7 @@ import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.FacebookSdk
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -163,11 +164,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 	private fun signOut() {
 		val loginType = service.userLoginType
 		if (loginType != null) {
-			if (loginType == LoginType.FACEBOOK) {
-				TODO()
-			} else if (loginType == LoginType.GOOGLE) {
-				Auth.GoogleSignInApi.signOut(googleApiClient)
-			}
+			signOutFromProvider(loginType)
 
 			service.signOut().withSchedulers()
 				.subscribe({
@@ -181,8 +178,18 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		}
 	}
 
+	private fun signOutFromProvider(loginType: LoginType) {
+		Timber.d("signing out from provider with login type $loginType")
+
+		if (loginType == LoginType.FACEBOOK) {
+			LoginManager.getInstance().logOut()
+		} else if (loginType == LoginType.GOOGLE) {
+			Auth.GoogleSignInApi.signOut(googleApiClient)
+		}
+	}
+
 	/**
-	 * Attempts to sign in wuth the account specified by the login form.
+	 * Attempts to sign in with the account specified by the login form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
@@ -236,15 +243,15 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 	private fun singInOnServer(email: String, password: String) {
 		val signInObservable = service.signInWithEmail(email, password)
-		doSignInOnServer(signInObservable)
+		doSignInOnServer(signInObservable, LoginType.EMAIL)
 	}
 
 	private fun singInOnServer(token: String, loginType: LoginType) {
 		val signInObservable = service.signInWithSocial(token, loginType)
-		doSignInOnServer(signInObservable)
+		doSignInOnServer(signInObservable, loginType)
 	}
 
-	private fun doSignInOnServer(signInObservable: Observable<User>) {
+	private fun doSignInOnServer(signInObservable: Observable<User>, loginType: LoginType) {
 		signInObservable
 				.withSchedulers()
 				.subscribe({ user ->
@@ -254,6 +261,8 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				}, { ex ->
 					Timber.e(ex, "Login failed")
 					snackbar("Failed to sign in - " + ex.message)
+
+					signOutFromProvider(loginType)
 					updateUI(false)
 				})
 	}
@@ -277,6 +286,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			binding.loginContainer.visible = true
 			binding.loginSignOutContainer.visible = false
 		}
+		binding.loginStatus.text = getString(R.string.login_status_connected, service.user?.email ?: "")
 	}
 
 	/**

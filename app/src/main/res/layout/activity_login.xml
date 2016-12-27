@@ -34,65 +34,78 @@
 					android:id="@+id/login_facebook"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:minHeight="48dp"
+					android:layout_margin="@dimen/padding"
 					android:layout_gravity="center_horizontal" />
 
 				<com.google.android.gms.common.SignInButton
 					android:id="@+id/login_google"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:minHeight="48dp"
 					android:layout_gravity="center_horizontal|bottom"
-					android:layout_margin="4dp"
+					android:layout_margin="@dimen/padding"
 					android:visibility="visible"/>
 
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="@dimen/activity_vertical_margin"
-					android:layout_gravity="start"
-					android:padding="@dimen/padding"
-					android:text="@string/login_email_description"/>
-
-				<android.support.design.widget.TextInputLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-
-					<EditText
-						android:id="@+id/email"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:hint="@string/login_prompt_email"
-						android:inputType="textEmailAddress"
-						android:maxLines="1"
-						android:singleLine="true"/>
-
-				</android.support.design.widget.TextInputLayout>
-
-				<android.support.design.widget.TextInputLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-
-					<EditText
-						android:id="@+id/password"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						android:hint="@string/login_prompt_password"
-						android:imeActionId="@+id/email_login"
-						android:imeActionLabel="@string/login_action_sign_in_short"
-						android:imeOptions="actionUnspecified"
-						android:inputType="textPassword"
-						android:maxLines="1"
-						android:singleLine="true"/>
-
-				</android.support.design.widget.TextInputLayout>
-
-				<Button
-					android:id="@+id/login_email_sign_in_button"
-					style="?android:textAppearanceSmall"
+				<LinearLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="16dp"
-					android:text="@string/login_action_sign_in"
-					android:textStyle="bold"/>
+					android:visibility="gone"
+					android:orientation="vertical">
+
+					<!-- Email sign-in is disabled for now -->
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="@dimen/activity_vertical_margin"
+						android:layout_gravity="start"
+						android:padding="@dimen/padding"
+						android:text="@string/login_email_description" />
+
+					<android.support.design.widget.TextInputLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content">
+
+						<EditText
+							android:id="@+id/email"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:hint="@string/login_prompt_email"
+							android:inputType="textEmailAddress"
+							android:maxLines="1"
+							android:singleLine="true" />
+
+					</android.support.design.widget.TextInputLayout>
+
+					<android.support.design.widget.TextInputLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content">
+
+						<EditText
+							android:id="@+id/password"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:hint="@string/login_prompt_password"
+							android:imeActionId="@+id/email_login"
+							android:imeActionLabel="@string/login_action_sign_in_short"
+							android:imeOptions="actionUnspecified"
+							android:inputType="textPassword"
+							android:maxLines="1"
+							android:singleLine="true" />
+
+					</android.support.design.widget.TextInputLayout>
+
+					<Button
+						android:id="@+id/login_email_sign_in_button"
+						style="?android:textAppearanceSmall"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="16dp"
+						android:text="@string/login_action_sign_in"
+						android:textStyle="bold" />
+				</LinearLayout>
+
 
 			</LinearLayout>
 		</ScrollView>
@@ -127,7 +140,7 @@
 			android:visibility="gone"
 			tools:visibility="visible">
 
-			<TextView
+			<TextView android:id="@+id/login_status"
 				style="?android:textAppearanceLarge"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

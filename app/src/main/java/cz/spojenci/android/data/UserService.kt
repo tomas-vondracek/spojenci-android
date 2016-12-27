@@ -66,7 +66,9 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 
 	fun signOut(): Observable<Void> {
 		return endpoint.logout()
-				.doOnNext { prefs.clear(); cookieJar.clear() }
+				.doOnError { ex -> Timber.w(ex, "Log out failed") }
+				.onErrorResumeNext { Observable.empty() }
+				.doOnCompleted { prefs.clear(); cookieJar.clear() }
 	}
 
 }

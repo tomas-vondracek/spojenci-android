@@ -6,7 +6,7 @@
 	<string name="login_email_description"><![CDATA[Sign In with Email & Password]]></string>
 	<string name="login_revoke">Revoke access</string>
 	<string name="login_disconnect">disconnect</string>
-	<string name="login_status_connected">Signed In</string>
+	<string name="login_status_connected">Signed In as %1$s</string>
 	<string name="login_prompt_email">Email</string>
 	<string name="login_prompt_password">Password</string>
 	<string name="login_action_sign_in">Sign in with Email</string>
