@@ -6,7 +6,7 @@
 			type="cz.spojenci.android.data.User"/>
 	</data>
 
-	<LinearLayout
+	<FrameLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:tools="http://schemas.android.com/tools"
 		android:id="@+id/activity_container"
@@ -16,12 +16,11 @@
 		android:paddingLeft="@dimen/activity_horizontal_margin"
 		android:paddingRight="@dimen/activity_horizontal_margin"
 		android:paddingTop="@dimen/activity_vertical_margin"
-		android:paddingBottom="@dimen/activity_vertical_margin"
 		tools:context=".activity.MainActivity">
 
 		<FrameLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+			android:layout_height="@dimen/main_header_height">
 
 			<Button android:id="@+id/main_connect_account"
 				style="?borderlessButtonStyle"
@@ -35,18 +34,20 @@
 
 			<RelativeLayout android:id="@+id/main_user"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="@dimen/main_header_height"
 				android:background="?selectableItemBackground">
 
 				<ImageView android:id="@+id/main_user_photo"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
+					android:layout_width="@dimen/main_header_height"
+					android:layout_height="@dimen/main_header_height"
+					android:layout_centerVertical="true"
 					android:layout_marginEnd="@dimen/padding"
 					android:src="@drawable/user_silhouette"/>
 
 				<TextView android:id="@+id/main_user_name"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginStart="@dimen/padding"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					tools:text="User Name"
 					android:text="@{user.name}"
@@ -56,6 +57,7 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginStart="@dimen/padding"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					tools:text="Contributions"
 					android:layout_below="@+id/main_user_name"
@@ -63,10 +65,12 @@
 			</RelativeLayout>
 		</FrameLayout>
 
-
+		<!-- challenges & activity list -->
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:paddingTop="@dimen/padding_large"
+			android:layout_marginTop="@dimen/main_header_height"
 			android:layout_marginBottom="@dimen/activity_vertical_margin">
 
 			<ProgressBar android:id="@+id/main_challenges_progress"
@@ -87,41 +91,9 @@
 				tools:visibility="visible"/>
 		</FrameLayout>
 
-		<FrameLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
+		<include layout="@layout/part_connect_fit"
+			android:id="@+id/main_fit_connect"/>
 
-			<Button android:id="@+id/main_connect_fit"
-				style="?borderlessButtonStyle"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:padding="@dimen/padding_large"
-				android:drawableStart="@drawable/ic_connect_fit"
-				android:drawablePadding="@dimen/activity_horizontal_margin"
-				android:visibility="gone"
-				tools:visibility="visible"
-				android:text="@string/main_connect_google_fit"/>
-
-			<ProgressBar android:id="@+id/main_fit_progress"
-				style="?android:progressBarStyleLarge"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:padding="@dimen/padding"
-				android:indeterminateOnly="true"
-				android:visibility="gone"
-				tools:visibility="visible"/>
-
-			<android.support.v7.widget.RecyclerView
-				android:id="@+id/main_fit_list"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:scrollbars="vertical"
-				android:visibility="gone"
-				tools:visibility="visible"/>
-
-		</FrameLayout>
-	</LinearLayout>
+	</FrameLayout>
 </layout>
 

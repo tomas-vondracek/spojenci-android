@@ -24,5 +24,6 @@ abstract class RecyclerAdapter<VH : RecyclerView.ViewHolder, out T>(protected va
 		return items.size
 	}
 
-	open class BoundViewHolder<out B : ViewDataBinding>(val binding: B) : RecyclerView.ViewHolder(binding.root)
 }
+
+open class BoundViewHolder<out B : ViewDataBinding>(val binding: B) : RecyclerView.ViewHolder(binding.root)

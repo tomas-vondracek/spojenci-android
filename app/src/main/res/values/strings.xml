@@ -18,8 +18,10 @@
 	<string name="error_field_required">This field is required</string>
 
 	<string name="main_connect_google_fit">Connect with Google Fit</string>
-	<string name="main_challenges">Challenges</string>
-	<string name="main_activity">Activity</string>
+	<string name="main_challenges">My Challenges</string>
+	<string name="main_activity">My Activity</string>
+	<string name="main_challenges_empty">No challenges</string>
+	<string name="main_activity_empty">No activity in Google Fit</string>
 	<string name="main_permission_location_rationale">Location permission is required to access the Google Fit data.</string>
 	<string name="main_permission_location_denied">Permission hasn\'t been granted. Can\'t connect to the Google Fit.</string>
 

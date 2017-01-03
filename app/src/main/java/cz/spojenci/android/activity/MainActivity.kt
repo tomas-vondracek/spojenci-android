@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
@@ -21,15 +23,9 @@ import cz.spojenci.android.BR
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.*
-import cz.spojenci.android.databinding.ActivityMainBinding
-import cz.spojenci.android.databinding.ItemChallengeBinding
-import cz.spojenci.android.databinding.ItemFitActivityBinding
-import cz.spojenci.android.databinding.ItemHeaderBinding
+import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.utils.RecyclerAdapter
-import cz.spojenci.android.utils.snackbar
-import cz.spojenci.android.utils.visible
-import cz.spojenci.android.utils.withSchedulers
+import cz.spojenci.android.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -51,6 +47,7 @@ class MainActivity : BaseActivity() {
 				.addScope(Scope(Scopes.FITNESS_ACTIVITY_READ))
 				.addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
 					override fun onConnectionSuspended(reason: Int) {
+						appPrefs.isFitConnected = false
 						Timber.d("Fit API suspended with reason $reason")
 					}
 
@@ -61,22 +58,26 @@ class MainActivity : BaseActivity() {
 					}
 				})
 				.enableAutoManage(this, 0, { result ->
-					Timber.w("Google Play services connection failed. Cause: ${result.toString()}");
+					Timber.w("Google Play services connection failed. Cause: $result")
+					appPrefs.isFitConnected = false
 					onFitAccessFailed(result)
 				})
 				.build()
 	}
 
 	private lateinit var binding: ActivityMainBinding
+	private lateinit var adapter: CombinedDataAdapter
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		injectSelf()
 
+		adapter = CombinedDataAdapter(this)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-		binding.mainFitList.layoutManager = LinearLayoutManager(this)
-		binding.mainConnectFit.setOnClickListener { btn ->
+		binding.mainChallengesList.layoutManager = LinearLayoutManager(this)
+		binding.mainChallengesList.adapter = adapter
+		binding.mainFitConnect.fitConnect.setOnClickListener { btn ->
 			connectFitApiClient()
 		}
 
@@ -109,8 +110,7 @@ class MainActivity : BaseActivity() {
 	override fun onStart() {
 		super.onStart()
 		val isFitConnected = appPrefs.isFitConnected
-		binding.mainConnectFit.visible = !isFitConnected
-		binding.mainFitList.visible = isFitConnected
+		binding.mainFitConnect.fitContainer.visible = !isFitConnected
 
 		if (isFitConnected) {
 			connectFitApiClient()
@@ -141,7 +141,7 @@ class MainActivity : BaseActivity() {
 					.withSchedulers()
 					.bindToLifecycle(this)
 					.subscribe({ challenges ->
-						binding.mainChallengesList.adapter = ChallengesAdapter(this, challenges)
+						adapter.challenges = challenges
 						binding.mainChallengesProgress.visible = false
 						binding.mainChallengesList.visible = true
 					}, { ex ->
@@ -154,8 +154,8 @@ class MainActivity : BaseActivity() {
 
 	private fun connectFitApiClient() {
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-			binding.mainConnectFit.visible = false
-			binding.mainFitProgress.visible = true
+			binding.mainFitConnect.fitConnect.visible = false
+			binding.mainFitConnect.fitProgress.visible = true
 			apiClient.connect()
 		} else {
 			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -170,7 +170,7 @@ class MainActivity : BaseActivity() {
 		fitRepo.sessions(apiClient)
 				.bindToLifecycle(this)
 				.subscribe({ result ->
-					binding.mainFitProgress.visible = false
+					binding.mainFitConnect.fitProgress.visible = false
 					if (!result.status.isSuccess) {
 						Timber.i("no data from Fit: " + result.status)
 						if (result.status.hasResolution()) {
@@ -178,10 +178,9 @@ class MainActivity : BaseActivity() {
 						}
 					}
 					Timber.d("Fit sessions: " + result.sessions)
-					binding.mainFitList.visible = true
-					binding.mainFitList.adapter = FitDataAdapter(this, result.sessions)
+					adapter.fitItems = result.sessions
 				}, { throwable ->
-					binding.mainFitProgress.visible = false
+					binding.mainFitConnect.fitProgress.visible = false
 					Timber.e(throwable, "failed to read from google fit")
 					snackbar("Failed to read data from Google Fit")
 				})
@@ -195,60 +194,93 @@ class MainActivity : BaseActivity() {
 			message = "Failed to access Google Fit: ${result.errorMessage}"
 		}
 
-		appPrefs.isFitConnected = false
-		binding.mainConnectFit.visible = true
-		binding.mainFitProgress.visible = false
+		binding.mainFitConnect.fitConnect.visible = true
+		binding.mainFitConnect.fitProgress.visible = false
 		snackbar(message)
 	}
 }
 
-class FitDataAdapter(context: Context, fitSessions: List<FitSession>) :
-		RecyclerAdapter<RecyclerView.ViewHolder, FitSession>(context, fitSessions) {
+class TitleViewHolder(binding: ItemHeaderBinding) : BoundViewHolder<ItemHeaderBinding>(binding)
+class EmptyViewHolder(binding: ItemEmptyBinding) : BoundViewHolder<ItemEmptyBinding>(binding)
+class FitViewHolder(binding: ItemFitActivityBinding) : BoundViewHolder<ItemFitActivityBinding>(binding)
+class ChallengeViewHolder(binding: ItemChallengeBinding) : BoundViewHolder<ItemChallengeBinding>(binding)
 
-	override fun getItemViewType(position: Int): Int {
-		if (position == 0) {
-			return R.layout.item_header
-		} else {
-			return R.layout.item_fit_activity
+/**
+ * Adapter with challenges and fit data.
+ */
+class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+	var fitItems: List<FitSession> = emptyList()
+	var challenges: List<Challenge> = emptyList()
+
+	private val inflater = LayoutInflater.from(context)
+
+	private val fitViewsCount: Int
+		get() {
+			return Math.max(fitItems.size, 1) + 1
 		}
+
+	private val challengesViewCount: Int
+		get() {
+			return Math.max(challenges.size, 1) + 1
+		}
+
+
+	private fun <B : ViewDataBinding> bindingForLayout(layoutId: Int, parent: ViewGroup): B {
+		return DataBindingUtil.inflate(inflater, layoutId, parent, false)
 	}
 
 	override fun getItemCount(): Int {
-		return super.getItemCount() + 1 // + header
+		return fitViewsCount + challengesViewCount
+	}
+
+	override fun getItemViewType(position: Int): Int {
+		when {
+			position == 0 ->
+				// challenges header
+				return R.layout.item_header
+			position < challengesViewCount ->
+				return if (challenges.isEmpty()) R.layout.item_empty else R.layout.item_challenge
+			position == challengesViewCount ->
+				// fit header
+				return R.layout.item_header
+			else ->
+				return if (fitItems.isEmpty()) R.layout.item_empty else R.layout.item_fit_activity
+		}
+	}
+
+	override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+		when (holder) {
+            is FitViewHolder -> {
+				val session = fitItems[position - 1 - challengesViewCount]
+				holder.binding.setVariable(BR.session, session)
+			}
+			is ChallengeViewHolder -> {
+				val challenge = challenges[position - 1]
+				holder.binding.setVariable(BR.challenge, challenge)
+			}
+			is TitleViewHolder -> {
+				val textId =
+						if (position >= challengesViewCount) R.string.main_activity
+						else R.string.main_challenges
+				holder.binding.itemTitle.setText(textId)
+			}
+			is EmptyViewHolder -> {
+				val textId =
+						if (position > challengesViewCount) R.string.main_activity_empty
+						else R.string.main_challenges_empty
+				holder.binding.itemTitle.setText(textId)
+			}
+		}
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 		return when (viewType) {
+			R.layout.item_challenge -> ChallengeViewHolder(bindingForLayout(viewType, parent))
 			R.layout.item_fit_activity -> FitViewHolder(bindingForLayout(viewType, parent))
 			R.layout.item_header -> TitleViewHolder(bindingForLayout(viewType, parent))
+			R.layout.item_empty -> EmptyViewHolder(bindingForLayout(viewType, parent))
 			else -> throw IllegalArgumentException("Unknown viewType " + viewType)
 		}
 	}
-
-	override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-		if (holder is FitViewHolder) {
-			val session = getItem(position - 1)
-			holder.binding.setVariable(BR.session, session)
-		} else if (holder is TitleViewHolder) {
-			holder.binding.itemTitle.setText(R.string.main_activity)
-		}
-	}
-
-	class FitViewHolder(binding: ItemFitActivityBinding) : BoundViewHolder<ItemFitActivityBinding>(binding)
-	class TitleViewHolder(binding: ItemHeaderBinding) : BoundViewHolder<ItemHeaderBinding>(binding)
-}
-
-
-class ChallengesAdapter(context: Context, challenges: List<Challenge>) :
-		RecyclerAdapter<ChallengesAdapter.ChallengeViewHolder, Challenge>(context, challenges) {
-
-	override fun onBindViewHolder(holder: ChallengeViewHolder, position: Int) {
-		holder.binding.setVariable(BR.challenge, getItem(position))
-	}
-
-	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChallengeViewHolder {
-		return ChallengeViewHolder(bindingForLayout(R.layout.item_challenge, parent))
-	}
-
-	class ChallengeViewHolder(binding: ItemChallengeBinding) : BoundViewHolder<ItemChallengeBinding>(binding)
 }
