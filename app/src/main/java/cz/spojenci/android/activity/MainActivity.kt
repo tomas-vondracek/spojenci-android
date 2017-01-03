@@ -25,7 +25,10 @@ import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.*
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.utils.*
+import cz.spojenci.android.utils.BoundViewHolder
+import cz.spojenci.android.utils.snackbar
+import cz.spojenci.android.utils.visible
+import cz.spojenci.android.utils.withSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -48,7 +51,7 @@ class MainActivity : BaseActivity() {
 				.addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
 					override fun onConnectionSuspended(reason: Int) {
 						appPrefs.isFitConnected = false
-						Timber.d("Fit API suspended with reason $reason")
+						Timber.d("Fit API suspended with reason $reason. FIT disconnected.")
 					}
 
 					override fun onConnected(bundle: Bundle?) {
@@ -58,7 +61,7 @@ class MainActivity : BaseActivity() {
 					}
 				})
 				.enableAutoManage(this, 0, { result ->
-					Timber.w("Google Play services connection failed. Cause: $result")
+					Timber.w("Google Play services connection failed. FIT disconnected. Cause: $result")
 					appPrefs.isFitConnected = false
 					onFitAccessFailed(result)
 				})
@@ -114,6 +117,15 @@ class MainActivity : BaseActivity() {
 
 		if (isFitConnected) {
 			connectFitApiClient()
+		} else {
+			binding.mainFitConnect.fitConnect.visible = true
+			// slide in
+			val height = resources.getDimension(R.dimen.bottom_bar_height)
+			binding.mainFitConnect.fitContainer.translationY = height
+			binding.mainFitConnect.fitContainer.animate()
+					.setStartDelay(200)
+					.translationY(0f)
+					.withLayer()
 		}
 	}
 
@@ -149,6 +161,10 @@ class MainActivity : BaseActivity() {
 						snackbar("Failed to load challenges " + ex.message)
 						binding.mainChallengesProgress.visible = false
 					})
+		} else {
+			// no user = no challenges, but we can show fit sessions
+			binding.mainChallengesProgress.visible = false
+			binding.mainChallengesList.visible = true
 		}
 	}
 

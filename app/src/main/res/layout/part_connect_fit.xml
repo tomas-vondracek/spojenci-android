@@ -6,12 +6,13 @@
 
 	<FrameLayout android:id="@+id/fit_container"
 		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:layout_gravity="bottom">
+		android:layout_height="@dimen/bottom_bar_height"
+		android:layout_gravity="bottom"
+		android:background="@android:color/background_dark">
 
 		<Button android:id="@+id/fit_connect"
 			style="?android:buttonBarButtonStyle"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
 			android:padding="@dimen/padding_large"
@@ -25,6 +26,7 @@
 			style="?android:progressBarStyleLarge"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/padding_small"
 			android:layout_gravity="center"
 			android:indeterminateOnly="true"
 			android:visibility="gone"
