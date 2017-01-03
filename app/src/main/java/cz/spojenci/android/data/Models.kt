@@ -31,3 +31,34 @@ data class LoginRequest private constructor(val account: AccountLogin?, val soci
 		}
 	}
 }
+
+data class ServerChallenge(
+	var akce: String? = null,
+	var challenge: String? = null,
+	var challengeEmail: String? = null,
+	var challengeName: String? = null,
+	var deleted: Boolean = false,
+	var description: String? = null,
+	var florbal: Boolean = false,
+	var hash: String? = null,
+	var hidden: Boolean = false,
+	var lyze: Boolean = false,
+	var multiply: Int = 0,
+	var onlymecanpay: Boolean = false,
+	var orientacnizavod: Boolean = false,
+	var originatingContact: Any? = null,
+	var outdoor: Boolean = false,
+	var performance: String? = null,
+	var pid: Int = 0,
+	var potapeni: Boolean = false,
+	var prispevkycelkem: Int = 0,
+	var sfId: Int = 0,
+	var souhlas: Boolean = false,
+	var status: String? = null,
+	var stolnitenis: Boolean = false,
+	var support: Any? = null,
+	var supporting: Int = 0,
+	var tanec: Boolean = false,
+	var title: String? = null,
+	var uid: Int = 0
+)

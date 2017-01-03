@@ -2,6 +2,7 @@ package cz.spojenci.android.data.remote
 
 import cz.spojenci.android.data.LoginRequest
 import cz.spojenci.android.data.LoginResponse
+import cz.spojenci.android.data.User
 import cz.spojenci.android.data.UserResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -19,7 +20,7 @@ interface IUserEndpoint {
 	fun login(@Body request: LoginRequest): Observable<LoginResponse>
 
 	@GET("user/me")
-	fun me(): Observable<UserResponse>
+	fun me(): Observable<User>
 
 	@POST("user/logout")
 	fun logout(): Observable<Void>

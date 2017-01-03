@@ -53,7 +53,7 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 	private fun signIn(request: Observable<LoginResponse>, type: LoginType): Observable<User> {
 		return request
 				.flatMap { endpoint.me() }
-				.map { it.user }
+//				.map { it.user }
 				.doOnNext { user ->
 					if (user == null || user.id.isNullOrEmpty()) {
 						throw IllegalArgumentException("illegal user $user")
