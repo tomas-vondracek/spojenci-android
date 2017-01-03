@@ -18,6 +18,7 @@
 	<string name="error_field_required">This field is required</string>
 
 	<string name="main_connect_google_fit">Connect with Google Fit</string>
+	<string name="main_login">Sign in with your Spojenci account</string>
 	<string name="main_challenges">My Challenges</string>
 	<string name="main_activity">My Activity</string>
 	<string name="main_challenges_empty">No challenges</string>

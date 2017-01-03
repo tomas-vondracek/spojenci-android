@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Spojenci</string>
+	<string name="title_activity_login">Příhlásit se</string>
+
+	<!-- login page -->
+	<string name="login_email_description"><![CDATA[Přihlásit se e-mailem a heslem]]></string>
+	<string name="login_revoke">Odebrat přístup</string>
+	<string name="login_disconnect">Odhlásit se</string>
+	<string name="login_action_sign_in">Přihlašte se s Vaším e-mailem</string>
+	<string name="login_action_sign_in_short">Přihlásit se</string>
+	<string name="login_in_process">Přihlašování</string>
+	<string name="login_prompt_email">E-mail</string>
+	<string name="login_prompt_password">Heslo</string>
+	<string name="login_status_connected">Přihlašen jako %1$s</string>
+	<string name="error_field_required">Toto pole je povinné</string>
+	<string name="error_incorrect_password">Nesprávné heslo</string>
+	<string name="error_invalid_email">Neplatný e-mail</string>
+	<string name="error_invalid_password">Příliš krátké heslo</string>
+
+	<string name="main_activity">Moje aktivita</string>
+	<string name="main_activity_empty">Žádné aktivita v Google Fit</string>
+	<string name="main_challenges">Moje výzvy</string>
+	<string name="main_challenges_empty">Žádné výzvy</string>
+	<string name="main_connect_google_fit">Připojit Google Fit</string>
+	<string name="main_login">Přihlašte se svým účtem spojenců</string>
+	<string name="main_permission_location_denied">Oprávnění nebylo uděleno. Nelze se připojit ke Google Fit.</string>
+	<string name="main_permission_location_rationale">Oprávnění k zjišťování polohý je požadováno kvůli přístupu ke Google Fit datům.</string>
+</resources>

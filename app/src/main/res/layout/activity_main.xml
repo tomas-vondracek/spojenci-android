@@ -30,7 +30,7 @@
 				android:padding="@dimen/padding_large"
 				android:visibility="gone"
 				tools:visibility="visible"
-				android:text="@string/common_signin_button_text"/>
+				android:text="@string/main_login"/>
 
 			<RelativeLayout android:id="@+id/main_user"
 				android:layout_width="match_parent"
