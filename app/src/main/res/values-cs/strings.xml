@@ -26,4 +26,5 @@
 	<string name="main_login">Přihlašte se svým účtem spojenců</string>
 	<string name="main_permission_location_denied">Oprávnění nebylo uděleno. Nelze se připojit ke Google Fit.</string>
 	<string name="main_permission_location_rationale">Oprávnění k zjišťování polohý je požadováno kvůli přístupu ke Google Fit datům.</string>
+	<string name="main_contributions">příspěvky celkem:</string>
 </resources>

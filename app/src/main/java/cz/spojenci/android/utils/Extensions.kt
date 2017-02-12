@@ -8,6 +8,9 @@ import cz.spojenci.android.R
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.*
 
 var View.visible: Boolean
 	get() = visibility == View.VISIBLE
@@ -28,4 +31,14 @@ fun Activity.snackbar(message: String,
 fun <T> Observable<T>.withSchedulers(): Observable<T> {
 	return observeOn(AndroidSchedulers.mainThread())
 			.subscribeOn(Schedulers.io())
+}
+
+val formatter = NumberFormat.getCurrencyInstance().let {
+	it.currency = Currency.getInstance("CZK")
+	it
+}
+
+
+fun BigDecimal.formatAsPrice(): String {
+	return formatter.format(this)
 }

@@ -53,14 +53,23 @@
 					android:layout_alignParentTop="true"
 					android:layout_toEndOf="@+id/main_user_photo"/>
 
-				<TextView
+				<TextView android:id="@+id/main_user_contributions_title"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:text="@string/main_contributions"
+					android:layout_below="@+id/main_user_name"
+					android:layout_alignStart="@+id/main_user_name"/>
+
+				<TextView android:id="@+id/main_user_contributions"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="@dimen/padding"
 					android:textAppearance="?android:attr/textAppearanceSmall"
-					tools:text="Contributions"
-					android:layout_below="@+id/main_user_name"
-					android:layout_alignStart="@+id/main_user_name"/>
+					tools:text="0CZK"
+					android:layout_alignBaseline="@+id/main_user_contributions_title"
+					android:layout_toEndOf="@+id/main_user_contributions_title"/>
 			</RelativeLayout>
 		</FrameLayout>
 

@@ -2,6 +2,7 @@ package cz.spojenci.android.data
 
 import cz.spojenci.android.data.remote.IChallengesEndpoint
 import rx.Observable
+import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,8 +18,11 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
                     .flatMap { Observable.from(it) }
                     .map { challenge ->
                         val owner = UserRef(challenge.uid.toString(), "")
+                        val paid = BigDecimal(challenge.prispevkycelkem)
+                        val unit = challenge.performance ?: ""
 
-                        Challenge(challenge.pid.toString(), challenge.title ?: "", owner, challenge.status ?: "")
+                        Challenge(challenge.pid.toString(), challenge.title ?: "", unit, paid, owner, challenge.status
+                                ?: "")
                     }
                     .filter { it != null && it.id != null && it.name != null }
                     .toList()

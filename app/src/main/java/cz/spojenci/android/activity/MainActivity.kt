@@ -25,10 +25,7 @@ import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.*
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.utils.BoundViewHolder
-import cz.spojenci.android.utils.snackbar
-import cz.spojenci.android.utils.visible
-import cz.spojenci.android.utils.withSchedulers
+import cz.spojenci.android.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -99,7 +96,7 @@ class MainActivity : BaseActivity() {
 
 	override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 		if (requestCode == REQUEST_PERMISSION_LOCATION) {
-			if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+			if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				Timber.d("location permission has been granted, connecting the Google Fit")
 				connectFitApiClient()
 			} else {
@@ -153,6 +150,10 @@ class MainActivity : BaseActivity() {
 					.withSchedulers()
 					.bindToLifecycle(this)
 					.subscribe({ challenges ->
+						val contributions = challenges.map { it.paid }
+								.reduce { paid1, paid2 -> paid1 + paid2 }
+						binding.mainUserContributions.text = contributions.formatAsPrice()
+
 						adapter.challenges = challenges
 						binding.mainChallengesProgress.visible = false
 						binding.mainChallengesList.visible = true

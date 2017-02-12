@@ -25,6 +25,7 @@
 	<string name="main_activity_empty">No activity in Google Fit</string>
 	<string name="main_permission_location_rationale">Location permission is required to access the Google Fit data.</string>
 	<string name="main_permission_location_denied">Permission hasn\'t been granted. Can\'t connect to the Google Fit.</string>
+	<string name="main_contributions">contributions total:</string>
 
 
 </resources>
