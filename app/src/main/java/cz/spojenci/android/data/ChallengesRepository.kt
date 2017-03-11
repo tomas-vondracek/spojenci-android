@@ -17,14 +17,16 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
             endpoint.challengesForUser(userId)
                     .flatMap { Observable.from(it) }
                     .map { challenge ->
-                        val owner = UserRef(challenge.uid.toString(), "")
+                        val owner = UserRef(userId, "")
                         val paid = BigDecimal(challenge.prispevkycelkem)
                         val unit = challenge.performance ?: ""
 
-                        Challenge(challenge.pid.toString(), challenge.title ?: "", unit, paid, owner, challenge.status
+                        Challenge(challenge.uid.toString(), challenge.title ?: "", unit, paid, owner, challenge.status
                                 ?: "")
                     }
                     .filter { it != null && it.id != null && it.name != null }
                     .toList()
 
+    fun challengeDetail(challengeId: String): Observable<ChallengeDetail> =
+            endpoint.challenge(challengeId)
 }

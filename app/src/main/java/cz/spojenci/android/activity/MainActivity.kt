@@ -26,6 +26,7 @@ import cz.spojenci.android.data.*
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
 import cz.spojenci.android.utils.*
+import rx.subjects.PublishSubject
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -77,8 +78,12 @@ class MainActivity : BaseActivity() {
 
 		binding.mainChallengesList.layoutManager = LinearLayoutManager(this)
 		binding.mainChallengesList.adapter = adapter
-		binding.mainFitConnect.fitConnect.setOnClickListener { btn ->
+		binding.mainFitConnect.fitConnect.setOnClickListener {
 			connectFitApiClient()
+		}
+
+		adapter.challengeItemsClicks.bindToLifecycle(this).subscribe { challenge ->
+			ChallengeDetailActivity.start(this, challenge)
 		}
 
 		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }
@@ -186,16 +191,16 @@ class MainActivity : BaseActivity() {
 	private fun onFitAccessAvailable() {
 		fitRepo.sessions(apiClient)
 				.bindToLifecycle(this)
-				.subscribe({ result ->
+				.subscribe({ (status, sessions) ->
 					binding.mainFitConnect.fitProgress.visible = false
-					if (!result.status.isSuccess) {
-						Timber.i("no data from Fit: " + result.status)
-						if (result.status.hasResolution()) {
-							result.status.startResolutionForResult(this, REQUEST_FIT_RESOLUTION)
+					if (!status.isSuccess) {
+						Timber.i("no data from Fit: " + status)
+						if (status.hasResolution()) {
+							status.startResolutionForResult(this, REQUEST_FIT_RESOLUTION)
 						}
 					}
-					Timber.d("Fit sessions: " + result.sessions)
-					adapter.fitItems = result.sessions
+					Timber.d("Fit sessions: " + sessions)
+					adapter.fitItems = sessions
 				}, { throwable ->
 					binding.mainFitConnect.fitProgress.visible = false
 					Timber.e(throwable, "failed to read from google fit")
@@ -227,8 +232,14 @@ class ChallengeViewHolder(binding: ItemChallengeBinding) : BoundViewHolder<ItemC
  */
 class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+	private val fitClickSubject = PublishSubject.create<FitSession>()
+	private val challengeClickSubject = PublishSubject.create<Challenge>()
+
 	var fitItems: List<FitSession> = emptyList()
 	var challenges: List<Challenge> = emptyList()
+
+	val fitItemsClicks: rx.Observable<FitSession> = fitClickSubject.asObservable()
+	val challengeItemsClicks: rx.Observable<Challenge> = challengeClickSubject.asObservable()
 
 	private val inflater = LayoutInflater.from(context)
 
@@ -241,7 +252,6 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
 		get() {
 			return Math.max(challenges.size, 1) + 1
 		}
-
 
 	private fun <B : ViewDataBinding> bindingForLayout(layoutId: Int, parent: ViewGroup): B {
 		return DataBindingUtil.inflate(inflater, layoutId, parent, false)
@@ -271,10 +281,16 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
             is FitViewHolder -> {
 				val session = fitItems[position - 1 - challengesViewCount]
 				holder.binding.setVariable(BR.session, session)
+				holder.binding.itemActivityContainer.setOnClickListener {
+					fitClickSubject.onNext(session)
+				}
 			}
 			is ChallengeViewHolder -> {
 				val challenge = challenges[position - 1]
 				holder.binding.setVariable(BR.challenge, challenge)
+				holder.binding.itemChallengeContainer.setOnClickListener {
+					challengeClickSubject.onNext(challenge)
+				}
 			}
 			is TitleViewHolder -> {
 				val textId =

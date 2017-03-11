@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Spojenci</string>
-	<string name="title_activity_login">Příhlásit se</string>
+	<string name="title_activity_login">Účet</string>
+	<string name="title_activity_challenge_detail">Výzva</string>
 
 	<!-- login page -->
 	<string name="login_email_description"><![CDATA[Přihlásit se e-mailem a heslem]]></string>

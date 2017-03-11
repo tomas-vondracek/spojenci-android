@@ -44,13 +44,15 @@ android {
             buildConfigField "String", "SERVER_URL", "\"http://private-c8c93-spojenci.apiary-mock.com/\""
         }
         prod {
-            buildConfigField "String", "SERVER_URL", "\"http://www.spojenci.cz/api/\""
+            buildConfigField "String", "SERVER_URL", "\"https://www.spojenci.cz/api/\""
         }
     }
 }
 
 dependencies {
     testCompile 'junit:junit:4.12'
+
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
     compile "com.android.support:design:${SUPPORT_VERSION}"
 
@@ -88,8 +90,5 @@ dependencies {
     kapt 'com.android.databinding:compiler:2.3.0'
 }
 
-kapt {
-    generateStubs = true
-}
-
+apply plugin: 'kotlin-kapt'
 apply plugin: "com.google.gms.google-services"

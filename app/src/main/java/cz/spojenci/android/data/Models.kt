@@ -1,17 +1,16 @@
 package cz.spojenci.android.data
 
 import java.math.BigDecimal
-import java.math.BigInteger
 
 data class User(val id: String, val loginType: String, val name: String, val email: String, val photoUrl: String?)
 
 data class UserRef(val id: String, val name: String)
 
-data class Challenge(val id: String, val name: String, val unit:String, val paid: BigDecimal,
+data class Challenge(val id: String, val name: String, val unit: String, val paid: BigDecimal,
 					 val owner: UserRef, val done: String)
 
-data class ChallengeDetail(val id: String, val name: String, val unit:String, val paid: BigInteger,
-						   val user: UserRef, val activity: UserActivity)
+data class ChallengeDetail(val id: String, val name: String, val unit: String, val paid: BigDecimal,
+						   val user: UserRef, val done: String, val activities: UserActivity)
 
 data class UserActivity(val type: String, val date: String, val user: UserRef)
 

@@ -1,6 +1,7 @@
 package cz.spojenci.android.data.remote
 
 import cz.spojenci.android.data.Challenge
+import cz.spojenci.android.data.ChallengeDetail
 import cz.spojenci.android.data.ServerChallenge
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -16,4 +17,7 @@ interface IChallengesEndpoint {
 
 	@GET("challenges/all")
 	fun challengesForAll(): Observable<List<Challenge>>
+
+	@GET("challenges/id/{id}")
+	fun challenge(@Path("id") challengeId: String): Observable<ChallengeDetail>
 }
