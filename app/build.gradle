@@ -2,19 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 ext {
-    SUPPORT_VERSION = "25.0.1"
-    GMS_VERSION = "10.0.1"
+    SUPPORT_VERSION = "25.2.0"
+    GMS_VERSION = "10.2.0"
     DAGGER_VERSION = "2.4"
     RETROFIT_VERSION = "2.1.0"
 }
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '25.0.0'
 
     dataBinding {
         enabled true
-        version = "2.0.0" //version 2.1.0 seems to be broken
+        version = "2.3.0"
     }
 
     defaultConfig {
@@ -85,7 +85,7 @@ dependencies {
     compile 'com.avast:android-styled-dialogs:2.3.3'
 
     // Data Binding
-    kapt 'com.android.databinding:compiler:2.0.0'
+    kapt 'com.android.databinding:compiler:2.3.0'
 }
 
 kapt {
