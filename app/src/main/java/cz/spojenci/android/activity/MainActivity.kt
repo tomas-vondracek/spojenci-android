@@ -28,6 +28,7 @@ import cz.spojenci.android.pref.AppPreferences
 import cz.spojenci.android.utils.*
 import rx.subjects.PublishSubject
 import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -155,7 +156,7 @@ class MainActivity : BaseActivity() {
 					.withSchedulers()
 					.bindToLifecycle(this)
 					.subscribe({ challenges ->
-						val contributions = challenges.map { it.paid }
+						val contributions = challenges.map { it.paid ?: BigDecimal.ZERO }
 								.reduce { paid1, paid2 -> paid1 + paid2 }
 						binding.mainUserContributions.text = contributions.formatAsPrice()
 
