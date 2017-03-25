@@ -4,10 +4,10 @@ import android.content.Context
 import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import cz.spojenci.android.BuildConfig
 import cz.spojenci.android.data.remote.IChallengesEndpoint
 import cz.spojenci.android.data.remote.IUserEndpoint
+import cz.spojenci.android.utils.CookiePersistor
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -34,7 +34,7 @@ class ServerModule() {
 	@Provides
 	@Singleton
 	fun provideCookieJar(context: Context): ClearableCookieJar {
-		return PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
+		return PersistentCookieJar(SetCookieCache(), CookiePersistor(context))
 	}
 
 	@Provides

@@ -18,6 +18,7 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import com.squareup.picasso.Picasso
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.BR
 import cz.spojenci.android.R
@@ -130,10 +131,7 @@ class MainActivity : BaseActivity() {
 					.translationY(0f)
 					.withLayer()
 		}
-	}
 
-	override fun onResume() {
-		super.onResume()
 		updateUserUi()
 	}
 
@@ -148,7 +146,17 @@ class MainActivity : BaseActivity() {
 		binding.mainUser.visible = isUserAvailable
 		binding.mainConnectAccount.visible = !isUserAvailable
 		if (isUserAvailable) {
-			binding.setVariable(BR.user, user)
+			binding.user = user
+
+			val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
+			user?.photo_url?.let { url ->
+				Picasso.with(this)
+						.load(url)
+						.resize(size, size)
+						.centerInside()
+						.placeholder(R.drawable.user_silhouette)
+						.into(binding.mainUserPhoto)
+			}
 
 			binding.mainChallengesProgress.visible = true
 			binding.mainChallengesList.visible = false

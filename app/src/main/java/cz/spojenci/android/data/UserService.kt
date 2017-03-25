@@ -71,5 +71,14 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 				.doOnCompleted { prefs.clear(); cookieJar.clear() }
 	}
 
+	fun updateUserProfile(): Observable<User> {
+		return endpoint.me()
+				.doOnNext { user ->
+					if (user != null && !user.id.isNullOrEmpty()) {
+						prefs.user = user
+					}
+				}
+	}
+
 }
 

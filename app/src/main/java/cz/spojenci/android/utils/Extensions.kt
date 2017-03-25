@@ -33,7 +33,7 @@ fun <T> Observable<T>.withSchedulers(): Observable<T> {
 			.subscribeOn(Schedulers.io())
 }
 
-val formatter = NumberFormat.getCurrencyInstance().let {
+val formatter: NumberFormat = NumberFormat.getCurrencyInstance().let {
 	it.currency = Currency.getInstance("CZK")
 	it
 }

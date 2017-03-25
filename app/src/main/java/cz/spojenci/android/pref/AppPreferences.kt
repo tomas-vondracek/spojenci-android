@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppPreferences @Inject constructor(private val context: Context) : Preferences(context, "app") {
+class AppPreferences @Inject constructor(context: Context) : Preferences(context, "app") {
 
 	var isFitConnected: Boolean
 		get() = pref.getBoolean("fit_connected", false)

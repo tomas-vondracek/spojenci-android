@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 ext {
-    SUPPORT_VERSION = "25.2.0"
-    GMS_VERSION = "10.2.0"
+    SUPPORT_VERSION = "25.3.0"
+    GMS_VERSION = "10.2.1"
     DAGGER_VERSION = "2.4"
     RETROFIT_VERSION = "2.1.0"
 }
@@ -51,6 +51,7 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.3.1"
 
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
@@ -85,6 +86,7 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.1.2'
     compile 'javax.annotation:jsr250-api:1.0'
     compile 'com.avast:android-styled-dialogs:2.3.3'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
     // Data Binding
     kapt 'com.android.databinding:compiler:2.3.0'
