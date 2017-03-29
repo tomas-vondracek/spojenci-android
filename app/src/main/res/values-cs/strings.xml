@@ -28,4 +28,10 @@
 	<string name="main_permission_location_denied">Oprávnění nebylo uděleno. Nelze se připojit ke Google Fit.</string>
 	<string name="main_permission_location_rationale">Oprávnění k zjišťování polohý je požadováno kvůli přístupu ke Google Fit datům.</string>
 	<string name="main_contributions">příspěvky celkem:</string>
+
+	<string name="challenge_detail_retry">Načíst znovu</string>
+	<string name="challenge_detail_empty">Žádné aktivity</string>
+	<string name="challenge_detail_total_attributions">příspěvky celkem:</string>
+	<string name="challenge_detail_unit_price">cena za %1$s:</string>
+	<string name="challenge_detail_activity">Aktivita</string>
 </resources>

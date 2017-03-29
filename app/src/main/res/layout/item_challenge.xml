@@ -11,7 +11,7 @@
 	</data>
 
 	<LinearLayout android:id="@+id/item_challenge_container"
-		android:orientation="vertical"
+		android:orientation="horizontal"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?selectableItemBackground"
@@ -21,8 +21,17 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:singleLine="true"
 			tools:text="Challenge Name"
-			android:text="@{challenge.name}"/>
+			android:text="@{challenge.name}"
+			android:maxLines="1"/>
+		<TextView android:id="@+id/item_challenge_amount"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_marginStart="@dimen/padding"
+			android:gravity="right"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@{challenge.activity_amount}"
+			tools:text="32km"/>
 	</LinearLayout>
 </layout>

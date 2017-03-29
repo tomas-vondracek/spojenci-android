@@ -29,5 +29,11 @@
 	<string name="main_permission_location_denied">Permission hasn\'t been granted. Can\'t connect to the Google Fit.</string>
 	<string name="main_contributions">contributions total:</string>
 
+	<string name="challenge_detail_retry">Reload</string>
+	<string name="challenge_detail_empty">No Activities</string>
+	<string name="challenge_detail_total_attributions">total attributions:</string>
+	<string name="challenge_detail_unit_price">price per %1$s:</string>
+	<string name="challenge_detail_activity">Activity</string>
+
 
 </resources>

@@ -6,14 +6,14 @@ data class User(val id: String, val loginType: String, val name: String, val ema
 
 data class UserRef(val id: String, val name: String)
 
-data class Challenge(val id: String, val name: String, val unit: String, val paid: BigDecimal?,
-					 val owner: UserRef, val done: String?)
+data class Challenge(val id: String, val name: String, val unit: String, val to_pay: BigDecimal?, val paid: BigDecimal?,
+                     val unit_price: BigDecimal?, val currency: String, val owner: UserRef, val done: String?, val activity_amount: String)
 
-data class ChallengeDetail(val id: String, val name: String, val unit: String, val paid: BigDecimal?,
-						   val user: UserRef, val done: String?, val supporters: Array<UserRef>,
-						   val activities: Array<UserActivity>)
+data class ChallengeDetail(val id: String, val name: String, val unit: String, val to_pay: BigDecimal?, val paid: BigDecimal?,
+                           val unit_price: BigDecimal?, val user: UserRef, val done: String?, val activity_amount: String,
+                           val supporters: Array<UserRef>, val activities: Array<UserActivity>)
 
-data class UserActivity(val type: String, val date: String, val user: UserRef)
+data class UserActivity(val type: String, val date: String, val user: UserRef, val value: String?, val comment: String?)
 
 // responses:
 data class UserResponse(val user: User)
