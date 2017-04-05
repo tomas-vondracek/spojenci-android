@@ -3,6 +3,7 @@
 	<string name="app_name">Spojenci</string>
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
+	<string name="reload">Načíst znovu</string>
 
 	<!-- login page -->
 	<string name="login_email_description"><![CDATA[Přihlásit se e-mailem a heslem]]></string>
@@ -18,6 +19,8 @@
 	<string name="error_incorrect_password">Nesprávné heslo</string>
 	<string name="error_invalid_email">Neplatný e-mail</string>
 	<string name="error_invalid_password">Příliš krátké heslo</string>
+	<string name="error_internet">Je problém s připojením k internetu</string>
+	<string name="error_general">Někde se stala chyba</string>
 
 	<string name="main_activity">Moje aktivita</string>
 	<string name="main_activity_empty">Žádné aktivita v Google Fit</string>
@@ -29,7 +32,6 @@
 	<string name="main_permission_location_rationale">Oprávnění k zjišťování polohý je požadováno kvůli přístupu ke Google Fit datům.</string>
 	<string name="main_contributions">příspěvky celkem:</string>
 
-	<string name="challenge_detail_retry">Načíst znovu</string>
 	<string name="challenge_detail_empty">Žádné aktivity</string>
 	<string name="challenge_detail_total_attributions">příspěvky celkem:</string>
 	<string name="challenge_detail_unit_price">cena za %1$s:</string>

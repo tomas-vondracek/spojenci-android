@@ -9,6 +9,7 @@ import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.math.BigDecimal
+import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.*
 
@@ -39,6 +40,17 @@ val formatter: NumberFormat = NumberFormat.getCurrencyInstance().let {
 }
 
 
-fun BigDecimal.formatAsPrice(): String {
-	return formatter.format(this)
+fun BigDecimal.formatAsPrice(currency: String): String {
+	synchronized (formatter) {
+		if (formatter.currency.currencyCode != currency) {
+			formatter.currency = Currency.getInstance(currency)
+		}
+		return formatter.format(this)
+	}
+}
+
+val dateTimeFormatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+
+fun Long.formatAsDateTime(): String {
+	return dateTimeFormatter.format(Date(this))
 }

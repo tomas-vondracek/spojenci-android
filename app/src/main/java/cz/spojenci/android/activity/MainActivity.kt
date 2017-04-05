@@ -23,13 +23,19 @@ import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.BR
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
-import cz.spojenci.android.data.*
+import cz.spojenci.android.data.Challenge
+import cz.spojenci.android.data.User
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.utils.*
+import cz.spojenci.android.presenter.FitItemModel
+import cz.spojenci.android.presenter.MainPresenter
+import cz.spojenci.android.utils.BoundViewHolder
+import cz.spojenci.android.utils.snackbar
+import cz.spojenci.android.utils.visible
+import cz.spojenci.android.utils.withSchedulers
+import rx.lang.kotlin.subscribeBy
 import rx.subjects.PublishSubject
 import timber.log.Timber
-import java.math.BigDecimal
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
@@ -39,10 +45,8 @@ class MainActivity : BaseActivity() {
 		const val REQUEST_FIT_RESOLUTION = 2
 	}
 
-	@Inject lateinit var fitRepo: IFitRepository
-	@Inject lateinit var challengesRepo: ChallengesRepository
 	@Inject lateinit var appPrefs: AppPreferences
-	@Inject lateinit var userService: UserService
+	@Inject lateinit var presenter: MainPresenter
 
 	private val apiClient: GoogleApiClient by lazy {
 		GoogleApiClient.Builder(this)
@@ -132,55 +136,47 @@ class MainActivity : BaseActivity() {
 					.withLayer()
 		}
 
-		updateUserUi()
+		presenter.challengesViewModel
+				.withSchedulers()
+				.bindToLifecycle(this)
+				.subscribeBy(onNext = { viewModel ->
+					updateUserUi(viewModel.user)
+
+					binding.mainUserContributions.text = viewModel.contributions("CZK")
+
+					adapter.challenges = viewModel.challenges
+					binding.mainChallengesProgress.visible = false
+					binding.mainChallengesList.visible = true
+
+				}, onError = { ex ->
+					Timber.e(ex, "Failed to load challenges")
+					snackbar("Failed to load challenges " + ex.message)
+					binding.mainChallengesProgress.visible = false
+				})
 	}
 
 	override fun onStop() {
 		super.onStop()
 	}
 
-	private fun updateUserUi() {
-		val user = userService.user
+	private fun updateUserUi(user: User?) {
 		val isUserAvailable = user != null
 
 		binding.mainUser.visible = isUserAvailable
 		binding.mainConnectAccount.visible = !isUserAvailable
-		if (isUserAvailable) {
-			binding.user = user
 
-			val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
-			user?.photo_url?.let { url ->
-				Picasso.with(this)
-						.load(url)
-						.resize(size, size)
-						.centerInside()
-						.placeholder(R.drawable.user_silhouette)
-						.into(binding.mainUserPhoto)
-			}
+		binding.user = user
 
-			binding.mainChallengesProgress.visible = true
-			binding.mainChallengesList.visible = false
-			challengesRepo.challengesForUser(user!!.id)
-					.withSchedulers()
-					.bindToLifecycle(this)
-					.subscribe({ challenges ->
-						val contributions = challenges.map { it.paid ?: BigDecimal.ZERO }
-								.reduce { paid1, paid2 -> paid1 + paid2 }
-						binding.mainUserContributions.text = contributions.formatAsPrice()
-
-						adapter.challenges = challenges
-						binding.mainChallengesProgress.visible = false
-						binding.mainChallengesList.visible = true
-					}, { ex ->
-						Timber.e(ex, "Failed to load challenges")
-						snackbar("Failed to load challenges " + ex.message)
-						binding.mainChallengesProgress.visible = false
-					})
-		} else {
-			// no user = no challenges, but we can show fit sessions
-			binding.mainChallengesProgress.visible = false
-			binding.mainChallengesList.visible = true
+		val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
+		user?.photo_url?.let { url ->
+			Picasso.with(this)
+					.load(url)
+					.resize(size, size)
+					.centerInside()
+					.placeholder(R.drawable.user_silhouette)
+					.into(binding.mainUserPhoto)
 		}
+
 	}
 
 	private fun connectFitApiClient() {
@@ -198,9 +194,9 @@ class MainActivity : BaseActivity() {
 	}
 
 	private fun onFitAccessAvailable() {
-		fitRepo.sessions(apiClient)
+		presenter.fitActivity(apiClient)
 				.bindToLifecycle(this)
-				.subscribe({ (status, sessions) ->
+				.subscribe({ (status, items) ->
 					binding.mainFitConnect.fitProgress.visible = false
 					if (!status.isSuccess) {
 						Timber.i("no data from Fit: " + status)
@@ -208,8 +204,8 @@ class MainActivity : BaseActivity() {
 							status.startResolutionForResult(this, REQUEST_FIT_RESOLUTION)
 						}
 					}
-					Timber.d("Fit sessions: " + sessions)
-					adapter.fitItems = sessions
+					Timber.d("Fit items: " + items)
+					adapter.fitItems = items
 				}, { throwable ->
 					binding.mainFitConnect.fitProgress.visible = false
 					Timber.e(throwable, "failed to read from google fit")
@@ -241,13 +237,13 @@ class ChallengeViewHolder(binding: ItemChallengeBinding) : BoundViewHolder<ItemC
  */
 class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-	private val fitClickSubject = PublishSubject.create<FitSession>()
+	private val fitClickSubject = PublishSubject.create<FitItemModel>()
 	private val challengeClickSubject = PublishSubject.create<Challenge>()
 
-	var fitItems: List<FitSession> = emptyList()
+	var fitItems: List<FitItemModel> = emptyList()
 	var challenges: List<Challenge> = emptyList()
 
-	val fitItemsClicks: rx.Observable<FitSession> = fitClickSubject.asObservable()
+	val fitItemsClicks: rx.Observable<FitItemModel> = fitClickSubject.asObservable()
 	val challengeItemsClicks: rx.Observable<Challenge> = challengeClickSubject.asObservable()
 
 	private val inflater = LayoutInflater.from(context)
@@ -288,10 +284,10 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
 	override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
 		when (holder) {
             is FitViewHolder -> {
-				val session = fitItems[position - 1 - challengesViewCount]
-				holder.binding.setVariable(BR.session, session)
+				val fitItem = fitItems[position - 1 - challengesViewCount]
+				holder.binding.item = fitItem
 				holder.binding.itemActivityContainer.setOnClickListener {
-					fitClickSubject.onNext(session)
+					fitClickSubject.onNext(fitItem)
 				}
 			}
 			is ChallengeViewHolder -> {

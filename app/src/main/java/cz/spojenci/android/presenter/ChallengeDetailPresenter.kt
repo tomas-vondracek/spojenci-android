@@ -19,8 +19,8 @@ class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: C
 					val unitPrice = detail.unit_price ?: BigDecimal.ZERO
 
 					ChallengeDetailViewModel(detail.name,
-							paid.formatAsPrice(),
-							unitPrice.formatAsPrice(),
+							paid.formatAsPrice("CZK"),
+							unitPrice.formatAsPrice("CZK"),
 							detail.unit,
 							detail.activities.asList())
 				}

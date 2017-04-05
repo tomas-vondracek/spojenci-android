@@ -4,10 +4,10 @@
 	xmlns:tools="http://schemas.android.com/tools">
 
 	<data>
-		<import type="cz.spojenci.android.data.FitSession"/>
+		<import type="cz.spojenci.android.presenter.FitItemModel"/>
 
-		<variable name="session"
-			type="FitSession"/>
+		<variable name="item"
+			type="FitItemModel"/>
 	</data>
 
 	<LinearLayout android:id="@+id/item_activity_container"
@@ -23,6 +23,13 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:singleLine="true"
 			tools:text="SessionDescription"
-			android:text="@{session.description}"/>
+			android:text="@{item.description}"/>
+		<TextView android:id="@+id/item_activity_description"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:singleLine="true"
+			tools:text="SessionDescription"
+			android:text="@{item.time}"/>
 	</LinearLayout>
 </layout>

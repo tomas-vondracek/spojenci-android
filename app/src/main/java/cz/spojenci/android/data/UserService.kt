@@ -4,6 +4,7 @@ import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import cz.spojenci.android.data.remote.IUserEndpoint
 import cz.spojenci.android.pref.UserPreferences
 import rx.Observable
+import rx.subjects.BehaviorSubject
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,18 +20,34 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
                                       private val prefs: UserPreferences,
                                       private val cookieJar: ClearableCookieJar) {
 
-	val userLoginType: LoginType?
+	var userLoginType: LoginType?
 		get() = prefs.loginType
+
+		private set(value) {
+			prefs.loginType = value
+		}
 
 	val isSignedIn: Boolean
 		get() {
 			return prefs.user != null
 		}
 
-	val user: User?
+	var user: User?
 		get() {
 			return prefs.user
 		}
+		private set(value) {
+			prefs.user = value
+			userSubject.onNext(value)
+		}
+
+	private var userSubject = BehaviorSubject.create<User?>()
+
+	val observableUser: Observable<User?> = userSubject.asObservable()
+
+	init {
+		userSubject.onNext(user)
+	}
 
 	fun signInWithEmail(email: String, password: String): Observable<User> {
 		Timber.d("singing in with email %s", email)
@@ -59,7 +76,8 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 						throw IllegalArgumentException("illegal user $user")
 					}
 
-					prefs.user = user; prefs.loginType = type
+					this.user = user
+					this.userLoginType = type
 				}
 	}
 
@@ -68,16 +86,23 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		return endpoint.logout()
 				.doOnError { ex -> Timber.w(ex, "Log out failed") }
 				.onErrorResumeNext { Observable.empty() }
-				.doOnCompleted { prefs.clear(); cookieJar.clear() }
+				.doOnCompleted { cleanUpPersistedData() }
 	}
 
 	fun updateUserProfile(): Observable<User> {
 		return endpoint.me()
 				.doOnNext { user ->
 					if (user != null && !user.id.isNullOrEmpty()) {
-						prefs.user = user
+						this.user = user
 					}
 				}
+	}
+
+	private fun cleanUpPersistedData() {
+		user = null
+		userLoginType = null
+		prefs.clear()
+		cookieJar.clear()
 	}
 
 }

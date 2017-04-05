@@ -81,12 +81,14 @@ dependencies {
     // rx
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'
+    compile 'io.reactivex:rxkotlin:1.0.0'
     compile 'com.trello:rxlifecycle-kotlin:0.6.1'
 
     compile 'com.jakewharton.timber:timber:4.1.2'
     compile 'javax.annotation:jsr250-api:1.0'
     compile 'com.avast:android-styled-dialogs:2.3.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 
     // Data Binding
     kapt 'com.android.databinding:compiler:2.3.0'
