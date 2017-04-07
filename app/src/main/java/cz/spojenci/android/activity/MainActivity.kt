@@ -11,6 +11,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
@@ -27,12 +29,14 @@ import cz.spojenci.android.data.Challenge
 import cz.spojenci.android.data.User
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
+import cz.spojenci.android.presenter.ChallengesViewModel
 import cz.spojenci.android.presenter.FitItemModel
 import cz.spojenci.android.presenter.MainPresenter
 import cz.spojenci.android.utils.BoundViewHolder
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
+import rx.Observable
 import rx.lang.kotlin.subscribeBy
 import rx.subjects.PublishSubject
 import timber.log.Timber
@@ -72,6 +76,8 @@ class MainActivity : BaseActivity() {
 				.build()
 	}
 
+	private lateinit var observableChallenges: Observable<ChallengesViewModel>
+
 	private lateinit var binding: ActivityMainBinding
 	private lateinit var adapter: CombinedDataAdapter
 
@@ -94,6 +100,18 @@ class MainActivity : BaseActivity() {
 
 		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }
 		binding.mainUser.setOnClickListener { LoginActivity.start(this) }
+		binding.emptyRetry.setOnClickListener {
+			presenter.clearChallengeCache()
+			loadChallenges()
+		}
+
+		observableChallenges = presenter.challenges
+				.withSchedulers()
+				.bindToLifecycle(this)
+				.doOnSubscribe {
+					binding.mainChallengesProgress.visible = true
+					binding.mainChallengesList.visible = false
+				}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,9 +154,31 @@ class MainActivity : BaseActivity() {
 					.withLayer()
 		}
 
-		presenter.challengesViewModel
-				.withSchedulers()
-				.bindToLifecycle(this)
+		loadChallenges()
+	}
+
+	override fun onStop() {
+		super.onStop()
+	}
+
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		menuInflater.inflate(R.menu.main, menu)
+		return super.onCreateOptionsMenu(menu)
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+		when (item?.itemId) {
+			R.id.menu_main_reload -> {
+				presenter.clearChallengeCache()
+				loadChallenges()
+				return true
+			}
+		}
+		return super.onOptionsItemSelected(item)
+	}
+
+	private fun loadChallenges() {
+		observableChallenges
 				.subscribeBy(onNext = { viewModel ->
 					updateUserUi(viewModel.user)
 
@@ -146,17 +186,18 @@ class MainActivity : BaseActivity() {
 
 					adapter.challenges = viewModel.challenges
 					binding.mainChallengesProgress.visible = false
-					binding.mainChallengesList.visible = true
+					binding.mainChallengesList.visible = viewModel.challenges.isNotEmpty()
+					binding.emptyContainer.visible = viewModel.challenges.isEmpty()
+					binding.emptyMessage.text = getString(R.string.main_challenges_empty)
 
 				}, onError = { ex ->
 					Timber.e(ex, "Failed to load challenges")
 					snackbar("Failed to load challenges " + ex.message)
 					binding.mainChallengesProgress.visible = false
+					binding.mainChallengesList.visible = false
+					binding.emptyMessage.text = getString(R.string.error_general)
+					binding.emptyContainer.visible = true
 				})
-	}
-
-	override fun onStop() {
-		super.onStop()
 	}
 
 	private fun updateUserUi(user: User?) {

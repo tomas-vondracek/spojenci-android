@@ -90,7 +90,8 @@
 				android:layout_gravity="center"
 				android:indeterminateOnly="true"
 				android:visibility="gone"
-				tools:visibility="visible"/>
+				tools:visibility="visible"
+				android:indeterminate="true"/>
 
 			<android.support.v7.widget.RecyclerView
 				android:id="@+id/main_challenges_list"
@@ -99,6 +100,30 @@
 				android:scrollbars="vertical"
 				android:visibility="gone"
 				tools:visibility="visible"/>
+
+			<LinearLayout android:id="@+id/empty_container"
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:visibility="gone"
+				tools:visibility="visible">
+
+				<TextView android:id="@+id/empty_message"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="@string/error_general"
+					android:layout_gravity="center_horizontal"/>
+
+				<Button android:id="@+id/empty_retry"
+					style="@style/Widget.AppCompat.Button.Borderless"
+					android:layout_margin="@dimen/padding_large"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:text="@string/reload"/>
+			</LinearLayout>
 		</FrameLayout>
 
 		<include layout="@layout/part_connect_fit"
