@@ -8,6 +8,7 @@
 	<dimen name="padding_small">4dp</dimen>
 
 	<dimen name="main_header_height">68dp</dimen>
+	<dimen name="profile_photo_size">66dp</dimen>
 	<dimen name="bottom_bar_height">48dp</dimen>
 	<dimen name="fab_margin">16dp</dimen>
 </resources>

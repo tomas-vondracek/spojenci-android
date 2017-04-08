@@ -22,7 +22,7 @@ import javax.inject.Singleton
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 31/07/16.
  */
 @Module
-class ServerModule() {
+class ServerModule {
 
 	val log: HttpLoggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
 		Timber.d(it)

@@ -212,8 +212,8 @@ class MainActivity : BaseActivity() {
 		user?.photo_url?.let { url ->
 			Picasso.with(this)
 					.load(url)
+					.noFade()
 					.resize(size, size)
-					.centerInside()
 					.placeholder(R.drawable.user_silhouette)
 					.into(binding.mainUserPhoto)
 		}
