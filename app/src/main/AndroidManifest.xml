@@ -38,9 +38,14 @@
 			tools:replace="theme"/>
 		<activity
 			android:name=".activity.ChallengeDetailActivity"
-			android:parentActivityName=".activity.MainActivity"
 			android:label="@string/title_activity_challenge_detail"
+			android:parentActivityName=".activity.MainActivity"
 			android:theme="@style/AppTheme.NoActionBar">
+		</activity>
+		<activity android:name=".activity.UpdateChallengeActivity"
+			android:label="@string/title_activity_update_challenge"
+			android:theme="@style/AppTheme.Dialog"
+			android:parentActivityName=".activity.ChallengeDetailActivity">
 		</activity>
 	</application>
 

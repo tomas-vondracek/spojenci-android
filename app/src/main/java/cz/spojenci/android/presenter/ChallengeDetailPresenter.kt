@@ -1,5 +1,7 @@
 package cz.spojenci.android.presenter
 
+import android.app.Activity
+import cz.spojenci.android.activity.UpdateChallengeActivity
 import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserActivity
 import cz.spojenci.android.utils.formatAsPrice
@@ -24,6 +26,10 @@ class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: C
 							detail.unit,
 							detail.activities.asList())
 				}
+	}
+
+	fun createChallengeActivity(challengeId: String, context: Activity) {
+		UpdateChallengeActivity.startFromChallenge(context, challengeId)
 	}
 
 }

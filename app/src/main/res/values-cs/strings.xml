@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Spojenci</string>
+	<string name="reload">Načíst znovu</string>
+
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
-	<string name="reload">Načíst znovu</string>
+	<string name="title_activity_update_challenge">Aktualizovat výzvu</string>
 
 	<!-- login page -->
 	<string name="login_email_description"><![CDATA[Přihlásit se e-mailem a heslem]]></string>
@@ -36,4 +38,6 @@
 	<string name="challenge_detail_total_attributions">příspěvky celkem:</string>
 	<string name="challenge_detail_unit_price">cena za %1$s:</string>
 	<string name="challenge_detail_activity">Aktivita</string>
+
+	<string name="update_challenge_send">Odeslat</string>
 </resources>

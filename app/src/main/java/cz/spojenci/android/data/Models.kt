@@ -15,6 +15,8 @@ data class ChallengeDetail(val id: String, val name: String, val unit: String, v
 
 data class UserActivity(val type: String, val date: String, val user: UserRef, val value: String?, val comment: String?)
 
+data class ChallengeUpdate(val id: String, val type: String, val value: String?, val comment: String?)
+
 // responses:
 data class UserResponse(val user: User)
 

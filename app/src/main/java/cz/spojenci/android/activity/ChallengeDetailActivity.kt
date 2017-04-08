@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.ViewGroup
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
@@ -52,12 +51,11 @@ class ChallengeDetailActivity : BaseActivity() {
 		setSupportActionBar(binding.toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-		binding.fab.setOnClickListener { view ->
-			Snackbar.make(view, "Not yet implemented", Snackbar.LENGTH_LONG)
-					.setAction("Action", null).show()
+		val challengeId = intent.getStringExtra("CHALLENGE_ID")
+		binding.fab.setOnClickListener {
+			presenter.createChallengeActivity(context = this, challengeId = challengeId)
 		}
 
-		val challengeId = intent.getStringExtra("CHALLENGE_ID")
 		observableChallengeDetail = presenter.challengeDetailFor(challengeId)
 				.withSchedulers()
 				.doOnSubscribe { contentBinding.challengeDetailProgress.visible = true }
