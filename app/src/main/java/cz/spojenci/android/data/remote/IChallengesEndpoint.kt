@@ -3,9 +3,7 @@ package cz.spojenci.android.data.remote
 import cz.spojenci.android.data.Challenge
 import cz.spojenci.android.data.ChallengeDetail
 import cz.spojenci.android.data.ChallengeUpdate
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 import rx.Observable
 
 /**
@@ -22,6 +20,7 @@ interface IChallengesEndpoint {
 	@GET("challenges/id/{id}")
 	fun challenge(@Path("id") challengeId: String): Observable<ChallengeDetail>
 
+	@Headers("Content-Type: application/json")
 	@POST("challenges/activity")
-	fun challengeUpdate(update: ChallengeUpdate): Observable<Void>
+	fun challengeUpdate(@Body update: ChallengeUpdate): Observable<Void>
 }

@@ -2,6 +2,7 @@
 <resources>
 	<string name="app_name">Spojenci</string>
 	<string name="reload">Načíst znovu</string>
+	<string name="ok">OK</string>
 
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
@@ -40,4 +41,6 @@
 	<string name="challenge_detail_activity">Aktivita</string>
 
 	<string name="update_challenge_send">Odeslat</string>
+	<string name="update_challenge_activity_validation">Vyplňte aktivitu</string>
+	<string name="update_challenge_sent">Aktivita byla odeslána</string>
 </resources>

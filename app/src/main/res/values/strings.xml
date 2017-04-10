@@ -2,6 +2,7 @@
 <resources>
 	<string name="app_name">Spojenci</string>
 	<string name="reload">Reload</string>
+	<string name="ok">OK</string>
 
 	<string name="title_activity_login">Account</string>
 	<string name="title_activity_challenge_detail">Challenge</string>
@@ -41,6 +42,8 @@
 	<string name="challenge_detail_activity">Activity</string>
 
 	<string name="update_challenge_send">Send</string>
+	<string name="update_challenge_activity_validation">Please fill in the activity value</string>
+	<string name="update_challenge_sent">Activity has been sent</string>
 
 
 </resources>

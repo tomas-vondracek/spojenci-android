@@ -14,6 +14,7 @@ import cz.spojenci.android.data.UserActivity
 import cz.spojenci.android.databinding.ActivityChallengeDetailBinding
 import cz.spojenci.android.databinding.ContentChallengeDetailBinding
 import cz.spojenci.android.databinding.ItemChallengeActivityBinding
+import cz.spojenci.android.presenter.ChallengeDetailPresentable
 import cz.spojenci.android.presenter.ChallengeDetailPresenter
 import cz.spojenci.android.presenter.ChallengeDetailViewModel
 import cz.spojenci.android.utils.*
@@ -21,7 +22,7 @@ import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
-class ChallengeDetailActivity : BaseActivity() {
+class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 
 	companion object {
 		fun start(context: Context, challenge: Challenge) {
@@ -53,12 +54,13 @@ class ChallengeDetailActivity : BaseActivity() {
 
 		val challengeId = intent.getStringExtra("CHALLENGE_ID")
 		binding.fab.setOnClickListener {
-			presenter.createChallengeActivity(context = this, challengeId = challengeId)
+			presenter.createChallengeActivity(context = this)
 		}
 
+		presenter.startFrom(this)
 		observableChallengeDetail = presenter.challengeDetailFor(challengeId)
 				.withSchedulers()
-				.doOnSubscribe { contentBinding.challengeDetailProgress.visible = true }
+				.doOnSubscribe { contentBinding.challengeDetailProgress.visible = true; binding.fab.isEnabled = false }
 				.doAfterTerminate { contentBinding.challengeDetailProgress.visible = false }
 				.bindToLifecycle(this)
 	}
@@ -67,6 +69,10 @@ class ChallengeDetailActivity : BaseActivity() {
 		super.onStart()
 
 		loadChallengeDetail()
+	}
+
+	override fun enableCreateActivity() {
+		binding.fab.isEnabled = true
 	}
 
 	private fun loadChallengeDetail() {

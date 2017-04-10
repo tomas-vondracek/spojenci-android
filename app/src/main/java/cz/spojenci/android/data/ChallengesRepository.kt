@@ -2,7 +2,6 @@ package cz.spojenci.android.data
 
 import cz.spojenci.android.data.remote.IChallengesEndpoint
 import rx.Observable
-import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,4 +28,7 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
 
     fun challengeDetail(challengeId: String): Observable<ChallengeDetail> =
             endpoint.challenge(challengeId)
+
+    fun postChallengeActivity(challengeId: String, activityValue: String): Observable<Void> =
+            endpoint.challengeUpdate(ChallengeUpdate(challengeId, "SPORT", activityValue, null))
 }
