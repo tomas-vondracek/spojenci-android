@@ -11,6 +11,9 @@
 		android:layout_marginTop="@dimen/padding"
 		android:textStyle="bold"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:padding="@dimen/padding"
+		android:paddingStart="@dimen/activity_horizontal_margin"
+		android:paddingEnd="@dimen/activity_horizontal_margin"
+		android:paddingTop="@dimen/padding"
+		android:paddingBottom="@dimen/padding"
 		tools:text="Medium Text"/>
 </layout>

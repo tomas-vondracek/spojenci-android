@@ -15,7 +15,10 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="?selectableItemBackground"
-		android:padding="@dimen/padding">
+		android:paddingStart="@dimen/activity_horizontal_margin"
+		android:paddingEnd="@dimen/activity_horizontal_margin"
+		android:paddingTop="@dimen/padding"
+		android:paddingBottom="@dimen/padding">
 
 		<TextView android:id="@+id/item_challenge_description"
 			android:layout_width="wrap_content"

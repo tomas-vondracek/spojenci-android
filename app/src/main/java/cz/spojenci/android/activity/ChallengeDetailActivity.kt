@@ -107,6 +107,9 @@ class ChallengeActivityAdapter(context: Context, items: List<UserActivity>): Rec
 
 	override fun onBindViewHolder(holder: ActivityViewHolder, position: Int) {
 		holder.binding.activity = items[position]
+		holder.binding.itemChallengeActivityContainer.setOnClickListener {
+			// TODO
+		}
 //		holder.binding.setVariable(BR.activity, items[position])
 	}
 

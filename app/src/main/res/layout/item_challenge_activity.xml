@@ -14,9 +14,11 @@
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginStart="@dimen/padding"
 		android:background="?selectableItemBackground"
-		android:padding="@dimen/padding">
+		android:paddingTop="@dimen/padding"
+		android:paddingBottom="@dimen/padding"
+		android:paddingStart="@dimen/activity_horizontal_margin"
+		android:paddingEnd="@dimen/activity_horizontal_margin">
 
 		<TextView android:id="@+id/item_challenge_activity_description"
 			android:layout_width="wrap_content"
@@ -24,6 +26,6 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="SessionDescription"
 			android:text="@{activity.toString()}"
-			android:maxLines="1"/>
+			android:maxLines="3"/>
 	</LinearLayout>
 </layout>
