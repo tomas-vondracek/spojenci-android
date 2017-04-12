@@ -67,6 +67,10 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		return signIn(signInRequest, type)
 	}
 
+	fun userOnlineProfile(): Observable<User> {
+		return endpoint.me()
+	}
+
 	private fun signIn(request: Observable<LoginResponse>, type: LoginType): Observable<User> {
 		return request
 				.flatMap { endpoint.me() }

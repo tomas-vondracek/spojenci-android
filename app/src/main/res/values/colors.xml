@@ -5,4 +5,9 @@
 	<color name="colorAccent">#EE942A</color>
 
 	<color name="themeColor">#006ED7</color>
+
+	<color name="bg_button_white_disabled">#AAAAAA</color>
+	<color name="bg_button_white_pressed">#AA006ED7</color>
+	<color name="bg_button_white_focused">#66006ED7</color>
+	<color name="bg_button_white_normal">#FFFFFF</color>
 </resources>

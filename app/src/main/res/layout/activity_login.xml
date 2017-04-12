@@ -27,25 +27,42 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="@dimen/activity_vertical_margin"
-					android:layout_gravity="start"
-					android:text="@string/login_action_sign_in_short"/>
+					android:layout_marginBottom="@dimen/padding"
+					android:layout_gravity="center_horizontal"
+					android:text="@string/main_login"/>
 
-				<com.facebook.login.widget.LoginButton
-					android:id="@+id/login_facebook"
+				<ImageView android:id="@+id/login_logo"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:minHeight="48dp"
 					android:layout_margin="@dimen/padding"
-					android:layout_gravity="center_horizontal" />
+					android:layout_gravity="center_horizontal"
+					android:src="@drawable/bg_logo_big"/>
 
-				<com.google.android.gms.common.SignInButton
-					android:id="@+id/login_google"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:minHeight="48dp"
-					android:layout_gravity="center_horizontal|bottom"
+				<Button android:id="@+id/login_google"
+					android:layout_width="220dp"
+					android:layout_height="48dp"
+					android:layout_gravity="center_horizontal"
 					android:layout_margin="@dimen/padding"
-					android:visibility="visible"/>
+					android:elevation="@dimen/padding"
+					android:padding="@dimen/padding"
+					android:background="@drawable/bg_button_white"
+					android:textColor="@color/common_google_signin_btn_text_light"
+					android:drawableStart="@drawable/common_google_signin_btn_icon_light"
+					android:drawablePadding="@dimen/padding"
+					android:text="@string/common_signin_button_text_long"/>
+
+				<Button android:id="@+id/login_facebook"
+					android:layout_width="220dp"
+					android:layout_height="48dp"
+					android:layout_gravity="center_horizontal"
+					android:layout_margin="@dimen/padding"
+					android:padding="@dimen/padding"
+					android:elevation="@dimen/padding"
+					android:background="@color/com_facebook_button_background_color"
+					android:textColor="@color/com_facebook_button_text_color"
+					android:drawableStart="@drawable/com_facebook_button_icon_white"
+					android:drawablePadding="@dimen/padding"
+					android:text="@string/com_facebook_loginview_log_in_button_long"/>
 
 				<LinearLayout
 					android:layout_width="match_parent"
@@ -91,8 +108,7 @@
 							android:imeActionLabel="@string/login_action_sign_in_short"
 							android:imeOptions="actionUnspecified"
 							android:inputType="textPassword"
-							android:maxLines="1"
-							android:singleLine="true" />
+							android:maxLines="1" />
 
 					</android.support.design.widget.TextInputLayout>
 

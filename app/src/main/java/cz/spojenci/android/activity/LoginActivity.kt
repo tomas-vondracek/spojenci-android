@@ -76,14 +76,16 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.build()
 
 		val signInButton = binding.loginGoogle
-		signInButton.setSize(SignInButton.SIZE_STANDARD)
 		signInButton.setOnClickListener { signInWithGoogle() }
 
 		binding.loginSignOut.setOnClickListener { signOut() }
 
 		callbackManager = com.facebook.CallbackManager.Factory.create()
-		binding.loginFacebook.setReadPermissions("public_profile", "email")
-		binding.loginFacebook.registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
+		val loginManager = LoginManager.getInstance()
+		binding.loginFacebook.setOnClickListener {
+			loginManager.logInWithReadPermissions(this, listOf("public_profile", "email"))
+		}
+		loginManager.registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
 			override fun onError(error: FacebookException?) {
 				Timber.w(error, "Facebook login failed")
 				snackbar(error?.message ?: "Facebook error")
