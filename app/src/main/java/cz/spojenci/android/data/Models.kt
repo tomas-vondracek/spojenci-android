@@ -4,7 +4,7 @@ import java.math.BigDecimal
 
 data class User(val id: String, val loginType: String, val name: String, val email: String, val photo_url: String?)
 
-data class UserRef(val id: String, val name: String)
+data class UserRef(val user_id: String, val user_name: String)
 
 data class Challenge(val id: String, val name: String, val unit: String, val to_pay: BigDecimal?, val paid: BigDecimal?,
                      val unit_price: BigDecimal?, val currency: String, val owner: UserRef, val done: String?, val activity_amount: String)

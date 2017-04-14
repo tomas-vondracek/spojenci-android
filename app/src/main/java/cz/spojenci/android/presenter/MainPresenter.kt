@@ -5,10 +5,8 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Status
 import cz.spojenci.android.data.*
 import cz.spojenci.android.presenter.MainPresenter.Companion.DEFAULT_CACHE_TIME_MS
-import cz.spojenci.android.data.CachableData
 import cz.spojenci.android.utils.formatAsDateTime
 import cz.spojenci.android.utils.formatAsPrice
-import cz.spojenci.android.data.logSource
 import rx.Emitter
 import rx.Observable
 import java.math.BigDecimal
@@ -46,8 +44,7 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 
 	val challenges: Observable<ChallengesViewModel> = Observable.concat(challengesFromMemory, challengesFromRepo)
 			.first { list -> list.isNotEmpty() }
-			.map {
-				list ->
+			.map { list ->
 				ChallengesViewModel(userService.user, list)
 			}
 
