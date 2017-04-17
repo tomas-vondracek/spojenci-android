@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<data>
+		<import type="android.view.View"/>
+
+		<variable name="challenge"
+			type="cz.spojenci.android.presenter.ChallengeDetailViewModel"/>
+
+		<variable name="hasActivities"
+			type="Boolean"/>
+	</data>
 
 	<android.support.design.widget.CoordinatorLayout
 		android:layout_width="match_parent"
@@ -19,11 +30,63 @@
 				android:layout_width="match_parent"
 				android:layout_height="?attr/actionBarSize"
 				android:background="?attr/colorPrimary"
+				android:title="@{challenge.name}"
 				app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-		</android.support.design.widget.AppBarLayout>
+			<android.support.constraint.ConstraintLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				app:layout_behavior="@string/appbar_scrolling_view_behavior"
+				android:paddingBottom="@dimen/padding_large"
+				tools:showIn="@layout/activity_challenge_detail"
+				tools:context="cz.spojenci.android.activity.ChallengeDetailActivity">
 
-		<include layout="@layout/content_challenge_detail" android:id="@+id/challenge_detail_content"/>
+				<TextView android:id="@+id/challenge_detail_label_attributions"
+					android:text="@string/challenge_detail_total_attributions"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding"
+					android:layout_marginStart="@dimen/activity_horizontal_margin"
+					app:layout_constraintTop_toTopOf="parent"
+					app:layout_constraintLeft_toLeftOf="parent"/>
+
+				<TextView android:id="@+id/challenge_detail_label_price"
+					android:text="@string/challenge_detail_unit_price"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="@dimen/padding"
+					app:layout_constraintLeft_toLeftOf="@+id/challenge_detail_label_attributions"
+					app:layout_constraintTop_toBottomOf="@+id/challenge_detail_label_attributions"/>
+
+				<TextView android:id="@+id/challenge_detail_value_attributions"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					tools:text="1000CZK"
+					android:text="@{challenge.attributions}"
+					android:textStyle="bold"
+					android:layout_marginStart="@dimen/padding"
+					app:layout_constraintLeft_toRightOf="@+id/challenge_detail_label_attributions"
+					app:layout_constraintBaseline_toBaselineOf="@+id/challenge_detail_label_attributions"
+					app:layout_constraintRight_toRightOf="parent"
+					tools:layout_constraintRight_creator="1"
+					tools:layout_constraintLeft_creator="1"/>
+
+				<TextView android:id="@+id/challenge_detail_value_price"
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					tools:text="20CZK"
+					android:text="@{challenge.unitPrice}"
+					android:textStyle="bold"
+					android:layout_marginStart="@dimen/padding"
+					app:layout_constraintLeft_toRightOf="@+id/challenge_detail_label_price"
+					app:layout_constraintBaseline_toBaselineOf="@+id/challenge_detail_label_price"
+					app:layout_constraintRight_toRightOf="parent"
+					tools:layout_constraintRight_creator="1"
+					tools:layout_constraintLeft_creator="1"/>
+
+			</android.support.constraint.ConstraintLayout>
+
+		</android.support.design.widget.AppBarLayout>
 
 		<android.support.design.widget.FloatingActionButton
 			android:id="@+id/fab"
@@ -32,6 +95,17 @@
 			android:layout_gravity="bottom|end"
 			android:layout_margin="@dimen/fab_margin"
 			app:srcCompat="@drawable/ic_add_white"/>
+
+		<android.support.v4.widget.NestedScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+			<include layout="@layout/content_challenge_detail"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/challenge_detail_content"/>
+		</android.support.v4.widget.NestedScrollView>
 
 	</android.support.design.widget.CoordinatorLayout>
 </layout>

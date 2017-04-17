@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools">
 
 	<data>
-		<import type="cz.spojenci.android.data.UserActivity"/>
+		<import type="cz.spojenci.android.presenter.UserActivityItemViewModel"/>
 
 		<variable name="activity"
-			type="UserActivity"/>
+			type="UserActivityItemViewModel"/>
 	</data>
 
-	<LinearLayout android:id="@+id/item_challenge_activity_container"
+	<android.support.constraint.ConstraintLayout android:id="@+id/item_challenge_activity_container"
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -20,12 +21,50 @@
 		android:paddingStart="@dimen/activity_horizontal_margin"
 		android:paddingEnd="@dimen/activity_horizontal_margin">
 
-		<TextView android:id="@+id/item_challenge_activity_description"
+		<TextView
+			android:id="@+id/item_challenge_activity_date"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/padding"
+			android:text="@{activity.date}"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			tools:text="17.4.2017"/>
+
+		<TextView android:id="@+id/item_challenge_activity_value"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/padding"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			tools:text="SessionDescription"
-			android:text="@{activity.toString()}"
-			android:maxLines="3"/>
-	</LinearLayout>
+			android:text="@{activity.value}"
+			android:maxLines="1"
+			android:drawableStart="@drawable/ic_flag"
+			android:drawablePadding="@dimen/padding"
+			tools:text="50 km"
+			app:layout_constraintTop_toBottomOf="@+id/item_challenge_activity_date"
+			app:layout_constraintLeft_toLeftOf="@+id/item_challenge_activity_date"/>
+
+		<TextView
+			android:id="@+id/item_challenge_activity_money"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@{activity.money}"
+			android:maxLines="1"
+			android:gravity="end"
+			app:layout_constraintLeft_toRightOf="@+id/item_challenge_activity_value"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintBaseline_toBaselineOf="@+id/item_challenge_activity_value"
+			app:layout_constraintHorizontal_bias="0.434"
+			tools:text="100CZK"/>
+
+		<View android:layout_width="0dp"
+			android:layout_height="1dp"
+			android:layout_marginTop="@dimen/padding"
+			android:background="#62000000"
+			app:layout_constraintTop_toBottomOf="@+id/item_challenge_activity_value"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintLeft_toLeftOf="parent"/>
+
+	</android.support.constraint.ConstraintLayout>
 </layout>

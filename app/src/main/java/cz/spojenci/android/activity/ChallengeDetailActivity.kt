@@ -10,13 +10,13 @@ import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.Challenge
-import cz.spojenci.android.data.UserActivity
 import cz.spojenci.android.databinding.ActivityChallengeDetailBinding
 import cz.spojenci.android.databinding.ContentChallengeDetailBinding
 import cz.spojenci.android.databinding.ItemChallengeActivityBinding
 import cz.spojenci.android.presenter.ChallengeDetailPresentable
 import cz.spojenci.android.presenter.ChallengeDetailPresenter
 import cz.spojenci.android.presenter.ChallengeDetailViewModel
+import cz.spojenci.android.presenter.UserActivityItemViewModel
 import cz.spojenci.android.utils.*
 import rx.Observable
 import timber.log.Timber
@@ -29,6 +29,7 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 
 			val intent = Intent(context, ChallengeDetailActivity::class.java)
 			intent.putExtra("CHALLENGE_ID", challenge.id)
+			intent.putExtra("CHALLENGE_NAME", challenge.name)
 			context.startActivity(intent)
 		}
 	}
@@ -85,9 +86,10 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 					val adapter = ChallengeActivityAdapter(this, items)
 					list.adapter = adapter
 
-					contentBinding.hasActivities = viewModel.hasActivities
+					binding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
+					binding.challenge = viewModel
 					contentBinding.challenge = viewModel
-					contentBinding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
+					contentBinding.hasActivities = viewModel.hasActivities
 					contentBinding.challengeDetailEmptyContainer.visible = !viewModel.hasActivities
 				}, { ex ->
 					Timber.e(ex, "Failed to load challenge detail")
@@ -99,7 +101,7 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 
 class ActivityViewHolder(binding: ItemChallengeActivityBinding) : BoundViewHolder<ItemChallengeActivityBinding>(binding)
 
-class ChallengeActivityAdapter(context: Context, items: List<UserActivity>): RecyclerAdapter<ActivityViewHolder, UserActivity>(context, items) {
+class ChallengeActivityAdapter(context: Context, items: List<UserActivityItemViewModel>): RecyclerAdapter<ActivityViewHolder, UserActivityItemViewModel>(context, items) {
 
 	init {
 		setHasStableIds(true)
@@ -116,7 +118,6 @@ class ChallengeActivityAdapter(context: Context, items: List<UserActivity>): Rec
 		holder.binding.itemChallengeActivityContainer.setOnClickListener {
 			// TODO
 		}
-//		holder.binding.setVariable(BR.activity, items[position])
 	}
 
 	override fun getItemId(position: Int): Long {

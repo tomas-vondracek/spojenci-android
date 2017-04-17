@@ -13,90 +13,23 @@
 			type="Boolean"/>
 	</data>
 
-	<android.support.constraint.ConstraintLayout
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior"
-		tools:showIn="@layout/activity_challenge_detail"
-		tools:context="cz.spojenci.android.activity.ChallengeDetailActivity">
-
-		<TextView android:id="@+id/challenge_detail_name"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			tools:text="Challenge Name"
-			android:text="@{challenge.name}"
-			android:layout_alignParentTop="true"
-			android:layout_marginTop="@dimen/padding"
-			android:layout_marginStart="@dimen/activity_horizontal_margin"
-			android:layout_marginEnd="@dimen/padding"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			tools:layout_constraintRight_creator="1"
-			tools:layout_constraintLeft_creator="1"/>
-
-		<TextView android:id="@+id/challenge_detail_label_attributions"
-			android:text="@string/challenge_detail_total_attributions"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding"
-			app:layout_constraintTop_toBottomOf="@+id/challenge_detail_name"
-			app:layout_constraintLeft_toLeftOf="@+id/challenge_detail_name"/>
-
-		<TextView android:id="@+id/challenge_detail_label_price"
-			android:text="@string/challenge_detail_unit_price"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding"
-			app:layout_constraintLeft_toLeftOf="@+id/challenge_detail_label_attributions"
-			app:layout_constraintTop_toBottomOf="@+id/challenge_detail_label_attributions"/>
-
-		<TextView android:id="@+id/challenge_detail_value_attributions"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			tools:text="1000CZK"
-			android:text="@{challenge.attributions}"
-			android:textStyle="bold"
-			android:layout_marginStart="@dimen/padding"
-			app:layout_constraintLeft_toRightOf="@+id/challenge_detail_label_attributions"
-			app:layout_constraintBaseline_toBaselineOf="@+id/challenge_detail_label_attributions"
-			tools:layout_constraintRight_creator="1"
-			tools:layout_constraintLeft_creator="1"
-			app:layout_constraintRight_toRightOf="parent"/>
-		<TextView android:id="@+id/challenge_detail_value_price"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			tools:text="20CZK"
-			android:text="@{challenge.unitPrice}"
-			android:textStyle="bold"
-			android:layout_marginStart="@dimen/padding"
-			app:layout_constraintLeft_toRightOf="@+id/challenge_detail_label_price"
-			app:layout_constraintBaseline_toBaselineOf="@+id/challenge_detail_label_price"
-			tools:layout_constraintRight_creator="1"
-			tools:layout_constraintLeft_creator="1"
-			app:layout_constraintRight_toRightOf="parent"/>
+		android:orientation="vertical">
 
 		<TextView android:id="@+id/challenge_detail_activity_label"
 			android:text="@string/challenge_detail_activity"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/activity_vertical_margin"
-			app:layout_constraintLeft_toLeftOf="@+id/challenge_detail_label_price"
-			app:layout_constraintTop_toBottomOf="@+id/challenge_detail_label_price"/>
+			android:layout_marginStart="@dimen/activity_horizontal_margin"
+			android:layout_marginTop="@dimen/activity_vertical_margin"/>
 
-
-		<FrameLayout
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="8dp"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/challenge_detail_activity_label"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			android:id="@+id/frameLayout"
-			android:visibility="visible"
-			app:layout_constraintVertical_bias="0.0">
+		<FrameLayout android:id="@+id/challenge_detail_list_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginTop="@dimen/padding"
+			android:visibility="visible">
 
 			<ProgressBar android:id="@+id/challenge_detail_progress"
 				style="?android:attr/progressBarStyle"
@@ -137,6 +70,5 @@
 			</LinearLayout>
 		</FrameLayout>
 
-
-	</android.support.constraint.ConstraintLayout>
+	</LinearLayout>
 </layout>

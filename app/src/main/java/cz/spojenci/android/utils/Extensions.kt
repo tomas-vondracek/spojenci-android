@@ -11,6 +11,7 @@ import rx.schedulers.Schedulers
 import java.math.BigDecimal
 import java.text.DateFormat
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 var View.visible: Boolean
@@ -53,4 +54,15 @@ val dateTimeFormatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SH
 
 fun Long.formatAsDateTime(): String {
 	return dateTimeFormatter.format(Date(this))
+}
+
+fun Date.formatAsDateTime(): String {
+	return dateTimeFormatter.format(this)
+}
+
+//2017-04-16T02:00:00+0200
+private val serverDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US)
+
+fun String.parseAsServerDate(): Date {
+	return serverDateFormat.parse(this)
 }

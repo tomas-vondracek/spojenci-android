@@ -33,6 +33,7 @@ import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
 import rx.Observable
+import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -115,6 +116,16 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		binding.loginEmailSignInButton.setOnClickListener { signInWithEmail() }
 
 		updateUI(service.isSignedIn)
+
+		if (service.isSignedIn) {
+			service.updateUserProfile()
+					.withSchedulers()
+					.subscribeBy(onNext = { user ->
+						Timber.d("updated user: $user")
+					}, onError = { ex ->
+						Timber.e(ex, "failed to update user profile")
+					})
+		}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

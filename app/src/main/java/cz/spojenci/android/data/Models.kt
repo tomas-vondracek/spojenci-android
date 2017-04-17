@@ -13,7 +13,7 @@ data class ChallengeDetail(val id: String, val name: String, val unit: String, v
                            val unit_price: BigDecimal?, val user: UserRef, val done: String?, val activity_amount: String,
                            val supporters: Array<UserRef>, val activities: Array<UserActivity>)
 
-data class UserActivity(val type: String, val date: String, val user: UserRef, val value: String?, val comment: String?)
+data class UserActivity(val type: String, val date: String?, val user: UserRef, val value: String?, val comment: String?)
 
 data class ChallengeUpdate(val id: String, val type: String, val value: String?, val comment: String?)
 
