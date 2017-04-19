@@ -4,6 +4,7 @@
 	<string name="reload">Načíst znovu</string>
 	<string name="ok">OK</string>
 
+	<string name="title_about">O aplikace</string>
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
 	<string name="title_activity_update_challenge">Aktualizovat výzvu</string>

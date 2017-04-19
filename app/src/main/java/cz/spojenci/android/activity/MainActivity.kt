@@ -20,6 +20,8 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import com.mikepenz.aboutlibraries.Libs
+import com.mikepenz.aboutlibraries.LibsBuilder
 import com.squareup.picasso.Picasso
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.BR
@@ -172,6 +174,15 @@ class MainActivity : BaseActivity() {
 				presenter.clearChallengeCache()
 				loadChallenges()
 				return true
+			}
+			R.id.menu_main_about -> {
+				LibsBuilder()
+						.withAboutDescription("spojenci.cz")
+						.withAboutVersionShown(true)
+						.withAboutIconShown(true)
+						.withActivityTitle(getString(R.string.title_about))
+						.withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+						.start(this)
 			}
 		}
 		return super.onOptionsItemSelected(item)

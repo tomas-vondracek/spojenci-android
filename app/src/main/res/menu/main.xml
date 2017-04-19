@@ -6,4 +6,8 @@
 		android:id="@+id/menu_main_reload"
 		android:title="@string/reload"
 		android:visible="true"/>
+	<item
+		android:id="@+id/menu_main_about"
+		android:title="@string/title_about"
+		android:visible="true"/>
 </menu>
