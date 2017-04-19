@@ -35,7 +35,12 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 				if (challengesWithCache == null) {
 					challengesWithCache = challengesFromRepo
 							.map { list ->
-								ChallengesViewModel(userService.user, list)
+								val contributions =
+										if (list.isNotEmpty()) {
+											list.map { it.paid ?: BigDecimal.ZERO }.reduce { paid1, paid2 -> paid1 + paid2 }
+										} else BigDecimal.ZERO
+								val items = list.map { ChallengeItemModel.fromChallenge(it) }
+								ChallengesViewModel(userService.user, items, contributions)
 							}
 							.replay(1)
 							.autoConnect()
@@ -56,12 +61,8 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 }
 
 data class ChallengesViewModel(val user: User?,
-                               val challenges: List<Challenge>) {
-
-	private val contributions: BigDecimal =
-			if (challenges.isNotEmpty()) {
-				challenges.map { it.paid ?: BigDecimal.ZERO }.reduce { paid1, paid2 -> paid1 + paid2 }
-			} else BigDecimal.ZERO
+                               val challenges: List<ChallengeItemModel>,
+                               val contributions: BigDecimal) {
 
 	fun contributions(currency: String): String = contributions.formatAsPrice(currency)
 }
@@ -75,3 +76,15 @@ data class FitItemModel(val id: String, val description: String, val time: Strin
 	}
 }
 data class FitViewModel(val status: Status, val items: List<FitItemModel>)
+
+data class ChallengeItemModel(val id: String, val name: String, val value: String) {
+
+	companion object Factory {
+
+		fun fromChallenge(item: Challenge): ChallengeItemModel {
+			val value = item.activity_amount ?: "0"
+			return ChallengeItemModel(item.id, item.name, "$value ${item.unit}")
+		}
+	}
+
+}

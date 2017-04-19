@@ -7,7 +7,7 @@ data class User(val id: String, val loginType: String, val name: String, val ema
 data class UserRef(val user_id: String, val user_name: String)
 
 data class Challenge(val id: String, val name: String, val unit: String, val to_pay: BigDecimal?, val paid: BigDecimal?,
-                     val unit_price: BigDecimal?, val currency: String, val owner: UserRef, val done: String?, val activity_amount: String)
+                     val unit_price: BigDecimal?, val currency: String, val owner: UserRef, val done: String?, val activity_amount: String?)
 
 data class ChallengeDetail(val id: String, val name: String, val unit: String, val to_pay: BigDecimal?, val paid: BigDecimal?,
                            val unit_price: BigDecimal?, val user: UserRef, val done: String?, val activity_amount: String,

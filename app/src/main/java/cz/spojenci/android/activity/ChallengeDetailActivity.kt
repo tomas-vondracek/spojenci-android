@@ -9,14 +9,10 @@ import android.view.ViewGroup
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
-import cz.spojenci.android.data.Challenge
 import cz.spojenci.android.databinding.ActivityChallengeDetailBinding
 import cz.spojenci.android.databinding.ContentChallengeDetailBinding
 import cz.spojenci.android.databinding.ItemChallengeActivityBinding
-import cz.spojenci.android.presenter.ChallengeDetailPresentable
-import cz.spojenci.android.presenter.ChallengeDetailPresenter
-import cz.spojenci.android.presenter.ChallengeDetailViewModel
-import cz.spojenci.android.presenter.UserActivityItemViewModel
+import cz.spojenci.android.presenter.*
 import cz.spojenci.android.utils.*
 import rx.Observable
 import timber.log.Timber
@@ -25,7 +21,7 @@ import javax.inject.Inject
 class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 
 	companion object {
-		fun start(context: Context, challenge: Challenge) {
+		fun start(context: Context, challenge: ChallengeItemModel) {
 
 			val intent = Intent(context, ChallengeDetailActivity::class.java)
 			intent.putExtra("CHALLENGE_ID", challenge.id)

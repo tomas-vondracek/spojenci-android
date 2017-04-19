@@ -25,10 +25,10 @@ import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.BR
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
-import cz.spojenci.android.data.Challenge
 import cz.spojenci.android.data.User
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
+import cz.spojenci.android.presenter.ChallengeItemModel
 import cz.spojenci.android.presenter.ChallengesViewModel
 import cz.spojenci.android.presenter.FitItemModel
 import cz.spojenci.android.presenter.MainPresenter
@@ -241,6 +241,7 @@ class MainActivity : BaseActivity() {
 				.bindToLifecycle(this)
 				.subscribe({ (status, items) ->
 					binding.mainFitConnect.fitProgress.visible = false
+					binding.mainFitConnect.fitContainer.visible = false
 					if (!status.isSuccess) {
 						Timber.i("no data from Fit: " + status)
 						if (status.hasResolution()) {
@@ -281,13 +282,13 @@ class ChallengeViewHolder(binding: ItemChallengeBinding) : BoundViewHolder<ItemC
 class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 	private val fitClickSubject = PublishSubject.create<FitItemModel>()
-	private val challengeClickSubject = PublishSubject.create<Challenge>()
+	private val challengeClickSubject = PublishSubject.create<ChallengeItemModel>()
 
 	var fitItems: List<FitItemModel> = emptyList()
-	var challenges: List<Challenge> = emptyList()
+	var challenges: List<ChallengeItemModel> = emptyList()
 
 	val fitItemsClicks: rx.Observable<FitItemModel> = fitClickSubject.asObservable()
-	val challengeItemsClicks: rx.Observable<Challenge> = challengeClickSubject.asObservable()
+	val challengeItemsClicks: rx.Observable<ChallengeItemModel> = challengeClickSubject.asObservable()
 
 	private val inflater = LayoutInflater.from(context)
 
