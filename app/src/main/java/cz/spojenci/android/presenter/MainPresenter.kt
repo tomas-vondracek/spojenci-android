@@ -1,10 +1,8 @@
 package cz.spojenci.android.presenter
 
-import android.os.SystemClock
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Status
 import cz.spojenci.android.data.*
-import cz.spojenci.android.presenter.MainPresenter.Companion.DEFAULT_CACHE_TIME_MS
 import cz.spojenci.android.utils.formatAsDateTime
 import cz.spojenci.android.utils.formatAsPrice
 import rx.Emitter
@@ -21,48 +19,39 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
                                         private val fitRepo: IFitRepository,
                                         private val userService: UserService) {
 
-	companion object {
-		val DEFAULT_CACHE_TIME_MS: Long = 1000*60*5
-	}
-
 	private val emptyChallenges: Observable<List<Challenge>> =
 			Observable.create ({ emitter -> emitter.onNext(emptyList())}, Emitter.BackpressureMode.NONE)
-
-	private var cachedChallenges: CachedChallenges? = null
 
 	private val challengesFromRepo: Observable<List<Challenge>> = userService.observableUser
 			.flatMap { user ->
 				if (user != null) challengesRepo.challengesForUser(user.id) else emptyChallenges
-			}.doOnNext { list ->
-				cachedChallenges = CachedChallenges(challenges = list)
 			}
 
-	private val challengesFromMemory: Observable<List<Challenge>> =
-			Observable.fromCallable { cachedChallenges }
-					.compose(logSource<CachedChallenges?>("MEMORY"))
-					.map { cachedChallenges -> cachedChallenges?.takeIf { it.isUpToDate() }?.challenges ?: emptyList() }
+	private var challengesWithCache: Observable<ChallengesViewModel>? = null
 
-	val challenges: Observable<ChallengesViewModel> = Observable.concat(challengesFromMemory, challengesFromRepo)
-			.first { list -> list.isNotEmpty() }
-			.map { list ->
-				ChallengesViewModel(userService.user, list)
+	val challenges: Observable<ChallengesViewModel>
+		get() {
+			synchronized(this) {
+				if (challengesWithCache == null) {
+					challengesWithCache = challengesFromRepo
+							.map { list ->
+								ChallengesViewModel(userService.user, list)
+							}
+							.replay(1)
+							.autoConnect()
+				}
+				return challengesWithCache!!
 			}
+		}
 
 	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> = fitRepo.sessions(apiClient).map { (status, sessions) ->
 		FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
 	}
 
 	fun clearChallengeCache() {
-		cachedChallenges = null
-	}
-}
-
-data class CachedChallenges(val challenges: List<Challenge>, val maxAgeMs: Long = DEFAULT_CACHE_TIME_MS): CachableData {
-
-	private val timeCreated = SystemClock.elapsedRealtime()
-
-	override fun isUpToDate(): Boolean {
-		return SystemClock.elapsedRealtime() - timeCreated < maxAgeMs
+		synchronized(this) {
+			challengesWithCache = null
+		}
 	}
 }
 

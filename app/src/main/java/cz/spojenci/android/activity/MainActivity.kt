@@ -76,7 +76,14 @@ class MainActivity : BaseActivity() {
 				.build()
 	}
 
-	private lateinit var observableChallenges: Observable<ChallengesViewModel>
+	private val observableChallenges: Observable<ChallengesViewModel>
+		get() = presenter.challenges
+				.withSchedulers()
+				.bindToLifecycle(this)
+				.doOnSubscribe {
+					binding.mainChallengesProgress.visible = true
+					binding.mainChallengesList.visible = false
+				}
 
 	private lateinit var binding: ActivityMainBinding
 	private lateinit var adapter: CombinedDataAdapter
@@ -105,13 +112,6 @@ class MainActivity : BaseActivity() {
 			loadChallenges()
 		}
 
-		observableChallenges = presenter.challenges
-				.withSchedulers()
-				.bindToLifecycle(this)
-				.doOnSubscribe {
-					binding.mainChallengesProgress.visible = true
-					binding.mainChallengesList.visible = false
-				}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -180,15 +180,17 @@ class MainActivity : BaseActivity() {
 	private fun loadChallenges() {
 		observableChallenges
 				.subscribeBy(onNext = { viewModel ->
-					updateUserUi(viewModel.user)
+					val user = viewModel.user
+					updateUserUi(user)
 
 					binding.mainUserContributions.text = viewModel.contributions("CZK")
 
 					adapter.challenges = viewModel.challenges
 					binding.mainChallengesProgress.visible = false
-					binding.mainChallengesList.visible = viewModel.challenges.isNotEmpty()
-					binding.emptyContainer.visible = viewModel.challenges.isEmpty()
+					binding.mainChallengesList.visible = viewModel.challenges.isNotEmpty() && user != null
+					binding.emptyContainer.visible = viewModel.challenges.isEmpty() && user != null
 					binding.emptyMessage.text = getString(R.string.main_challenges_empty)
+					binding.mainChallengesLogo.visible = user == null
 
 				}, onError = { ex ->
 					Timber.e(ex, "Failed to load challenges")

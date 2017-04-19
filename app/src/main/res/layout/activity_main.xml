@@ -79,9 +79,17 @@
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:layout_gravity="fill_vertical"
 			android:paddingTop="@dimen/padding_large"
 			android:layout_marginTop="@dimen/main_header_height"
 			android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+			<ImageView android:id="@+id/main_challenges_logo"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:visibility="gone"
+				android:src="@drawable/bg_logo_big"/>
 
 			<ProgressBar android:id="@+id/main_challenges_progress"
 				style="?android:progressBarStyleLarge"
