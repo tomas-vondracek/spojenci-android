@@ -55,6 +55,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="@dimen/padding"
+					android:visibility="invisible"
+					tools:visibility="visible"
 					app:layout_constraintLeft_toLeftOf="@+id/challenge_detail_label_attributions"
 					app:layout_constraintTop_toBottomOf="@+id/challenge_detail_label_attributions"/>
 
@@ -99,11 +101,10 @@
 		<android.support.v4.widget.NestedScrollView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
+			android:fillViewport="true"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 			<include layout="@layout/content_challenge_detail"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
 				android:id="@+id/challenge_detail_content"/>
 		</android.support.v4.widget.NestedScrollView>
 

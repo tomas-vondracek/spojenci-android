@@ -19,7 +19,6 @@ import javax.inject.Inject
 
 interface ChallengeDetailPresentable {
 
-	fun enableCreateActivity()
 }
 
 class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: ChallengesRepository) {
@@ -31,12 +30,11 @@ class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: C
 		this.view = view
 	}
 
-	fun challengeDetailFor(id: String): Observable<ChallengeDetailViewModel> {
+	fun challengeDetailFor(id: String, challengeName: String): Observable<ChallengeDetailViewModel> {
 		return challengesRepo.challengeDetail(id)
 				.observeOn(AndroidSchedulers.mainThread())
 				.doOnNext { detail ->
 					challengeDetail = detail
-					view.enableCreateActivity()
 				}
 				.map { detail ->
 					val paid = detail.paid ?: BigDecimal.ZERO
@@ -51,6 +49,7 @@ class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: C
 							detail.unit,
 							items)
 				}
+				.startWith(ChallengeDetailViewModel.inProgress(challengeName))
 	}
 
 	fun createChallengeActivity(context: Activity) {
@@ -65,7 +64,15 @@ data class ChallengeDetailViewModel(val name: String,
                                     val attributions: String,
                                     val unitPrice: String,
                                     val unitName: String,
-                                    val activities: List<UserActivityItemViewModel>) {
+                                    val activities: List<UserActivityItemViewModel>,
+                                    val isLoading: Boolean = false) {
+
+	companion object Factory {
+
+		fun inProgress(name: String): ChallengeDetailViewModel {
+			return ChallengeDetailViewModel(name, "", "", "", emptyList(), true)
+		}
+	}
 
 	val hasActivities: Boolean
 	get() = activities.isNotEmpty()

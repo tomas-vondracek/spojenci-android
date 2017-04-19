@@ -50,15 +50,18 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 		val challengeId = intent.getStringExtra("CHALLENGE_ID")
+		val challengeName = intent.getStringExtra("CHALLENGE_NAME")
 		binding.fab.setOnClickListener {
 			presenter.createChallengeActivity(context = this)
 		}
 
+		contentBinding.challengeDetailRetry.setOnClickListener {
+			loadChallengeDetail()
+		}
+
 		presenter.startFrom(this)
-		observableChallengeDetail = presenter.challengeDetailFor(challengeId)
+		observableChallengeDetail = presenter.challengeDetailFor(challengeId, challengeName)
 				.withSchedulers()
-				.doOnSubscribe { contentBinding.challengeDetailProgress.visible = true; binding.fab.isEnabled = false }
-				.doAfterTerminate { contentBinding.challengeDetailProgress.visible = false }
 				.bindToLifecycle(this)
 	}
 
@@ -68,25 +71,31 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 		loadChallengeDetail()
 	}
 
-	override fun enableCreateActivity() {
-		binding.fab.isEnabled = true
-	}
-
 	private fun loadChallengeDetail() {
 		observableChallengeDetail
 				.subscribe({ viewModel ->
 					Timber.d("Loaded challenge detail: $viewModel on thread ${Thread.currentThread().name}")
-					val items = viewModel.activities
 
-					val list = contentBinding.challengeDetailList
-					val adapter = ChallengeActivityAdapter(this, items)
-					list.adapter = adapter
+					val isLoading = viewModel.isLoading
+					contentBinding.challengeDetailProgress.visible = isLoading
+					contentBinding.challengeDetailEmptyContainer.visible = !isLoading && !viewModel.hasActivities
+					binding.fab.isEnabled = !isLoading
 
-					binding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
-					binding.challenge = viewModel
-					contentBinding.challenge = viewModel
-					contentBinding.hasActivities = viewModel.hasActivities
-					contentBinding.challengeDetailEmptyContainer.visible = !viewModel.hasActivities
+					if (!isLoading) {
+						val items = viewModel.activities
+
+						val list = contentBinding.challengeDetailList
+						val adapter = ChallengeActivityAdapter(this, items)
+						list.adapter = adapter
+
+						binding.challengeDetailLabelPrice.visible = true
+						binding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
+						binding.challenge = viewModel
+						contentBinding.challenge = viewModel
+						contentBinding.hasActivities = viewModel.hasActivities
+					} else {
+						binding.toolbar.title = viewModel.name
+					}
 				}, { ex ->
 					Timber.e(ex, "Failed to load challenge detail")
 					snackbar("Failed to load challenge detail " + ex.message)
