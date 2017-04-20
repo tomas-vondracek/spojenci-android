@@ -5,6 +5,8 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
@@ -71,6 +73,17 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 		loadChallengeDetail()
 	}
 
+	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+		menuInflater.inflate(R.menu.challenge_detail, menu)
+		return super.onCreateOptionsMenu(menu)
+	}
+
+	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+		when (item?.itemId) {
+			R.id.menu_challenge_detail_pay -> presenter.openPayment(this)
+		}
+		return super.onOptionsItemSelected(item)
+	}
 	private fun loadChallengeDetail() {
 		observableChallengeDetail
 				.subscribe({ viewModel ->

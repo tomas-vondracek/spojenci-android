@@ -41,6 +41,7 @@
 	<string name="challenge_detail_total_attributions">total attributions:</string>
 	<string name="challenge_detail_unit_price">price per %1$s:</string>
 	<string name="challenge_detail_activity">Activity</string>
+	<string name="challenge_detail_pay">Pay</string>
 
 	<string name="update_challenge_send">Send</string>
 	<string name="update_challenge_activity_validation">Please fill in the activity value</string>

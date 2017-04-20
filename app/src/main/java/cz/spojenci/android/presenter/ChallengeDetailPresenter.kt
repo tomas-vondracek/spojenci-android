@@ -2,6 +2,7 @@ package cz.spojenci.android.presenter
 
 import android.app.Activity
 import cz.spojenci.android.activity.UpdateChallengeActivity
+import cz.spojenci.android.activity.WebViewActivity
 import cz.spojenci.android.data.ChallengeDetail
 import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserActivity
@@ -11,6 +12,8 @@ import cz.spojenci.android.utils.parseAsServerDate
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import java.math.BigDecimal
+import java.text.Normalizer
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 /**
@@ -55,6 +58,19 @@ class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: C
 	fun createChallengeActivity(context: Activity) {
 		challengeDetail?.let { detail ->
 			UpdateChallengeActivity.startFromChallenge(context, detail.id, detail.unit)
+		}
+	}
+
+	fun openPayment(activity: Activity) {
+		challengeDetail?.let { detail ->
+
+			val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
+			var name = Normalizer.normalize(detail.name, Normalizer.Form.NFD)
+			name = pattern.matcher(name).replaceAll("").toLowerCase()
+
+			val identifier = "$name-${detail.id}"
+			val url = "http://www.spojenci.cz/transakce/$identifier/dir/Transaction/"
+			WebViewActivity.start(activity, url)
 		}
 	}
 

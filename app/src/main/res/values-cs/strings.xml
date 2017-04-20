@@ -4,7 +4,7 @@
 	<string name="reload">Načíst znovu</string>
 	<string name="ok">OK</string>
 
-	<string name="title_about">O aplikace</string>
+	<string name="title_about">O aplikaci</string>
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
 	<string name="title_activity_update_challenge">Aktualizovat výzvu</string>
@@ -18,7 +18,7 @@
 	<string name="login_in_process">Přihlašování</string>
 	<string name="login_prompt_email">E-mail</string>
 	<string name="login_prompt_password">Heslo</string>
-	<string name="login_status_connected">Přihlašen jako %1$s</string>
+	<string name="login_status_connected">Přihlášen jako %1$s</string>
 	<string name="error_field_required">Toto pole je povinné</string>
 	<string name="error_incorrect_password">Nesprávné heslo</string>
 	<string name="error_invalid_email">Neplatný e-mail</string>
@@ -40,6 +40,7 @@
 	<string name="challenge_detail_total_attributions">příspěvky celkem:</string>
 	<string name="challenge_detail_unit_price">cena za %1$s:</string>
 	<string name="challenge_detail_activity">Aktivita</string>
+	<string name="challenge_detail_pay">Zaplatit</string>
 
 	<string name="update_challenge_send">Odeslat</string>
 	<string name="update_challenge_activity_validation">Vyplňte aktivitu</string>

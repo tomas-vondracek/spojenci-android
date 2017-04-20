@@ -42,10 +42,15 @@
 			android:parentActivityName=".activity.MainActivity"
 			android:theme="@style/AppTheme.NoActionBar">
 		</activity>
-		<activity android:name=".activity.UpdateChallengeActivity"
+		<activity
+			android:name=".activity.UpdateChallengeActivity"
 			android:label="@string/title_activity_update_challenge"
-			android:theme="@style/AppTheme.Dialog"
-			android:parentActivityName=".activity.ChallengeDetailActivity">
+			android:parentActivityName=".activity.ChallengeDetailActivity"
+			android:theme="@style/AppTheme.Dialog">
+		</activity>
+		<activity
+			android:name=".activity.WebViewActivity"
+			android:theme="@style/AppTheme.NoActionBar">
 		</activity>
 	</application>
 
