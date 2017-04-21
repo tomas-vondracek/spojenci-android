@@ -4,6 +4,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Status
 import cz.spojenci.android.data.*
 import cz.spojenci.android.utils.formatAsDateTime
+import cz.spojenci.android.utils.formatAsDistance
 import cz.spojenci.android.utils.formatAsPrice
 import rx.Emitter
 import rx.Observable
@@ -49,9 +50,10 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 			}
 		}
 
-	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> = fitRepo.sessions(apiClient).map { (status, sessions) ->
-		FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
-	}
+	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> =
+			fitRepo.sessions(apiClient).map { (status, sessions) ->
+				FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
+			}
 
 	fun clearChallengeCache() {
 		synchronized(this) {
@@ -67,11 +69,13 @@ data class ChallengesViewModel(val user: User?,
 	fun contributions(currency: String): String = contributions.formatAsPrice(currency)
 }
 
-data class FitItemModel(val id: String, val description: String, val time: String) {
+data class FitItemModel(val id: String, val description: String, val time: String, val value: String) {
 
 	companion object Factory {
 		fun fromFitSession(session: FitSession): FitItemModel {
-			return FitItemModel(session.id, session.description, session.timestamp.formatAsDateTime())
+			val distanceInKm = session.distanceValue / 1000F
+			val value = "${distanceInKm.formatAsDistance()} km"
+			return FitItemModel(session.id, session.description, session.timestamp.formatAsDateTime(), value)
 		}
 	}
 }

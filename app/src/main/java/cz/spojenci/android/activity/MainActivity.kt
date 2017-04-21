@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -99,6 +100,7 @@ class MainActivity : BaseActivity() {
 
 		binding.mainChallengesList.layoutManager = LinearLayoutManager(this)
 		binding.mainChallengesList.adapter = adapter
+		binding.mainChallengesList.itemAnimator = DefaultItemAnimator()
 		binding.mainFitConnect.fitConnect.setOnClickListener {
 			connectFitApiClient()
 		}
@@ -250,6 +252,7 @@ class MainActivity : BaseActivity() {
 	private fun onFitAccessAvailable() {
 		presenter.fitActivity(apiClient)
 				.bindToLifecycle(this)
+				.withSchedulers()
 				.subscribe({ (status, items) ->
 					binding.mainFitConnect.fitProgress.visible = false
 					binding.mainFitConnect.fitContainer.visible = false
@@ -261,6 +264,7 @@ class MainActivity : BaseActivity() {
 					}
 					Timber.d("Fit items: " + items)
 					adapter.fitItems = items
+					adapter.notifyDataSetChanged()
 				}, { throwable ->
 					binding.mainFitConnect.fitProgress.visible = false
 					Timber.e(throwable, "failed to read from google fit")

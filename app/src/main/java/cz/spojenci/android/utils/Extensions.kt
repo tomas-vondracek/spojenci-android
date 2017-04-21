@@ -66,3 +66,10 @@ private val serverDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale
 fun String.parseAsServerDate(): Date {
 	return serverDateFormat.parse(this)
 }
+
+
+private val distanceNumberFormat = NumberFormat.getNumberInstance()
+
+fun Float.formatAsDistance(): String {
+	return distanceNumberFormat.format(this)
+}

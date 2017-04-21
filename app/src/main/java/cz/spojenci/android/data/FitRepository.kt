@@ -4,14 +4,13 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.SessionReadRequest
 import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-data class FitSession(val id: String, val description: String, val timestamp: Long)
+data class FitSession(val id: String, val description: String, val timestamp: Long, val distanceValue: Float, val activityType: String)
 data class FitReadResult(val status: Status, val sessions: List<FitSession>)
 
 interface IFitRepository {
@@ -26,7 +25,7 @@ class FitRepository : IFitRepository {
 			// Set a start and end time for our query, using a start time of 1 week before this moment.
 			val cal = Calendar.getInstance()
 			val endTime = cal.timeInMillis
-			cal.add(Calendar.WEEK_OF_YEAR, -1)
+			cal.add(Calendar.MONTH, -1)
 			val startTime = cal.timeInMillis
 
 			// Build a session read request
@@ -41,14 +40,21 @@ class FitRepository : IFitRepository {
 		}.map { result ->
 			val sessions = when {
 				result.status.isSuccess ->
-					result.sessions.map { s ->
-						val description = "${s.activity}, ${s.description}, ${s.name}"
-						FitSession(s.identifier, description, s.getStartTime(TimeUnit.MILLISECONDS))
-					}.sortedByDescending { session -> session.timestamp }
+					result.sessions.map { session ->
+						session to result.getDataSet(session, DataType.TYPE_DISTANCE_DELTA)
+					}.filter { (_, dataSet) ->
+						dataSet.isNotEmpty() && dataSet.first().dataPoints.isNotEmpty()
+					}.map { (session, dataSet) ->
+						val description = session.name
+						val value = dataSet.firstOrNull()?.dataPoints?.firstOrNull()?.getValue(Field.FIELD_DISTANCE)
+
+						val startTime = session.getStartTime(TimeUnit.MILLISECONDS)
+						val distanceValue = if (value?.format == Field.FORMAT_FLOAT) value.asFloat() else 0.0F
+						FitSession(session.identifier, description, startTime, distanceValue, session.activity)
+					}.sortedByDescending(FitSession::timestamp)
 				else -> emptyList()
 			}
 			FitReadResult(result.status, sessions)
-		}.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
+		}
 	}
 }
