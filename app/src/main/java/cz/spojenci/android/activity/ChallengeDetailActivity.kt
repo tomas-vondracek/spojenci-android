@@ -1,5 +1,6 @@
 package cz.spojenci.android.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -23,6 +24,9 @@ import javax.inject.Inject
 class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 
 	companion object {
+
+		val REQUEST_CREATE_ACTIVITY = 1
+
 		fun start(context: Context, challenge: ChallengeItemModel) {
 
 			val intent = Intent(context, ChallengeDetailActivity::class.java)
@@ -54,7 +58,7 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 		val challengeId = intent.getStringExtra("CHALLENGE_ID")
 		val challengeName = intent.getStringExtra("CHALLENGE_NAME")
 		binding.fab.setOnClickListener {
-			presenter.createChallengeActivity(context = this)
+			presenter.createChallengeActivity(context = this, requestCode = REQUEST_CREATE_ACTIVITY)
 		}
 
 		contentBinding.challengeDetailRetry.setOnClickListener {
@@ -65,6 +69,13 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 		observableChallengeDetail = presenter.challengeDetailFor(challengeId, challengeName)
 				.withSchedulers()
 				.bindToLifecycle(this)
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
+		if (requestCode == REQUEST_CREATE_ACTIVITY && resultCode == Activity.RESULT_OK) {
+			loadChallengeDetail()
+		}
 	}
 
 	override fun onStart() {

@@ -6,7 +6,8 @@
 
 	<color name="themeColor">#006ED7</color>
 
-	<color name="separator">#62000000</color>
+	<color name="separator">#60000000</color>
+	<color name="colorWarning">#8eff0000</color>
 
 	<color name="bg_button_white_disabled">#AAAAAA</color>
 	<color name="bg_button_white_pressed">#AA006ED7</color>

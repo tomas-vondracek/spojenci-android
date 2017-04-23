@@ -46,6 +46,7 @@
 	<string name="update_challenge_send">Send</string>
 	<string name="update_challenge_activity_validation">Please fill in the activity value</string>
 	<string name="update_challenge_sent">Activity has been sent</string>
+    <string name="update_challenge_activity_value">Enter your activity value</string>
 
 
 </resources>

@@ -55,9 +55,9 @@ class ChallengeDetailPresenter @Inject constructor(private val challengesRepo: C
 				.startWith(ChallengeDetailViewModel.inProgress(challengeName))
 	}
 
-	fun createChallengeActivity(context: Activity) {
+	fun createChallengeActivity(context: Activity, requestCode: Int) {
 		challengeDetail?.let { detail ->
-			UpdateChallengeActivity.startFromChallenge(context, detail.id, detail.unit)
+			UpdateChallengeActivity.startFromChallengeForResult(context, detail.id, detail.unit, requestCode)
 		}
 	}
 

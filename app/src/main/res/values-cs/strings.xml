@@ -45,4 +45,5 @@
 	<string name="update_challenge_send">Odeslat</string>
 	<string name="update_challenge_activity_validation">Vyplňte aktivitu</string>
 	<string name="update_challenge_sent">Aktivita byla odeslána</string>
+    <string name="update_challenge_activity_value">Zadejte Vaši aktivitu</string>
 </resources>

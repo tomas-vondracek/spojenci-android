@@ -1,6 +1,6 @@
 package cz.spojenci.android.activity
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -26,12 +26,12 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 
 	companion object {
 
-		fun startFromChallenge(context: Context, challengeId: String, challengeUnit: String) {
+		fun startFromChallengeForResult(context: Activity, challengeId: String, challengeUnit: String, requestCode: Int) {
 
 			val intent = Intent(context, UpdateChallengeActivity::class.java)
 			intent.putExtra("CHALLENGE_ID", challengeId)
 			intent.putExtra("CHALLENGE_UNIT", challengeUnit)
-			context.startActivity(intent)
+			context.startActivityForResult(intent, requestCode)
 		}
 	}
 
@@ -61,27 +61,29 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 		presenter.sendActivity()
 				.withSchedulers()
 				.doOnSubscribe {
+					binding.updateErrorMessage.visible = false
 					binding.updateSend.isEnabled = false
 					binding.updateProgress.visible = true
+					binding.updateValue.isEnabled = false
 				}
 				.doAfterTerminate {
 					binding.updateSend.isEnabled = true
 					binding.updateProgress.visible = false
+					binding.updateValue.isEnabled = true
 				}
 				.bindToLifecycle(this)
 				.subscribeBy(
 						onNext = {
 							Toast.makeText(this, R.string.update_challenge_sent, Toast.LENGTH_LONG).show()
+							setResult(Activity.RESULT_OK)
 							finish()
 						},
 						onError = { ex ->
 							Timber.e(ex, "failed to post the challenge update")
 
 							val message = if (ex is IOException) R.string.error_internet else R.string.error_general
-							SimpleDialogFragment.createBuilder(this, supportFragmentManager)
-									.setMessage(message)
-									.setPositiveButtonText(R.string.ok)
-									.show()
+							binding.updateErrorMessage.visible = true
+							binding.updateErrorMessage.text = getString(message)
 						})
 	}
 
