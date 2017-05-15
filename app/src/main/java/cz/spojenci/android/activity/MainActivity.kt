@@ -50,6 +50,7 @@ class MainActivity : BaseActivity() {
 	companion object {
 		const val REQUEST_PERMISSION_LOCATION = 1
 		const val REQUEST_FIT_RESOLUTION = 2
+		const val REQUEST_FIT_DETAIL = 3
 	}
 
 	@Inject lateinit var appPrefs: AppPreferences
@@ -106,7 +107,10 @@ class MainActivity : BaseActivity() {
 		}
 
 		adapter.challengeItemsClicks.bindToLifecycle(this).subscribe { challenge ->
-			ChallengeDetailActivity.start(this, challenge)
+			presenter.openChallengeDetail(this, challenge)
+		}
+		adapter.fitItemsClicks.bindToLifecycle(this).subscribe { fitItem ->
+			presenter.openFitDetail(this, fitItem, REQUEST_FIT_DETAIL)
 		}
 
 		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }

@@ -52,6 +52,11 @@
 			android:name=".activity.WebViewActivity"
 			android:theme="@style/AppTheme.NoActionBar">
 		</activity>
+		<activity android:name=".activity.FitDetailActivity"
+			android:label="@string/title_activity_fit_detail"
+			android:parentActivityName=".activity.MainActivity"
+			android:theme="@style/AppTheme.Dialog">
+		</activity>
 	</application>
 
 </manifest>

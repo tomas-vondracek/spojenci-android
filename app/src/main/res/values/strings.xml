@@ -3,11 +3,13 @@
 	<string name="app_name">Spojenci</string>
 	<string name="reload">Reload</string>
 	<string name="ok">OK</string>
+	<string name="close">Close</string>
 
 	<string name="title_about">About</string>
 	<string name="title_activity_login">Account</string>
 	<string name="title_activity_challenge_detail">Challenge</string>
 	<string name="title_activity_update_challenge">Update Challenge</string>
+	<string name="title_activity_fit_detail">Google Fit Activity</string>
 
 	<!-- login page -->
 	<string name="login_email_description"><![CDATA[Sign In with Email & Password]]></string>
@@ -47,6 +49,9 @@
 	<string name="update_challenge_activity_validation">Please fill in the activity value</string>
 	<string name="update_challenge_sent">Activity has been sent</string>
     <string name="update_challenge_activity_value">Enter your activity value</string>
+
+	<string name="fit_detail_attach_to_challenge">Link with challenge</string>
+	<string name="fit_detail_attached_to_challenge">Linked with challenge %1$s</string>
 
 
 </resources>

@@ -20,5 +20,6 @@ class AppModule(private val context: Context) {
 	@Singleton
 	fun provideFitRepo(): IFitRepository {
 		return FitRepository()
+//		return MockFitRepository()
 	}
 }

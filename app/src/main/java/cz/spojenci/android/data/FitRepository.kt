@@ -32,6 +32,7 @@ class FitRepository : IFitRepository {
 			val readRequest = SessionReadRequest.Builder()
 					.setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
 					.read(DataType.TYPE_DISTANCE_DELTA)
+					.enableServerQueries()
 					.readSessionsFromAllApps()
 					.build()
 

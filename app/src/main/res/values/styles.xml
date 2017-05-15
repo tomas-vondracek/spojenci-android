@@ -13,7 +13,10 @@
 		<item name="windowNoTitle">true</item>
 	</style>
 
-	<style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.MinWidth"/>
+	<style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.MinWidth">
+		<item name="windowNoTitle">true</item>
+
+	</style>
 
 	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 

@@ -3,11 +3,13 @@
 	<string name="app_name">Spojenci</string>
 	<string name="reload">Načíst znovu</string>
 	<string name="ok">OK</string>
+	<string name="close">Zavřít</string>
 
 	<string name="title_about">O aplikaci</string>
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
 	<string name="title_activity_update_challenge">Aktualizovat výzvu</string>
+	<string name="title_activity_fit_detail">Aktivita z Google Fit</string>
 
 	<!-- login page -->
 	<string name="login_email_description"><![CDATA[Přihlásit se e-mailem a heslem]]></string>
@@ -46,4 +48,7 @@
 	<string name="update_challenge_activity_validation">Vyplňte aktivitu</string>
 	<string name="update_challenge_sent">Aktivita byla odeslána</string>
     <string name="update_challenge_activity_value">Zadejte Vaši aktivitu</string>
+
+	<string name="fit_detail_attach_to_challenge">Spojit s výzvou</string>
+	<string name="fit_detail_attached_to_challenge">Spojeno s výzvou %1$s</string>
 </resources>
