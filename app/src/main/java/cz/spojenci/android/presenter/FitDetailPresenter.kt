@@ -1,5 +1,6 @@
 package cz.spojenci.android.presenter
 
+import android.content.Context
 import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.data.local.FitActivityDatabase
@@ -11,9 +12,10 @@ import javax.inject.Inject
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 25/04/17.
  */
-class FitDetailPresenter @Inject constructor(private val challengesRepo: ChallengesRepository,
+class FitDetailPresenter @Inject constructor(private val context: Context,
+                                             private val challengesRepo: ChallengesRepository,
                                              private val db: FitActivityDatabase,
-                                             private val userService: UserService) {
+                                             private val userService: UserService): Presenter() {
 
 	private val challenges: Observable<List<ChallengeItemModel>> = userService.observableUser
 			.flatMap { user ->
@@ -33,7 +35,7 @@ class FitDetailPresenter @Inject constructor(private val challengesRepo: Challen
 				FitDetailViewModel.challenges(challenges, attachedChallengeName.isNotEmpty(), attachedChallengeName)
 			}
 			.doOnError { Timber.e(it, "failed to load challenges into fit detail") }
-			.onErrorReturn { FitDetailViewModel.error() }
+			.onErrorReturn { FitDetailViewModel.error(translateApiRequestError(context, it)) }
 			.startWith(FitDetailViewModel.inProgress())
 
 	fun attachFitActivity(action: FitAttachAction): Observable<FitAttachViewModel> {
@@ -50,7 +52,7 @@ class FitDetailPresenter @Inject constructor(private val challengesRepo: Challen
 					}
 				}
 				.doOnError { Timber.e(it, "failed to attach fit activity") }
-				.onErrorReturn { FitAttachViewModel.error("Failed to attach fit activity.") }
+				.onErrorReturn { FitAttachViewModel.error(translateApiRequestError(context, it)) }
 				.startWith(FitAttachViewModel.attaching())
 	}
 }
@@ -68,11 +70,11 @@ data class FitDetailViewModel(val challenges: List<ChallengeItemModel>,
 						isLoadingChallenges = false,
 						isActivityAttached = activityAttached,
 						attachedChallenge = attachedChallenge)
-		fun error(): FitDetailViewModel =
+		fun error(message: String): FitDetailViewModel =
 				FitDetailViewModel(challenges = emptyList(),
 						isLoadingChallenges = false,
 						isActivityAttached = false,
-						attachedChallenge = "An error occurred while loading challenges")
+						errorMessage = message)
 	}
 }
 

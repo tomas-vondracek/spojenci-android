@@ -8,7 +8,7 @@
 		<import type="android.view.View"/>
 
 		<variable name="challenge"
-			type="cz.spojenci.android.presenter.ChallengeDetailViewModel"/>
+			type="cz.spojenci.android.presenter.ChallengeDetailViewModel.Success"/>
 
 		<variable name="hasActivities"
 			type="Boolean"/>

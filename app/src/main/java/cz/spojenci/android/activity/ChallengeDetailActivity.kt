@@ -100,29 +100,37 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 				.subscribe({ viewModel ->
 					Timber.d("Loaded challenge detail: $viewModel on thread ${Thread.currentThread().name}")
 
-					val isLoading = viewModel.isLoading
+					val isLoading = viewModel is ChallengeDetailViewModel.InProgress
 					contentBinding.challengeDetailProgress.visible = isLoading
-					contentBinding.challengeDetailEmptyContainer.visible = !isLoading && !viewModel.hasActivities
 					binding.fab.isEnabled = !isLoading
 
-					if (!isLoading) {
-						val items = viewModel.activities
+					when (viewModel) {
+						is ChallengeDetailViewModel.Success -> {
+							val items = viewModel.activities
 
-						val list = contentBinding.challengeDetailList
-						val adapter = ChallengeActivityAdapter(this, items)
-						list.adapter = adapter
+							val list = contentBinding.challengeDetailList
+							val adapter = ChallengeActivityAdapter(this, items)
+							list.adapter = adapter
 
-						binding.challengeDetailLabelPrice.visible = true
-						binding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
-						binding.challenge = viewModel
-						contentBinding.challenge = viewModel
-						contentBinding.hasActivities = viewModel.hasActivities
-					} else {
-						binding.toolbar.title = viewModel.name
+							binding.challengeDetailLabelPrice.visible = true
+							binding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
+							binding.challenge = viewModel
+							contentBinding.challenge = viewModel
+							contentBinding.hasActivities = viewModel.hasActivities
+							contentBinding.challengeDetailEmptyContainer.visible = !viewModel.hasActivities
+						}
+						is ChallengeDetailViewModel.Error -> {
+							snackbar(viewModel.message)
+							contentBinding.challengeDetailEmptyContainer.visible = true
+						}
+						is ChallengeDetailViewModel.InProgress -> {
+							binding.toolbar.title = viewModel.name
+							contentBinding.challengeDetailEmptyContainer.visible = false
+						}
 					}
+
 				}, { ex ->
-					Timber.e(ex, "Failed to load challenge detail")
-					snackbar("Failed to load challenge detail " + ex.message)
+					snackbar("Failed to process challenge detail " + ex.message)
 				})
 	}
 

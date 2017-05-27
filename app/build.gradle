@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 ext {
     SUPPORT_VERSION = "25.3.1"
-    GMS_VERSION = "10.2.1"
+    GMS_VERSION = "10.2.6"
     DAGGER_VERSION = "2.10"
     RETROFIT_VERSION = "2.1.0"
 }
@@ -54,7 +54,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.3.1"
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "com.android.support.constraint:constraint-layout:1.0.2"
     compile "com.android.support:appcompat-v7:${SUPPORT_VERSION}"
     compile "com.android.support:design:${SUPPORT_VERSION}"
 

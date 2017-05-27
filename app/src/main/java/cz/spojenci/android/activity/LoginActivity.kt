@@ -21,7 +21,6 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.GoogleApiClient
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
@@ -29,6 +28,7 @@ import cz.spojenci.android.data.LoginType
 import cz.spojenci.android.data.User
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.databinding.ActivityLoginBinding
+import cz.spojenci.android.presenter.Presenter
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
@@ -273,7 +273,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 					updateUI(true)
 				}, { ex ->
 					Timber.e(ex, "Login failed")
-					snackbar("Failed to sign in - " + ex.message)
+					snackbar(Presenter.translateApiRequestError(this, ex))
 
 					signOutFromProvider(loginType)
 					updateUI(false)

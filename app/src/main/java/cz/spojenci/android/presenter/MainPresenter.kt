@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @Singleton
 class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRepository,
                                         private val fitRepo: IFitRepository,
-                                        private val userService: UserService) {
+                                        private val userService: UserService): Presenter() {
 
 	private val emptyChallenges: Observable<List<Challenge>> =
 			Observable.create ({ emitter -> emitter.onNext(emptyList())}, Emitter.BackpressureMode.NONE)

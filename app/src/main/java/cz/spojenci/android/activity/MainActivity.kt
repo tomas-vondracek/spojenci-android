@@ -31,10 +31,7 @@ import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.User
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.presenter.ChallengeItemModel
-import cz.spojenci.android.presenter.ChallengesViewModel
-import cz.spojenci.android.presenter.FitItemModel
-import cz.spojenci.android.presenter.MainPresenter
+import cz.spojenci.android.presenter.*
 import cz.spojenci.android.utils.BoundViewHolder
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
@@ -211,10 +208,10 @@ class MainActivity : BaseActivity() {
 
 				}, onError = { ex ->
 					Timber.e(ex, "Failed to load challenges")
-					snackbar("Failed to load challenges " + ex.message)
+					snackbar(Presenter.translateApiRequestError(this, ex))
 					binding.mainChallengesProgress.visible = false
 					binding.mainChallengesList.visible = false
-					binding.emptyMessage.text = getString(R.string.error_general)
+					binding.emptyMessage.text = Presenter.translateApiRequestError(this, ex)
 					binding.emptyContainer.visible = true
 				})
 	}

@@ -25,8 +25,13 @@
 	<string name="error_incorrect_password">Nesprávné heslo</string>
 	<string name="error_invalid_email">Neplatný e-mail</string>
 	<string name="error_invalid_password">Příliš krátké heslo</string>
+
+	<!-- general errors -->
 	<string name="error_internet">Je problém s připojením k internetu</string>
 	<string name="error_general">Někde se stala chyba</string>
+	<string name="error_auth">Přihlášení vypršelo, přihlašte se prosím znovu</string>
+	<string name="error_bad_request">Bad request</string>
+	<string name="error_server_error">Server error occurred, please try again later</string>
 
 	<string name="main_activity">Moje aktivita</string>
 	<string name="main_activity_empty">Žádné aktivita v Google Fit</string>

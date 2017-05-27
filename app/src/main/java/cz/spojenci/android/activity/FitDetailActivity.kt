@@ -54,12 +54,12 @@ class FitDetailActivity : BaseActivity() {
 					.bindToLifecycle(this)
 					.withSchedulers()
 					.subscribeBy(
-							onNext = { (isAttaching, finished, error) ->
+							onNext = { (isAttaching, finished, errorMessage) ->
 								binding.fitDetailSendProgress.visible = isAttaching
 								binding.fitDetailAttach.isEnabled = !isAttaching
 
-								binding.fitDetailError.visible = error.isNotEmpty()
-								binding.fitDetailError.text = error
+								binding.fitDetailError.visible = errorMessage.isNotEmpty()
+								binding.fitDetailError.text = errorMessage
 
 								if (finished) {
 									setResult(Activity.RESULT_OK)

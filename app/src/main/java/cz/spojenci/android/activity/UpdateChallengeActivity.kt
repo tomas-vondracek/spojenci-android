@@ -12,6 +12,7 @@ import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.databinding.ActivityUpdateChallengeBinding
 import cz.spojenci.android.presenter.CreateActivityForm
+import cz.spojenci.android.presenter.SendActivityViewModel
 import cz.spojenci.android.presenter.UpdateChallengePresentable
 import cz.spojenci.android.presenter.UpdateChallengePresenter
 import cz.spojenci.android.utils.visible
@@ -19,7 +20,6 @@ import cz.spojenci.android.utils.withSchedulers
 import rx.Observable
 import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
@@ -60,30 +60,33 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 	private fun sendUpdate() {
 		presenter.sendActivity()
 				.withSchedulers()
-				.doOnSubscribe {
-					binding.updateErrorMessage.visible = false
-					binding.updateSend.isEnabled = false
-					binding.updateProgress.visible = true
-					binding.updateValue.isEnabled = false
-				}
-				.doAfterTerminate {
-					binding.updateSend.isEnabled = true
-					binding.updateProgress.visible = false
-					binding.updateValue.isEnabled = true
-				}
 				.bindToLifecycle(this)
 				.subscribeBy(
-						onNext = {
-							Toast.makeText(this, R.string.update_challenge_sent, Toast.LENGTH_LONG).show()
-							setResult(Activity.RESULT_OK)
-							finish()
+						onNext = { vm ->
+							when (vm) {
+								is SendActivityViewModel.Success -> {
+									Toast.makeText(this, R.string.update_challenge_sent, Toast.LENGTH_LONG).show()
+									setResult(Activity.RESULT_OK)
+									finish()
+								}
+								is SendActivityViewModel.InProgress -> {
+									binding.updateErrorMessage.visible = false
+									binding.updateSend.isEnabled = false
+									binding.updateProgress.visible = true
+									binding.updateValue.isEnabled = false
+								}
+								is SendActivityViewModel.Error -> {
+									binding.updateSend.isEnabled = true
+									binding.updateProgress.visible = false
+									binding.updateValue.isEnabled = true
+
+									binding.updateErrorMessage.visible = true
+									binding.updateErrorMessage.text = vm.message
+								}
+							}
 						},
 						onError = { ex ->
-							Timber.e(ex, "failed to post the challenge update")
-
-							val message = if (ex is IOException) R.string.error_internet else R.string.error_general
-							binding.updateErrorMessage.visible = true
-							binding.updateErrorMessage.text = getString(message)
+							Timber.e(ex, "failed to process the challenge update")
 						})
 	}
 
