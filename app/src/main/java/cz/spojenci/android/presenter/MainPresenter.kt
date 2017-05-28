@@ -35,6 +35,10 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 
 	private var challengesWithCache: Observable<ChallengesViewModel>? = null
 
+	val isUserSignedIn: Boolean
+		get() = userService.isSignedIn
+
+
 	val challenges: Observable<ChallengesViewModel>
 		get() {
 			synchronized(this) {

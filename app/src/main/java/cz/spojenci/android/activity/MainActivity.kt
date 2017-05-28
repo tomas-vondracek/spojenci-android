@@ -148,7 +148,7 @@ class MainActivity : BaseActivity() {
 
 		if (isFitConnected) {
 			connectFitApiClient()
-		} else {
+		} else if (presenter.isUserSignedIn) {
 			binding.mainFitConnect.fitConnect.visible = true
 			// slide in
 			val height = resources.getDimension(R.dimen.bottom_bar_height)
