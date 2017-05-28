@@ -15,13 +15,16 @@
 	<!-- login page -->
 	<string name="login_email_description"><![CDATA[Sign In with Email & Password]]></string>
 	<string name="login_revoke">Revoke access</string>
-	<string name="login_disconnect">disconnect</string>
+	<string name="login_disconnect">Sign Out</string>
+	<string name="login_disconnect_ask">Do you want to sign out?</string>
 	<string name="login_status_connected">Signed In as %1$s</string>
 	<string name="login_prompt_email">Email</string>
 	<string name="login_prompt_password">Password</string>
 	<string name="login_action_sign_in">Sign in with Email</string>
 	<string name="login_action_sign_in_short">Sign in</string>
 	<string name="login_in_process">Signing in…</string>
+	<string name="login_expired">Login has expired, do you want to sign in again?</string>
+	<string name="login_user_profile_failed">Failed to load user profile</string>
 	<string name="error_invalid_email">This email address is invalid</string>
 	<string name="error_invalid_password">This password is too short</string>
 	<string name="error_incorrect_password">This password is incorrect</string>
@@ -30,7 +33,7 @@
 	<!-- general errors -->
 	<string name="error_internet">There seems to be a connectivity problem</string>
 	<string name="error_general">Something went wrong</string>
-	<string name="error_auth">Login timed out, please sign in again</string>
+	<string name="error_auth">Login has expired, please sign in again</string>
 	<string name="error_bad_request">Bad request</string>
 	<string name="error_server_error">Server error occurred, please try again later</string>
 

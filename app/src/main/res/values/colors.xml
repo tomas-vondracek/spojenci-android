@@ -8,6 +8,7 @@
 
 	<color name="separator">#60000000</color>
 	<color name="colorWarning">#8eff0000</color>
+	<color name="colorPositive">#2b9900</color>
 
 	<color name="bg_button_white_disabled">#AAAAAA</color>
 	<color name="bg_button_white_pressed">#AA006ED7</color>

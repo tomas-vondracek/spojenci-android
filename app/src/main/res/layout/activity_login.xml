@@ -149,25 +149,72 @@
 
 		<FrameLayout
 			android:id="@+id/login_sign_out_container"
-			style="?android:buttonBarStyle"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:orientation="horizontal"
 			android:visibility="gone"
 			tools:visibility="visible">
 
-			<TextView android:id="@+id/login_status"
-				style="?android:textAppearanceLarge"
+			<RelativeLayout android:id="@+id/login_profile_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
-				android:gravity="center"
-				android:text="@string/login_status_connected"/>
+				android:animateLayoutChanges="true"
+				android:paddingStart="@dimen/activity_horizontal_margin"
+				android:paddingEnd="@dimen/activity_horizontal_margin"
+				android:paddingTop="@dimen/activity_vertical_margin">
+
+				<de.hdodenhof.circleimageview.CircleImageView
+					xmlns:app="http://schemas.android.com/apk/res-auto"
+					android:id="@+id/login_user_photo"
+					android:layout_width="@dimen/profile_photo_size"
+					android:layout_height="@dimen/profile_photo_size"
+					android:layout_alignParentStart="true"
+					android:layout_alignParentTop="true"
+					app:civ_border_width="1dp"
+					app:civ_border_color="@android:color/black"/>
+
+				<TextView android:id="@+id/login_user_name"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="@dimen/padding_large"
+					android:layout_alignParentTop="true"
+					android:layout_toEndOf="@+id/login_user_photo"
+					android:gravity="center_vertical"
+					tools:text="User Name"/>
+
+				<TextView android:id="@+id/login_status"
+					style="?android:textAppearanceMedium"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:layout_below="@+id/login_user_name"
+					android:layout_alignStart="@+id/login_user_name"
+					android:layout_alignWithParentIfMissing="true"
+					android:layout_marginTop="@dimen/padding"
+					android:gravity="center"
+					android:text="@string/login_status_connected"/>
+
+				<ProgressBar android:id="@+id/login_profile_progress"
+					style="?android:progressBarStyleHorizontal"
+					android:indeterminateOnly="true"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_margin="@dimen/padding"
+					android:layout_centerHorizontal="true"
+					android:layout_below="@+id/login_status"
+					android:visibility="invisible"
+					tools:visibility="visible"/>
+
+			</RelativeLayout>
+
 
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_gravity="bottom">
+				android:layout_gravity="bottom"
+				style="?android:buttonBarStyle">
 
 				<Button
 					style="?android:buttonBarButtonStyle"
@@ -175,6 +222,7 @@
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
+					android:visibility="gone"
 					android:text="@string/login_revoke"/>
 
 				<Button

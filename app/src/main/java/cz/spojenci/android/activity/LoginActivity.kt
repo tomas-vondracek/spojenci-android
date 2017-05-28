@@ -7,10 +7,11 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import com.avast.android.dialogs.fragment.SimpleDialogFragment
+import com.avast.android.dialogs.iface.IPositiveButtonDialogListener
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -22,6 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.squareup.picasso.Picasso
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.LoginType
@@ -37,10 +40,12 @@ import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
 import javax.inject.Inject
 
-class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedListener {
+class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener, IPositiveButtonDialogListener {
 
 	companion object {
 		private const val RC_GOOGLE_SIGN_IN: Int = 1
+		private const val RC_LOGIN_EXPIRED: Int = 2
+		private const val RC_ASK_SIGN_OUT: Int = 3
 
 		fun start(context: Context) {
 			val intent = Intent(context, LoginActivity::class.java)
@@ -78,7 +83,14 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		val signInButton = binding.loginGoogle
 		signInButton.setOnClickListener { signInWithGoogle() }
 
-		binding.loginSignOut.setOnClickListener { signOut() }
+		binding.loginSignOut.setOnClickListener {
+			SimpleDialogFragment.createBuilder(this, supportFragmentManager)
+					.setRequestCode(RC_ASK_SIGN_OUT)
+					.setMessage(R.string.login_disconnect_ask)
+					.setPositiveButtonText(R.string.login_disconnect)
+					.setNegativeButtonText(R.string.close)
+					.show()
+		}
 
 		callbackManager = com.facebook.CallbackManager.Factory.create()
 		val loginManager = LoginManager.getInstance()
@@ -89,20 +101,20 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			override fun onError(error: FacebookException?) {
 				Timber.w(error, "Facebook login failed")
 				snackbar(error?.message ?: "Facebook error")
-				updateUI(false)
+				updateUI(null)
 			}
 
 			override fun onCancel() {
 				Timber.d("Facebook login canceled")
 				snackbar("Facebook canceled")
-				updateUI(false)
+				updateUI(null)
 			}
 
 			override fun onSuccess(result: LoginResult) {
 				val accessToken = result.accessToken
 				Timber.d("Facebook login result: $accessToken for user id ${accessToken.userId} " +
 						"from source ${accessToken.source} with expiration ${accessToken.expires}")
-				showProgress(true, { binding.loginContainer.visible = false })
+				showLoginProgress(true, { binding.loginContainer.visible = false })
 				singInOnServer(accessToken.token, LoginType.FACEBOOK)
 			}
 		})
@@ -117,16 +129,11 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 		binding.loginEmailSignInButton.setOnClickListener { signInWithEmail() }
 
-		updateUI(service.isSignedIn)
+		updateUI(service.user)
 
 		if (service.isSignedIn) {
-			service.updateUserProfile()
-					.withSchedulers()
-					.subscribeBy(onNext = { user ->
-						Timber.d("updated user: $user")
-					}, onError = { ex ->
-						Timber.e(ex, "failed to update user profile")
-					})
+			// refresh user profile
+			loadUserProfile()
 		}
 	}
 
@@ -141,6 +148,12 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		}
 	}
 
+	override fun onPositiveButtonClicked(requestCode: Int) {
+		if (requestCode == RC_LOGIN_EXPIRED || requestCode == RC_ASK_SIGN_OUT) {
+			signOut()
+		}
+	}
+
 	override fun onConnectionFailed(result: ConnectionResult) {
 		Timber.i("Google Play services connection failed. Cause: %s", result.toString())
 		Snackbar.make(
@@ -149,11 +162,42 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				Snackbar.LENGTH_LONG).show()
 	}
 
+	private fun loadUserProfile() {
+		service.updateUserProfile()
+				.withSchedulers()
+				.bindToLifecycle(this)
+				.doOnSubscribe { binding.loginProfileProgress.visible = true }
+				.doOnTerminate { binding.loginProfileProgress.visible = false }
+				.subscribeBy(onNext = { user ->
+					Timber.d("updated user: $user")
+					updateUI(user)
+				}, onError = { ex ->
+					Timber.e(ex, "failed to update user profile")
+					updateUI(service.user)
+
+					if (Presenter.isAuthError(ex)) {
+						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
+								.setRequestCode(RC_LOGIN_EXPIRED)
+								.setMessage(R.string.login_expired)
+								.setTitle(R.string.login_user_profile_failed)
+								.setPositiveButtonText(R.string.ok)
+								.setNegativeButtonText(R.string.close)
+								.show()
+					} else {
+						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
+								.setMessage(Presenter.translateApiRequestError(this, ex))
+								.setTitle(R.string.login_user_profile_failed)
+								.setPositiveButtonText(R.string.ok)
+								.show()
+					}
+				})
+	}
+
 	private fun signInWithGoogle() {
 		val signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient)
 		startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
 
-		showProgress(false, { binding.loginContainer.visible = true })
+		showLoginProgress(false, { binding.loginContainer.visible = true })
 	}
 
 	private fun handleGoogleSignInResult(result: GoogleSignInResult) {
@@ -163,14 +207,14 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			// Signed in successfully, show authenticated UI.
 			val account = result.signInAccount
 			Timber.d("signed in with google account %s", account)
-			showProgress(true, { binding.loginContainer.visible = false })
+			showLoginProgress(true, { binding.loginContainer.visible = false })
 			singInOnServer(idToken, LoginType.GOOGLE)
 		} else {
 			if (result.status.isCanceled) {
 				snackbar("Google sign in request canceled")
 			}
 			// Signed out, show unauthenticated UI.
-			updateUI(false)
+			updateUI(null)
 		}
 	}
 
@@ -181,12 +225,12 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 
 			service.signOut().withSchedulers()
 				.subscribe({
-					updateUI(false)
+					updateUI(null)
 				}, { ex ->
 					Timber.e(ex, "Sign Out failed")
 					snackbar("Failed to sign out - " + ex.message)
 
-					updateUI(true)
+					updateUI(service.user)
 				})
 		}
 	}
@@ -247,7 +291,7 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 			// form field with an error.
 			focusView?.requestFocus()
 		} else {
-			showProgress(true, { binding.loginContainer.visible = false })
+			showLoginProgress(true, { binding.loginContainer.visible = false })
 
 			singInOnServer(email, password)
 
@@ -270,13 +314,13 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 				.subscribe({ user ->
 					Timber.i("Successfully signed in as user %s", user)
 
-					updateUI(true)
+					updateUI(user)
 				}, { ex ->
 					Timber.e(ex, "Login failed")
 					snackbar(Presenter.translateApiRequestError(this, ex))
 
 					signOutFromProvider(loginType)
-					updateUI(false)
+					updateUI(null)
 				})
 	}
 
@@ -290,23 +334,37 @@ class LoginActivity : AppCompatActivity(), GoogleApiClient.OnConnectionFailedLis
 		return password.length >= 4
 	}
 
-	private fun updateUI(signedIn: Boolean) {
-		showProgress(false)
-		if (signedIn) {
-			binding.loginContainer.visible = false
-			binding.loginSignOutContainer.visible = true
-		} else {
-			binding.loginContainer.visible = true
-			binding.loginSignOutContainer.visible = false
+	private fun updateUI(user: User?) {
+		val signedIn = user != null
+
+		showLoginProgress(false)
+		binding.loginContainer.visible = !signedIn
+		binding.loginSignOutContainer.visible = signedIn
+
+		binding.loginUserPhoto.visible = signedIn
+		binding.loginUserName.visible = signedIn
+
+		user?.apply {
+			binding.loginUserName.text = name
+			binding.loginStatus.text = email
+
+			val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
+			photo_url?.let { url ->
+				Picasso.with(this@LoginActivity)
+						.load(url)
+						.noFade()
+						.resize(size, size)
+						.placeholder(R.drawable.user_silhouette)
+						.into(binding.loginUserPhoto)
+			}
 		}
-		binding.loginStatus.text = getString(R.string.login_status_connected, service.user?.email ?: "")
 	}
 
 	/**
 	 * Shows the progress UI and hides the login form.
 	 */
-	private fun showProgress(showProgress: Boolean,
-	                         animationCallback: () -> Unit = { }) {
+	private fun showLoginProgress(showProgress: Boolean,
+	                              animationCallback: () -> Unit = { }) {
 		if (binding.loginProgress.visible == showProgress) {
 			return
 		}

@@ -41,5 +41,7 @@ open class Presenter {
 				}
 			}
 		}
+
+		fun isAuthError(ex: Throwable) = ex is HttpException && ex.code() == 401
 	}
 }
