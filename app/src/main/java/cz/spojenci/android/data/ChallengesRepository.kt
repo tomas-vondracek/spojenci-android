@@ -11,20 +11,29 @@ import javax.inject.Singleton
 @Singleton
 class ChallengesRepository @Inject constructor(private val endpoint: IChallengesEndpoint) {
 
+    private val challengesInMemory: MutableMap<String, List<Challenge>> = mutableMapOf()
+
     @Suppress("SENSELESS_COMPARISON")
-    fun challengesForUser(userId: String): Observable<List<Challenge>> =
-            endpoint.challengesForUser(userId)
-                    .flatMap { Observable.from(it) }
-//                    .map { challenge ->
-//                        val owner = UserRef(userId, "")
-//                        val paid = BigDecimal(challenge.prispevkycelkem)
-//                        val unit = challenge.performance ?: ""
-//
-//                        Challenge(challenge.uid.toString(), challenge.title ?: "", unit, paid, owner, challenge.status
-//                                ?: "")
-//                    }
-                    .filter { it != null && it.id != null && it.name != null }
-                    .toList()
+    fun challengesForUser(userId: String, forceRefresh: Boolean = false): Observable<List<Challenge>> {
+        val cachedChallenges: Observable<List<Challenge>>
+        if (forceRefresh) {
+            challengesInMemory.remove(userId)
+            cachedChallenges = Observable.empty()
+        } else {
+            cachedChallenges = Observable.fromCallable { challengesInMemory[userId] }
+                    .compose(logSource("MEMORY"))
+        }
+
+        val challengesOnServer = endpoint.challengesForUser(userId)
+                .flatMap { Observable.from(it) }
+                .filter { it != null && it.id != null && it.name != null }
+                .toList()
+                .compose(logSource("SERVER"))
+                .doOnNext { challengesInMemory.put(userId, it) }
+
+        return Observable.concat(cachedChallenges, challengesOnServer)
+                .first { list -> list != null }
+    }
 
     fun challengeDetail(challengeId: String): Observable<ChallengeDetail> =
             endpoint.challenge(challengeId)

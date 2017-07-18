@@ -28,47 +28,44 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 	private val emptyChallenges: Observable<List<Challenge>> =
 			Observable.create ({ emitter -> emitter.onNext(emptyList())}, Emitter.BackpressureMode.NONE)
 
-	private val challengesFromRepo: Observable<List<Challenge>> = userService.observableUser
-			.flatMap { user ->
-				if (user != null) challengesRepo.challengesForUser(user.id) else emptyChallenges
-			}
-
 	private var challengesWithCache: Observable<ChallengesViewModel>? = null
 
 	val isUserSignedIn: Boolean
 		get() = userService.isSignedIn
 
-
-	val challenges: Observable<ChallengesViewModel>
-		get() {
-			synchronized(this) {
-				if (challengesWithCache == null) {
-					challengesWithCache = challengesFromRepo
-							.map { list ->
-								val contributions =
-										if (list.isNotEmpty()) {
-											list.map { it.paid ?: BigDecimal.ZERO }.reduce { paid1, paid2 -> paid1 + paid2 }
-										} else BigDecimal.ZERO
-								val items = list.map { ChallengeItemModel.fromChallenge(it) }
-								ChallengesViewModel(userService.user, items, contributions)
-							}
-							.replay(1)
-							.autoConnect()
-				}
-				return challengesWithCache!!
+	private fun challengesFromRepo(forceRefresh: Boolean): Observable<List<Challenge>> = userService.observableUser
+			.flatMap { user ->
+				if (user != null) challengesRepo.challengesForUser(user.id, forceRefresh = forceRefresh) else emptyChallenges
 			}
+
+
+	fun challenges(forceRefresh: Boolean = false): Observable<ChallengesViewModel> {
+		synchronized(this) {
+			if (forceRefresh) {
+				challengesWithCache = null
+			}
+
+			if (challengesWithCache == null) {
+				challengesWithCache = challengesFromRepo(forceRefresh = forceRefresh)
+						.map { list ->
+							val contributions =
+									if (list.isNotEmpty()) {
+										list.map { it.paid ?: BigDecimal.ZERO }.reduce { paid1, paid2 -> paid1 + paid2 }
+									} else BigDecimal.ZERO
+							val items = list.map { ChallengeItemModel.fromChallenge(it) }
+							ChallengesViewModel(userService.user, items, contributions)
+						}
+						.replay(1)
+						.autoConnect()
+			}
+			return challengesWithCache!!
 		}
+	}
 
 	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> =
 			fitRepo.sessions(apiClient).map { (status, sessions) ->
 				FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
 			}
-
-	fun clearChallengeCache() {
-		synchronized(this) {
-			challengesWithCache = null
-		}
-	}
 
 	fun openFitDetail(activity: Activity, fitItem: FitItemModel, requestCode: Int) {
 		FitDetailActivity.startForResult(activity, fitItem, requestCode)

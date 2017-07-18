@@ -31,12 +31,14 @@ import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.data.User
 import cz.spojenci.android.databinding.*
 import cz.spojenci.android.pref.AppPreferences
-import cz.spojenci.android.presenter.*
+import cz.spojenci.android.presenter.ChallengeItemModel
+import cz.spojenci.android.presenter.FitItemModel
+import cz.spojenci.android.presenter.MainPresenter
+import cz.spojenci.android.presenter.Presenter
 import cz.spojenci.android.utils.BoundViewHolder
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
-import rx.Observable
 import rx.lang.kotlin.subscribeBy
 import rx.subjects.PublishSubject
 import timber.log.Timber
@@ -77,15 +79,6 @@ class MainActivity : BaseActivity() {
 				.build()
 	}
 
-	private val observableChallenges: Observable<ChallengesViewModel>
-		get() = presenter.challenges
-				.withSchedulers()
-				.bindToLifecycle(this)
-				.doOnSubscribe {
-					binding.mainChallengesProgress.visible = true
-					binding.mainChallengesList.visible = false
-				}
-
 	private lateinit var binding: ActivityMainBinding
 	private lateinit var adapter: CombinedDataAdapter
 
@@ -113,8 +106,7 @@ class MainActivity : BaseActivity() {
 		binding.mainConnectAccount.setOnClickListener { LoginActivity.start(this) }
 		binding.mainUser.setOnClickListener { LoginActivity.start(this) }
 		binding.emptyRetry.setOnClickListener {
-			presenter.clearChallengeCache()
-			loadChallenges()
+			loadChallenges(forceRefresh = true)
 		}
 
 	}
@@ -174,8 +166,7 @@ class MainActivity : BaseActivity() {
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 		when (item?.itemId) {
 			R.id.menu_main_reload -> {
-				presenter.clearChallengeCache()
-				loadChallenges()
+				loadChallenges(forceRefresh = true)
 				return true
 			}
 			R.id.menu_main_about -> {
@@ -191,8 +182,14 @@ class MainActivity : BaseActivity() {
 		return super.onOptionsItemSelected(item)
 	}
 
-	private fun loadChallenges() {
-		observableChallenges
+	private fun loadChallenges(forceRefresh: Boolean = false) {
+		presenter.challenges(forceRefresh)
+				.withSchedulers()
+				.bindToLifecycle(this)
+				.doOnSubscribe {
+					binding.mainChallengesProgress.visible = true
+					binding.mainChallengesList.visible = false
+				}
 				.subscribeBy(onNext = { viewModel ->
 					val user = viewModel.user
 					updateUserUi(user)
