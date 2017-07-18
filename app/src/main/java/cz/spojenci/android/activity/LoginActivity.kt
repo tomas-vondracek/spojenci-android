@@ -46,6 +46,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 		private const val RC_GOOGLE_SIGN_IN: Int = 1
 		private const val RC_LOGIN_EXPIRED: Int = 2
 		private const val RC_ASK_SIGN_OUT: Int = 3
+		private const val RC_GOOGLE_RESOLUTION: Int = 4
 
 		fun start(context: Context) {
 			val intent = Intent(context, LoginActivity::class.java)
@@ -201,7 +202,8 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 	}
 
 	private fun handleGoogleSignInResult(result: GoogleSignInResult) {
-		Timber.d("handleSignInResult:" + result.status)
+		val status = result.status
+		Timber.d("handleSignInResult:" + status)
 		val idToken = result.signInAccount?.idToken
 		if (result.isSuccess && idToken != null) {
 			// Signed in successfully, show authenticated UI.
@@ -210,8 +212,11 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 			showLoginProgress(true, { binding.loginContainer.visible = false })
 			singInOnServer(idToken, LoginType.GOOGLE)
 		} else {
-			if (result.status.isCanceled) {
-				snackbar("Google sign in request canceled")
+			when {
+				status.hasResolution() -> status.startResolutionForResult(this, RC_GOOGLE_RESOLUTION)
+				status.isCanceled -> snackbar("Google sign in request canceled")
+				status.isInterrupted -> snackbar("Google sign in request interrupted")
+				else -> snackbar(status.statusMessage ?: "Google sign in failed; error code: ${status.statusCode}")
 			}
 			// Signed out, show unauthenticated UI.
 			updateUI(null)

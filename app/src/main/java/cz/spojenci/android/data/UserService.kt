@@ -63,6 +63,9 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 			throw IllegalArgumentException("illegal login type $type for social login")
 		}
 		val signInRequest = endpoint.login(LoginRequest.social(token, type))
+				.doOnNext({ response ->
+					Timber.d("login response: $response")
+				})
 
 		return signIn(signInRequest, type)
 	}
