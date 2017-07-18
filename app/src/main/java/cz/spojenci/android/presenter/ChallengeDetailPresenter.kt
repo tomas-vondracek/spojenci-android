@@ -83,13 +83,6 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 
 sealed class ChallengeDetailViewModel {
 
-//	companion object Factory {
-//
-//		fun inProgress(name: String): ChallengeDetailViewModel {
-//			return ChallengeDetailViewModel(name, "", "", "", emptyList(), true)
-//		}
-//	}
-
 	data class Success(val name: String,
 	                   val attributions: String,
 	                   val unitPrice: String,
