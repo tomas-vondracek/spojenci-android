@@ -8,6 +8,7 @@ import com.google.android.gms.common.api.Status
 import cz.spojenci.android.activity.ChallengeDetailActivity
 import cz.spojenci.android.activity.FitDetailActivity
 import cz.spojenci.android.data.*
+import cz.spojenci.android.data.local.FitActivityDatabase
 import cz.spojenci.android.utils.formatAsDateTime
 import cz.spojenci.android.utils.formatAsDistance
 import cz.spojenci.android.utils.formatAsPrice
@@ -23,6 +24,7 @@ import javax.inject.Singleton
 @Singleton
 class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRepository,
                                         private val fitRepo: IFitRepository,
+                                        private val db: FitActivityDatabase,
                                         private val userService: UserService): Presenter() {
 
 	private val emptyChallenges: Observable<List<Challenge>> =
@@ -62,10 +64,22 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 		}
 	}
 
-	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> =
-			fitRepo.sessions(apiClient).map { (status, sessions) ->
-				FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
+	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> {
+		val attachedFitActivity = userService.observableUser.flatMap {
+			db.fitActivityForUser(it?.id ?: "").map {
+				it.map { it.fitActivityId } .toHashSet()
 			}
+		}
+
+		val viewModels = fitRepo.sessions(apiClient).map { (status, sessions) ->
+			FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
+		}
+
+		return Observable.zip(viewModels, attachedFitActivity) { viewModel, activities ->
+			viewModel.items.forEach { item -> item.isAttached = activities.contains(item.id) }
+			viewModel
+		}
+	}
 
 	fun openFitDetail(activity: Activity, fitItem: FitItemModel, requestCode: Int) {
 		FitDetailActivity.startForResult(activity, fitItem, requestCode)
@@ -83,7 +97,8 @@ data class ChallengesViewModel(val user: User?,
 	fun contributions(currency: String): String = contributions.formatAsPrice(currency)
 }
 
-data class FitItemModel(val id: String, val description: String, val time: String, val value: String) : Parcelable {
+data class FitItemModel(val id: String, val description: String, val time: String, val value: String,
+                        var isAttached: Boolean = false) : Parcelable {
 
 	companion object {
 		fun fromFitSession(session: FitSession): FitItemModel {
@@ -99,7 +114,7 @@ data class FitItemModel(val id: String, val description: String, val time: Strin
 		}
 	}
 
-	constructor(source: Parcel) : this(source.readString(), source.readString(), source.readString(), source.readString())
+	constructor(source: Parcel) : this(source.readString(), source.readString(), source.readString(), source.readString(), source.readInt() == 1)
 
 	override fun describeContents() = 0
 
@@ -108,6 +123,7 @@ data class FitItemModel(val id: String, val description: String, val time: Strin
 		dest?.writeString(description)
 		dest?.writeString(time)
 		dest?.writeString(value)
+		dest?.writeInt(if (isAttached) 1 else 0)
 	}
 }
 

@@ -1,6 +1,7 @@
 package cz.spojenci.android.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -117,6 +118,9 @@ class MainActivity : BaseActivity() {
 
 		if (requestCode == REQUEST_FIT_RESOLUTION && resultCode == RESULT_OK) {
 			onFitAccessAvailable()
+		} else if (requestCode == REQUEST_FIT_DETAIL && resultCode == Activity.RESULT_OK) {
+			loadChallenges(forceRefresh = true)
+			loadFitSessions()
 		}
 	}
 
@@ -248,6 +252,10 @@ class MainActivity : BaseActivity() {
 	}
 
 	private fun onFitAccessAvailable() {
+		loadFitSessions()
+	}
+
+	private fun loadFitSessions() {
 		presenter.fitActivity(apiClient)
 				.bindToLifecycle(this)
 				.withSchedulers()

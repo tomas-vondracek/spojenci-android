@@ -58,6 +58,14 @@ class FitActivityDatabase @Inject constructor(val db: BriteDatabase) {
 					FitActivityRecord.fromCursor(c)
 				}
 	}
+
+	fun fitActivityForUser(userId: String): Observable<List<FitActivityRecord>> {
+		val query = "SELECT * FROM $tableNameActivity WHERE user_id == \"$userId\""
+		return db.createQuery(tableNameActivity, query)
+				.mapToList { c ->
+					FitActivityRecord.fromCursor(c)
+				}
+	}
 }
 
 data class FitActivityRecord(val challengeId: String, val fitActivityId: String, val userId: String, val timeStamp: Long) {

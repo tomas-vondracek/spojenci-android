@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools">
 
 	<data>
+		<import type="android.view.View"/>
 		<import type="cz.spojenci.android.presenter.FitItemModel"/>
 
 		<variable name="item"
@@ -19,21 +21,32 @@
 		android:paddingTop="@dimen/padding"
 		android:paddingBottom="@dimen/padding">
 
+		<ImageView android:id="@+id/item_activity_icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="@dimen/padding"
+			app:srcCompat="@drawable/ic_check_48"
+			android:visibility="@{item.attached ? View.VISIBLE : View.GONE}"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentStart="true"/>
+
 		<TextView android:id="@+id/item_activity_description"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignParentStart="true"
-			android:layout_alignParentTop="true"
-			android:layout_toEndOf="@+id/item_activity_value"
+			android:layout_alignWithParentIfMissing="true"
+			android:layout_toEndOf="@+id/item_activity_icon"
+			android:layout_toStartOf="@+id/item_activity_value"
 			android:layout_alignBaseline="@+id/item_activity_value"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="SessionDescription"
 			android:text="@{item.description}"
-			android:maxLines="1"/>
+			android:maxLines="1"
+			android:layout_alignParentTop="true"/>
 		<TextView android:id="@+id/item_activity_time"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_below="@+id/item_activity_description"
+			android:layout_alignStart="@+id/item_activity_description"
 			android:layout_marginTop="@dimen/padding"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			tools:text="22.4.2017"
@@ -44,6 +57,7 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentEnd="true"
 			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:gravity="end"
 			tools:text="21.5 km"
 			android:text="@{item.value}"
 			android:maxLines="1"/>
