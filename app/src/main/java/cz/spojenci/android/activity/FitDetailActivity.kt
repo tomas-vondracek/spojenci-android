@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
@@ -24,6 +25,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class FitDetailActivity : BaseActivity() {
+
 	companion object {
 
 		fun startForResult(context: Activity, fitActivity: FitItemModel, requestCode: Int) {
@@ -46,6 +48,14 @@ class FitDetailActivity : BaseActivity() {
 		val fitActivityModel = intent.getParcelableExtra<FitItemModel>("FIT_ACTIVITY")
 		title = fitActivityModel.description
 
+		binding.fitDetailChallengePicker.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+			override fun onNothingSelected(parent: AdapterView<*>?) { }
+
+			override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+				val model = parent.selectedItem as ChallengeItemModel
+				binding.fitDetailAttach.text = "${getString(R.string.fit_detail_attach_to_challenge)} - ${model.name}"
+			}
+		}
 		binding.fitActivity = fitActivityModel
 		binding.fitDetailAttach.setOnClickListener {
 			val challengeItem = binding.fitDetailChallengePicker.selectedItem as ChallengeItemModel

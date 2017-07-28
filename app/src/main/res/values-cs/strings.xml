@@ -57,6 +57,6 @@
 	<string name="update_challenge_sent">Aktivita byla odeslána</string>
     <string name="update_challenge_activity_value">Zadejte Vaši aktivitu</string>
 
-	<string name="fit_detail_attach_to_challenge">Spojit s výzvou</string>
-	<string name="fit_detail_attached_to_challenge">Spojeno s výzvou %1$s</string>
+	<string name="fit_detail_attach_to_challenge">Vykázat aktivitu</string>
+	<string name="fit_detail_attached_to_challenge">Vykázáno k výzvě %1$s</string>
 </resources>
