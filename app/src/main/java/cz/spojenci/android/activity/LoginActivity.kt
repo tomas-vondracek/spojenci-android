@@ -68,6 +68,9 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 		FacebookSdk.sdkInitialize(applicationContext)
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+		setSupportActionBar(binding.toolbar)
+		supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
 		val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -350,8 +353,14 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 		binding.loginUserName.visible = signedIn
 
 		user?.apply {
-			binding.loginUserName.text = name
+			binding.loginUserName.text = "$name $surname"
 			binding.loginStatus.text = email
+			val loginProvider = when (service.userLoginType ?: LoginType.EMAIL) {
+				LoginType.FACEBOOK -> "Facebook"
+				LoginType.GOOGLE -> "Google"
+				else -> "E-mail"
+			}
+			binding.loginProvider.text = getString(R.string.login_status_connected, loginProvider)
 
 			val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
 			photo_url?.let { url ->

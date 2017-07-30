@@ -2,7 +2,7 @@ package cz.spojenci.android.data
 
 import java.math.BigDecimal
 
-data class User(val id: String, val loginType: String, val name: String, val email: String, val photo_url: String?)
+data class User(val id: String, val loginType: String, val name: String, val surname: String, val email: String, val photo_url: String?)
 
 data class UserRef(val user_id: String, val user_name: String)
 

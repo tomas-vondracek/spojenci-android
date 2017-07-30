@@ -17,6 +17,15 @@
 		<item name="windowNoTitle">true</item>
 
 	</style>
+	<style name="AppTheme.Dialog.Big" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize">
+		<item name="windowNoTitle">true</item>
+		<item name="windowFixedWidthMinor">95%</item>
+		<item name="android:windowMinWidthMinor">95%</item>
+		<item name="windowMinWidthMinor">95%</item>
+		<item name="windowMinWidthMajor">60%</item>
+		<item name="windowFixedHeightMajor">90%</item>
+
+	</style>
 
 	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 

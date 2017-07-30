@@ -28,6 +28,7 @@
 			android:name=".activity.LoginActivity"
 			android:label="@string/title_activity_login"
 			android:parentActivityName=".activity.MainActivity"
+			android:theme="@style/AppTheme.Dialog.Big"
 			android:windowSoftInputMode="stateHidden">
 		</activity>
 		<activity

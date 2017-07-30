@@ -20,7 +20,7 @@
 	<string name="login_in_process">Přihlašování</string>
 	<string name="login_prompt_email">E-mail</string>
 	<string name="login_prompt_password">Heslo</string>
-	<string name="login_status_connected">Přihlášen jako %1$s</string>
+	<string name="login_status_connected">Přihlášen přes %1$s</string>
 	<string name="login_expired">Přihlášení vypršelo, chcete se přihlásit znovu?</string>
 	<string name="login_user_profile_failed">Nastala chyba při načítání profilu</string>
 	<string name="login_disconnect_ask">Chcete se odhlásit?</string>
