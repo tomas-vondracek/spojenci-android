@@ -23,6 +23,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.firebase.crash.FirebaseCrash
 import com.squareup.picasso.Picasso
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
@@ -180,6 +181,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 					updateUI(service.user)
 
 					if (Presenter.isAuthError(ex)) {
+						FirebaseCrash.report(Exception("user login expired", ex))
 						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
 								.setRequestCode(RC_LOGIN_EXPIRED)
 								.setMessage(R.string.login_expired)

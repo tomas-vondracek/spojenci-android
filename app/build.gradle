@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'kotlin-android'
 
 ext {
     SUPPORT_VERSION = "25.3.1"
-    GMS_VERSION = "10.2.6"
+    GMS_VERSION = "11.0.4"
     DAGGER_VERSION = "2.10"
     RETROFIT_VERSION = "2.1.0"
 }
@@ -20,7 +21,7 @@ android {
     defaultConfig {
         applicationId "cz.spojenci.android"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -63,6 +64,8 @@ dependencies {
     compile "com.google.android.gms:play-services-analytics:${GMS_VERSION}"
     compile "com.google.android.gms:play-services-auth:${GMS_VERSION}"
     compile "com.google.android.gms:play-services-fitness:${GMS_VERSION}"
+    compile "com.google.firebase:firebase-crash:${GMS_VERSION}"
+    compile "com.google.firebase:firebase-perf:${GMS_VERSION}"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
@@ -73,7 +76,7 @@ dependencies {
     compile "com.squareup.retrofit2:adapter-rxjava:${RETROFIT_VERSION}"
     compile "com.squareup.retrofit2:converter-gson:${RETROFIT_VERSION}"
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
 
     // dagger

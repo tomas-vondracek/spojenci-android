@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "735871369275",
-    "project_id": "spojenci-1320"
+    "firebase_url": "https://spojenci-1320.firebaseio.com",
+    "project_id": "spojenci-1320",
+    "storage_bucket": "spojenci-1320.appspot.com"
   },
   "client": [
     {
@@ -13,11 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "735871369275-92bgkapk3j29a03cak316lqknp9t48m3.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "735871369275-7djefcch5f8frcgbi0mquft0460fv3v9.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "735871369275-jq6la60ole23ba7r0vu3gl373f4efdkb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "cz.spojenci.android",
-            "certificate_hash": "F88F7A5449350D988E7F4E91741C6F649302C2A5"
+            "certificate_hash": "f88f7a5449350d988e7f4e91741c6f649302c2a5"
           }
         },
         {
@@ -35,11 +45,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735871369275-92bgkapk3j29a03cak316lqknp9t48m3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
