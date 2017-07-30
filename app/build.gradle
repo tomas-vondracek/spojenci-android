@@ -26,10 +26,19 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+    signingConfigs {
+        release {
+            storeFile file(SPOJENCI_KEYSTORE)
+            keyAlias SPOJENCI_SIGN_ALIAS
+            storePassword SPOJENCI_PASSWORD_STORE
+            keyPassword SPOJENCI_PASSWORD_KEY
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     sourceSets {
@@ -96,7 +105,7 @@ dependencies {
     compile 'com.avast:android-styled-dialogs:2.3.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile('com.mikepenz:aboutlibraries:5.9.5@aar') {
+    compile('com.mikepenz:aboutlibraries:5.9.7@aar') {
         transitive = true
     }
 
