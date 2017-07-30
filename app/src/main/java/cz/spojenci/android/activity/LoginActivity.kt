@@ -364,7 +364,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 			}
 			binding.loginProvider.text = getString(R.string.login_status_connected, loginProvider)
 
-			val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
+			val size = resources.getDimensionPixelSize(R.dimen.profile_photo_size)
 			photo_url?.let { url ->
 				Picasso.with(this@LoginActivity)
 						.load(url)

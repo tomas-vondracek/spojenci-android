@@ -225,7 +225,7 @@ class MainActivity : BaseActivity() {
 
 		binding.user = user
 
-		val size = resources.getDimensionPixelSize(R.dimen.main_header_height)
+		val size = resources.getDimensionPixelSize(R.dimen.profile_photo_size)
 		user?.photo_url?.let { url ->
 			Picasso.with(this)
 					.load(url)

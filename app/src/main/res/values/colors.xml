@@ -6,7 +6,7 @@
 
 	<color name="themeColor">#006ED7</color>
 
-	<color name="separator">#40000000</color>
+	<color name="separator">#ffBBBBBB</color>
 	<color name="colorWarning">#8eff0000</color>
 	<color name="colorPositive">#2b9900</color>
 
