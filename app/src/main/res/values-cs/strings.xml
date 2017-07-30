@@ -36,9 +36,9 @@
 	<string name="error_bad_request">Bad request</string>
 	<string name="error_server_error">Server error occurred, please try again later</string>
 
-	<string name="main_activity">Moje aktivita</string>
+	<string name="main_activity">Moje aktivita v Google Fit:</string>
 	<string name="main_activity_empty">Žádné aktivita v Google Fit</string>
-	<string name="main_challenges">Moje výzvy</string>
+	<string name="main_challenges">Moje výzvy:</string>
 	<string name="main_challenges_empty">Žádné výzvy</string>
 	<string name="main_connect_google_fit">Připojit Google Fit</string>
 	<string name="main_login">Přihlašte se svým účtem spojenců</string>
