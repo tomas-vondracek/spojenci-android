@@ -14,10 +14,13 @@
 	</style>
 
 	<style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.MinWidth">
+		<item name="colorAccent">@color/colorAccent</item>
 		<item name="windowNoTitle">true</item>
 
 	</style>
 	<style name="AppTheme.Dialog.Big" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize">
+		<item name="colorAccent">@color/colorAccent</item>
+
 		<item name="windowNoTitle">true</item>
 		<item name="windowFixedWidthMinor">95%</item>
 		<item name="android:windowMinWidthMinor">95%</item>

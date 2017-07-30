@@ -11,4 +11,7 @@ class AppPreferences @Inject constructor(context: Context) : Preferences(context
 		get() = pref.getBoolean("fit_connected", false)
 		set(isConnected) = pref.edit { setBoolean ("fit_connected" to isConnected) }
 
+	var isFirstRun: Boolean
+		get() = pref.getBoolean("first_run", true)
+		set(value) = pref.edit { setBoolean ("first_run" to value) }
 }

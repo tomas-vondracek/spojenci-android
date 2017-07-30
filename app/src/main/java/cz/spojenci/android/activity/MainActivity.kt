@@ -110,6 +110,10 @@ class MainActivity : BaseActivity() {
 			loadChallenges(forceRefresh = true)
 		}
 
+		if (appPrefs.isFirstRun) {
+			appPrefs.isFirstRun = false
+			LoginActivity.start(this)
+		}
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -137,10 +141,10 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
-	override fun onStart() {
-		super.onStart()
+	override fun onResume() {
+		super.onResume()
 		val isFitConnected = appPrefs.isFitConnected
-		binding.mainFitConnect.fitContainer.visible = !isFitConnected
+		binding.mainFitConnect.fitContainer.visible = !isFitConnected && presenter.isUserSignedIn
 
 		if (isFitConnected) {
 			connectFitApiClient()
@@ -156,10 +160,6 @@ class MainActivity : BaseActivity() {
 		}
 
 		loadChallenges()
-	}
-
-	override fun onStop() {
-		super.onStop()
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
