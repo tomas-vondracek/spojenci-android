@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.DefaultItemAnimator
@@ -173,9 +174,13 @@ class MainActivity : BaseActivity() {
 				loadChallenges(forceRefresh = true)
 				return true
 			}
+			R.id.menu_main_about_project -> {
+				val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.spojenci.cz"))
+				startActivity(intent)
+			}
 			R.id.menu_main_about -> {
 				LibsBuilder()
-						.withAboutDescription("spojenci.cz")
+						.withAboutDescription("www.spojenci.cz")
 						.withAboutVersionShown(true)
 						.withAboutIconShown(true)
 						.withActivityTitle(getString(R.string.title_about))

@@ -46,6 +46,7 @@
 	<string name="main_permission_location_rationale">Location permission is required to access the Google Fit data.</string>
 	<string name="main_permission_location_denied">Permission hasn\'t been granted. Can\'t connect to the Google Fit.</string>
 	<string name="main_contributions">contributions total:</string>
+	<string name="main_about_project">About Project</string>
 
 	<string name="challenge_detail_empty">No Activities</string>
 	<string name="challenge_detail_total_attributions">total attributions:</string>
