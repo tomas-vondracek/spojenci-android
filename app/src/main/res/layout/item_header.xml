@@ -2,21 +2,25 @@
 
 <layout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools">
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<FrameLayout
+	<android.support.v7.widget.CardView
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/padding"
+		android:layout_marginEnd="@dimen/padding"
+		android:layout_marginTop="@dimen/padding_large"
+		app:cardPreventCornerOverlap="true">
 
 		<TextView
 			android:id="@+id/item_title"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding"
 			android:textStyle="bold"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:paddingStart="@dimen/activity_horizontal_margin"
-			android:paddingEnd="@dimen/activity_horizontal_margin"
+			android:paddingStart="@dimen/padding_large"
+			android:paddingEnd="@dimen/padding_large"
 			android:paddingTop="@dimen/padding"
 			android:paddingBottom="@dimen/padding"
 			tools:text="Medium Text"/>
@@ -25,8 +29,7 @@
 		<View android:layout_width="match_parent"
 			android:layout_height="1dp"
 			android:layout_gravity="bottom"
-			android:layout_marginStart="@dimen/activity_horizontal_margin"
 			android:background="@color/separator"/>
-	</FrameLayout>
+	</android.support.v7.widget.CardView>
 
 </layout>

@@ -90,6 +90,7 @@ class MainActivity : BaseActivity() {
 
 		adapter = CombinedDataAdapter(this)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+		setSupportActionBar(binding.mainToolbar.toolbar)
 
 		binding.mainChallengesList.layoutManager = LinearLayoutManager(this)
 		binding.mainChallengesList.adapter = adapter
