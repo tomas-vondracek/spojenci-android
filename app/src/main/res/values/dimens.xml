@@ -5,6 +5,7 @@
 	<dimen name="dialog_horizontal_margin">26dp</dimen>
 
 	<dimen name="padding_large">16dp</dimen>
+	<dimen name="padding_item">12dp</dimen>
 	<dimen name="padding">8dp</dimen>
 	<dimen name="padding_small">4dp</dimen>
 

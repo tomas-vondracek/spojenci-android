@@ -22,12 +22,11 @@
 			android:orientation="horizontal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="?selectableItemBackground"
-			android:elevation="@dimen/elevation"
 			android:paddingStart="@dimen/padding_large"
 			android:paddingEnd="@dimen/padding_large"
-			android:paddingTop="@dimen/padding"
-			android:paddingBottom="@dimen/padding">
+			android:paddingTop="@dimen/padding_item"
+			android:paddingBottom="@dimen/padding_item"
+			android:background="?selectableItemBackground">
 
 			<TextView android:id="@+id/item_challenge_description"
 				android:layout_width="wrap_content"

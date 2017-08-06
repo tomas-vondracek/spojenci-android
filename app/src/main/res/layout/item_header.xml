@@ -17,6 +17,8 @@
 			android:id="@+id/item_title"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/padding_small"
+			android:layout_marginTop="@dimen/padding_small"
 			android:textStyle="bold"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:paddingStart="@dimen/padding_large"
