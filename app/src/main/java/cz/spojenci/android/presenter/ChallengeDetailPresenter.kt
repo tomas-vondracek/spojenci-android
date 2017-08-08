@@ -7,7 +7,7 @@ import cz.spojenci.android.activity.WebViewActivity
 import cz.spojenci.android.data.ChallengeDetail
 import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserActivity
-import cz.spojenci.android.utils.formatAsDateTime
+import cz.spojenci.android.utils.formatAsDate
 import cz.spojenci.android.utils.formatAsPrice
 import cz.spojenci.android.utils.parseAsServerDate
 import rx.Observable
@@ -104,7 +104,7 @@ data class UserActivityItemViewModel(val date: String,
                                      val money: String) {
 	companion object Factory {
 		fun fromDetail(detail: ChallengeDetail, activity: UserActivity): UserActivityItemViewModel {
-			val date = activity.date?.parseAsServerDate()?.formatAsDateTime() ?: ""
+			val date = activity.date?.parseAsServerDate()?.formatAsDate() ?: ""
 			val unitPrice = detail.unit_price ?: BigDecimal.ZERO
 			val moneyToPay = BigDecimal(activity.value).multiply(unitPrice)
 			val value = if (activity.isComment()) activity.value else "${activity.value} ${detail.unit}"

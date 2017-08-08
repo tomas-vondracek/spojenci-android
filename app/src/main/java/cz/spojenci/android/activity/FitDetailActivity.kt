@@ -91,6 +91,7 @@ class FitDetailActivity : BaseActivity() {
 					binding.fitDetailChallengePicker.adapter = adapter
 					binding.fitDetailChallengePicker.isEnabled = !isLoadingChallenges
 					binding.fitDetailChallengePicker.visible = !isActivityAttached
+					binding.fitDetailChallengePickerLabel.visible = !isActivityAttached
 					binding.fitDetailAttach.isEnabled = items.count() > 0
 					binding.fitDetailAttach.visible = !isActivityAttached
 					binding.fitDetailAttachedChallenge.text =

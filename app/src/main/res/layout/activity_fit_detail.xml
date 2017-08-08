@@ -22,7 +22,6 @@
 			android:layout_height="?attr/actionBarSize"
 			android:background="?attr/colorPrimary"
 			app:popupTheme="@style/AppTheme.PopupOverlay"
-			android:textAppearance="@android:style/TextAppearance.Material.Medium"
 			tools:text="Title"
 			app:layout_constraintLeft_toLeftOf="parent"
 			app:layout_constraintTop_toTopOf="parent"
@@ -34,7 +33,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginEnd="@dimen/dialog_horizontal_margin"
-			android:textAppearance="@android:style/TextAppearance.Material.Medium"
+			android:textAppearance="?android:textAppearanceLarge"
 			tools:text="20 km"
 			app:layout_constraintRight_toRightOf="parent"
 			app:layout_constraintBaseline_toBaselineOf="@+id/fit_detail_date"/>
@@ -42,14 +41,16 @@
 		<TextView
 			android:id="@+id/fit_detail_date"
 			android:text="@{fitActivity.time}"
-			android:layout_width="wrap_content"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="@dimen/padding_large"
 			android:layout_marginStart="@dimen/activity_horizontal_margin"
 			tools:text="24.4.2017"
-			android:textAppearance="@android:style/TextAppearance.Material.Medium"
+			android:textAppearance="?android:textAppearanceMedium"
 			app:layout_constraintTop_toBottomOf="@+id/toolbar"
-			app:layout_constraintLeft_toLeftOf="parent"/>
+			app:layout_constraintEnd_toStartOf="@+id/fit_detail_value"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintHorizontal_bias="0.5"/>
 
 
 		<View
@@ -69,11 +70,15 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:minWidth="140dp"
 			android:enabled="false"
+			android:padding="@dimen/padding_large"
+			android:gravity="end"
 			app:layout_constraintRight_toRightOf="@+id/fit_detail_value"
 			app:layout_constraintTop_toBottomOf="@+id/fit_detail_separator_header"
-			app:layout_constraintLeft_toLeftOf="@+id/fit_detail_attach"
-			app:layout_constraintHorizontal_bias="0.0"/>
+			app:layout_constraintStart_toEndOf="@+id/fit_detail_challenge_picker_label"
+			app:layout_constraintBottom_toTopOf="@+id/fit_detail_attach"
+			app:layout_constraintVertical_bias="0.0"/>
 
 		<Button
 			android:id="@+id/fit_detail_attach"
@@ -81,61 +86,77 @@
 			android:text="@string/fit_detail_attach_to_challenge"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding_large"
-			android:layout_marginBottom="@dimen/activity_vertical_margin"
+			android:paddingTop="@dimen/padding_large"
+			android:paddingBottom="@dimen/padding_large"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin"
 			android:enabled="false"
 			android:drawableStart="@drawable/ic_link"
 			android:drawablePadding="@dimen/padding"
-			app:layout_constraintTop_toBottomOf="@+id/fit_detail_challenge_picker"
-			app:layout_constraintRight_toRightOf="@+id/fit_detail_value"
+			android:layout_marginTop="@dimen/padding_large"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintVertical_bias="0.0"/>
-
-		<ProgressBar android:id="@+id/fit_detail_send_progress"
-			style="?android:attr/progressBarStyleHorizontal"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding"
-			android:layout_marginBottom="@dimen/padding"
-			android:visibility="gone"
-			android:indeterminateOnly="true"
-			tools:visibility="visible"
-			app:layout_constraintLeft_toLeftOf="@+id/fit_detail_separator_header"
-			app:layout_constraintRight_toRightOf="@+id/fit_detail_attach"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintHorizontal_bias="0.0"
-			app:layout_constraintTop_toBottomOf="@+id/fit_detail_attach"
-			app:layout_constraintBottom_toBottomOf="parent"/>
-
-		<TextView android:id="@+id/fit_detail_error"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding"
-			android:layout_marginBottom="@dimen/padding"
-			android:textColor="@color/colorWarning"
-			android:visibility="gone"
-			tools:visibility="visible"
-			tools:text="error occurred"
-			app:layout_constraintRight_toRightOf="@+id/fit_detail_attach"
-			app:layout_constraintLeft_toLeftOf="@+id/fit_detail_separator_header"
-			app:layout_constraintTop_toBottomOf="@+id/fit_detail_attach"
-			app:layout_constraintBottom_toBottomOf="parent"/>
+			app:layout_constraintVertical_bias="1.0"/>
 
 		<TextView android:id="@+id/fit_detail_attached_challenge"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_marginEnd="@dimen/padding"
-			android:layout_marginStart="@dimen/padding"
-			android:layout_marginTop="@dimen/padding_large"
-			android:layout_marginBottom="@dimen/padding_large"
+			android:padding="@dimen/padding_item"
 			android:gravity="start|center_vertical"
 			android:drawableStart="@drawable/ic_check_48"
 			android:drawablePadding="@dimen/padding"
 			android:visibility="gone"
 			tools:visibility="visible"
 			tools:text="Attached to challenge \'Beh\'"
-			app:layout_constraintRight_toRightOf="@+id/fit_detail_attach"
-			app:layout_constraintLeft_toLeftOf="@+id/fit_detail_separator_header"
-			app:layout_constraintTop_toBottomOf="@+id/fit_detail_attach"/>
+			android:textAppearance="?android:textAppearanceLarge"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent"/>
+
+		<FrameLayout android:id="@+id/fit_detail_sending_container"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:minHeight="60dp"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/fit_detail_challenge_picker"
+			app:layout_constraintBottom_toTopOf="@+id/fit_detail_attach">
+
+			<ProgressBar android:id="@+id/fit_detail_send_progress"
+				style="?android:attr/progressBarStyleHorizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:padding="@dimen/padding_large"
+				android:visibility="gone"
+				android:indeterminateOnly="true"
+				tools:visibility="visible"/>
+
+			<TextView android:id="@+id/fit_detail_error"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:padding="@dimen/padding_large"
+				android:textColor="@color/colorWarning"
+				android:visibility="gone"
+				tools:visibility="visible"
+				tools:text="error occurred"
+				/>
+		</FrameLayout>
+
+		<TextView android:id="@+id/fit_detail_challenge_picker_label"
+			android:text="@string/fit_detail_pick_challenge"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginEnd="@dimen/padding"
+			android:textAppearance="?android:textAppearanceMedium"
+			app:layout_constraintStart_toStartOf="@+id/fit_detail_date"
+			app:layout_constraintEnd_toStartOf="@+id/fit_detail_challenge_picker"
+			app:layout_constraintTop_toTopOf="@+id/fit_detail_challenge_picker"
+			app:layout_constraintBottom_toBottomOf="@+id/fit_detail_challenge_picker"
+			app:layout_constraintHorizontal_bias="0.4"/>
 
 
 	</android.support.constraint.ConstraintLayout>

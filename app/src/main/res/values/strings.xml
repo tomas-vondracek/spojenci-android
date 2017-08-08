@@ -61,6 +61,7 @@
 
 	<string name="fit_detail_attach_to_challenge">Report to challenge</string>
 	<string name="fit_detail_attached_to_challenge">Reported with challenge %1$s</string>
+	<string name="fit_detail_pick_challenge">Pick the challenge:</string>
 
 
 </resources>

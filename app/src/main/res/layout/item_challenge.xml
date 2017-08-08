@@ -42,7 +42,7 @@
 				android:layout_weight="1"
 				android:layout_marginStart="@dimen/padding"
 				android:gravity="end"
-				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textAppearance="?android:attr/textAppearanceLarge"
 				android:text="@{challenge.value}"
 				tools:text="32km"/>
 		</LinearLayout>

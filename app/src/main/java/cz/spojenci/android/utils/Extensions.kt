@@ -51,6 +51,7 @@ fun BigDecimal.formatAsPrice(currency: String): String {
 }
 
 val dateTimeFormatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+val dateFormatter: DateFormat = DateFormat.getDateInstance(DateFormat.SHORT)
 
 fun Long.formatAsDateTime(): String {
 	return dateTimeFormatter.format(Date(this))
@@ -58,6 +59,9 @@ fun Long.formatAsDateTime(): String {
 
 fun Date.formatAsDateTime(): String {
 	return dateTimeFormatter.format(this)
+}
+fun Date.formatAsDate(): String {
+	return dateFormatter.format(this)
 }
 
 //2017-04-16T02:00:00+0200
