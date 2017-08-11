@@ -5,6 +5,8 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.fitness.FitnessActivities
+import cz.spojenci.android.R
 import cz.spojenci.android.activity.ChallengeDetailActivity
 import cz.spojenci.android.activity.FitDetailActivity
 import cz.spojenci.android.data.*
@@ -97,14 +99,19 @@ data class ChallengesViewModel(val user: User?,
 	fun contributions(currency: String): String = contributions.formatAsPrice(currency)
 }
 
-data class FitItemModel(val id: String, val description: String, val time: String, val value: String,
+data class FitItemModel(val id: String, val description: String, val time: String, val value: String, val iconId: Int,
                         var isAttached: Boolean = false) : Parcelable {
 
 	companion object {
 		fun fromFitSession(session: FitSession): FitItemModel {
 			val distanceInKm = session.distanceValue / 1000F
 			val value = "${distanceInKm.formatAsDistance()} km"
-			return FitItemModel(session.id, session.description, session.timestamp.formatAsDateTime(), value)
+			val iconId = when (session.activityType) {
+				FitnessActivities.RUNNING -> R.drawable.ic_running
+				FitnessActivities.BIKING -> R.drawable.ic_biking
+				else -> R.drawable.ic_flag
+			}
+			return FitItemModel(session.id, session.description, session.timestamp.formatAsDateTime(), value, iconId)
 		}
 
 		@Suppress("unused")
@@ -114,7 +121,8 @@ data class FitItemModel(val id: String, val description: String, val time: Strin
 		}
 	}
 
-	constructor(source: Parcel) : this(source.readString(), source.readString(), source.readString(), source.readString(), source.readInt() == 1)
+	constructor(source: Parcel) :
+			this(source.readString(), source.readString(), source.readString(), source.readString(), source.readInt(), source.readInt() == 1)
 
 	override fun describeContents() = 0
 
@@ -123,6 +131,7 @@ data class FitItemModel(val id: String, val description: String, val time: Strin
 		dest?.writeString(description)
 		dest?.writeString(time)
 		dest?.writeString(value)
+		dest?.writeInt(iconId)
 		dest?.writeInt(if (isAttached) 1 else 0)
 	}
 }

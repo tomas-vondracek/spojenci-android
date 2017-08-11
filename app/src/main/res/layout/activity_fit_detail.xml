@@ -113,7 +113,8 @@
 			android:textAppearance="?android:textAppearanceLarge"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"/>
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/fit_detail_separator_header"/>
 
 		<FrameLayout android:id="@+id/fit_detail_sending_container"
 			android:layout_width="0dp"

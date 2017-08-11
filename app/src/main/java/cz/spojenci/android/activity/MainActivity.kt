@@ -357,6 +357,7 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
             is FitViewHolder -> {
 				val fitItem = fitItems[position - 1 - challengesViewCount]
 				holder.binding.item = fitItem
+	            holder.binding.itemActivityIcon.setImageResource(fitItem.iconId)
 				holder.binding.itemActivityContainer.setOnClickListener {
 					fitClickSubject.onNext(fitItem)
 				}
