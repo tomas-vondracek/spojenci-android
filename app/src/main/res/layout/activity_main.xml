@@ -139,8 +139,15 @@
 
 		</FrameLayout>
 
-		<include layout="@layout/part_connect_fit"
-			android:id="@+id/main_fit_connect"/>
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
+
+			<include layout="@layout/part_connect_fit"
+				android:id="@+id/main_fit_connect"/>
+		</FrameLayout>
+
 
 	</LinearLayout>
 </layout>
