@@ -49,10 +49,11 @@
 	<string name="main_about_project">About Project</string>
 
 	<string name="challenge_detail_empty">No Activities</string>
-	<string name="challenge_detail_total_attributions">total attributions:</string>
-	<string name="challenge_detail_unit_price">price per %1$s:</string>
+	<string name="challenge_detail_total_attributions">Total attributions:</string>
+	<string name="challenge_detail_unit_price">Price per %1$s:</string>
 	<string name="challenge_detail_activity">Activity</string>
 	<string name="challenge_detail_pay">Pay</string>
+	<string name="challenge_detail_to_pay">To pay</string>
 
 	<string name="update_challenge_send">Send</string>
 	<string name="update_challenge_activity_validation">Please fill in the activity value</string>

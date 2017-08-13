@@ -44,6 +44,7 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 				}
 				.map<ChallengeDetailViewModel> { detail ->
 					val paid = detail.paid ?: BigDecimal.ZERO
+					val toPay = (detail.to_pay ?: BigDecimal.ZERO) - paid
 					val unitPrice = detail.unit_price ?: BigDecimal.ZERO
 					val items = detail.activities
 							.filter { ! it.isComment() }
@@ -51,6 +52,7 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 
 					ChallengeDetailViewModel.Success(detail.name,
 							paid.formatAsPrice("CZK"),
+							toPay.formatAsPrice("CZK"),
 							unitPrice.formatAsPrice("CZK"),
 							detail.unit,
 							items)
@@ -85,6 +87,7 @@ sealed class ChallengeDetailViewModel {
 
 	data class Success(val name: String,
 	                   val attributions: String,
+	                   val toPay: String,
 	                   val unitPrice: String,
 	                   val unitName: String,
 	                   val activities: List<UserActivityItemViewModel>): ChallengeDetailViewModel() {

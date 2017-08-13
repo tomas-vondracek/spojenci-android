@@ -48,10 +48,11 @@
 	<string name="main_about_project">O projektu</string>
 
 	<string name="challenge_detail_empty">Žádné aktivity</string>
-	<string name="challenge_detail_total_attributions">příspěvky celkem:</string>
-	<string name="challenge_detail_unit_price">cena za %1$s:</string>
+	<string name="challenge_detail_total_attributions">Příspěvky celkem:</string>
+	<string name="challenge_detail_unit_price">Cena za %1$s:</string>
 	<string name="challenge_detail_activity">Aktivita</string>
 	<string name="challenge_detail_pay">Zaplatit</string>
+	<string name="challenge_detail_to_pay">K zaplacení</string>
 
 	<string name="update_challenge_send">Odeslat</string>
 	<string name="update_challenge_activity_validation">Vyplňte aktivitu</string>
