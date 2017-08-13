@@ -162,7 +162,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 	override fun onConnectionFailed(result: ConnectionResult) {
 		Timber.i("Google Play services connection failed. Cause: %s", result.toString())
 		Snackbar.make(
-				findViewById(R.id.activity_container) as View,
+				findViewById<View>(R.id.activity_container),
 				"Exception while connecting to Google Play services: " + result.errorMessage,
 				Snackbar.LENGTH_LONG).show()
 	}

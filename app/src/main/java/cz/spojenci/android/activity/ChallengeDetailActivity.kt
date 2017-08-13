@@ -13,7 +13,6 @@ import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.databinding.ActivityChallengeDetailBinding
-import cz.spojenci.android.databinding.ContentChallengeDetailBinding
 import cz.spojenci.android.databinding.ItemChallengeActivityBinding
 import cz.spojenci.android.presenter.*
 import cz.spojenci.android.utils.*
@@ -40,17 +39,14 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 	private lateinit var observableChallengeDetail: Observable<ChallengeDetailViewModel>
 	private lateinit var binding: ActivityChallengeDetailBinding
 
-	private val contentBinding: ContentChallengeDetailBinding
-		get() = binding.challengeDetailContent
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		injectSelf()
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_challenge_detail)
-		contentBinding.challengeDetailList.layoutManager = LinearLayoutManager(this)
-		contentBinding.challengeDetailList.adapter = ChallengeActivityAdapter(this, emptyList())
-		contentBinding.hasActivities = true
+		binding.challengeDetailList.layoutManager = LinearLayoutManager(this)
+		binding.challengeDetailList.adapter = ChallengeActivityAdapter(this, emptyList())
+		binding.hasActivities = true
 
 		setSupportActionBar(binding.toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -61,7 +57,7 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 			presenter.createChallengeActivity(context = this, requestCode = REQUEST_CREATE_ACTIVITY)
 		}
 
-		contentBinding.challengeDetailRetry.setOnClickListener {
+		binding.challengeDetailRetry.setOnClickListener {
 			loadChallengeDetail()
 		}
 
@@ -101,31 +97,30 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 					Timber.d("Loaded challenge detail: $viewModel on thread ${Thread.currentThread().name}")
 
 					val isLoading = viewModel is ChallengeDetailViewModel.InProgress
-					contentBinding.challengeDetailProgress.visible = isLoading
+					binding.challengeDetailProgress.visible = isLoading
 					binding.fab.isEnabled = !isLoading
 
 					when (viewModel) {
 						is ChallengeDetailViewModel.Success -> {
 							val items = viewModel.activities
 
-							val list = contentBinding.challengeDetailList
+							val list = binding.challengeDetailList
 							val adapter = ChallengeActivityAdapter(this, items)
 							list.adapter = adapter
 
 							binding.challengeDetailLabelPrice.visible = true
 							binding.challengeDetailLabelPrice.text = getString(R.string.challenge_detail_unit_price, viewModel.unitName)
 							binding.challenge = viewModel
-							contentBinding.challenge = viewModel
-							contentBinding.hasActivities = viewModel.hasActivities
-							contentBinding.challengeDetailEmptyContainer.visible = !viewModel.hasActivities
+							binding.hasActivities = viewModel.hasActivities
+							binding.challengeDetailEmptyContainer.visible = !viewModel.hasActivities
 						}
 						is ChallengeDetailViewModel.Error -> {
 							snackbar(viewModel.message)
-							contentBinding.challengeDetailEmptyContainer.visible = true
+							binding.challengeDetailEmptyContainer.visible = true
 						}
 						is ChallengeDetailViewModel.InProgress -> {
 							binding.toolbar.title = viewModel.name
-							contentBinding.challengeDetailEmptyContainer.visible = false
+							binding.challengeDetailEmptyContainer.visible = false
 						}
 					}
 
