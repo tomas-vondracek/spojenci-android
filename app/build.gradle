@@ -3,7 +3,7 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'kotlin-android'
 
 ext {
-    SUPPORT_VERSION = "26.0.0"
+    SUPPORT_VERSION = "26.0.1"
     GMS_VERSION = "11.0.4"
     DAGGER_VERSION = "2.10"
     RETROFIT_VERSION = "2.1.0"

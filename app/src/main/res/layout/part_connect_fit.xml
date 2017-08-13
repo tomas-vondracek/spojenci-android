@@ -8,18 +8,18 @@
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/bottom_bar_height"
 		android:layout_gravity="bottom"
-		android:background="@android:color/background_dark">
+		android:background="?attr/colorPrimary">
 
 		<Button android:id="@+id/fit_connect"
-			style="?android:buttonBarButtonStyle"
+			style="?android:borderlessButtonStyle"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
+			android:layout_height="@dimen/bottom_bar_height"
 			android:padding="@dimen/padding_large"
 			android:drawableStart="@drawable/ic_connect_fit"
 			android:drawablePadding="@dimen/activity_horizontal_margin"
 			android:visibility="gone"
 			tools:visibility="visible"
+			android:textColor="@android:color/white"
 			android:text="@string/main_connect_google_fit"/>
 
 		<ProgressBar android:id="@+id/fit_progress"
