@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "735871369275-5cseeocuma45n81aimkrf255btvvvan0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cz.spojenci.android",
+            "certificate_hash": "522d550f7fe268703b0a3deb07337841da79995e"
+          }
+        },
+        {
           "client_id": "735871369275-92bgkapk3j29a03cak316lqknp9t48m3.apps.googleusercontent.com",
           "client_type": 3
         },
