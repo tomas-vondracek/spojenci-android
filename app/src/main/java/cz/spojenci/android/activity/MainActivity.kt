@@ -61,6 +61,7 @@ class MainActivity : BaseActivity() {
 		GoogleApiClient.Builder(this)
 				.addApi(Fitness.SESSIONS_API)
 				.addScope(Scope(Scopes.FITNESS_ACTIVITY_READ))
+				.addScope(Scope(Scopes.FITNESS_LOCATION_READ))
 				.addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
 					override fun onConnectionSuspended(reason: Int) {
 						appPrefs.isFitConnected = false
