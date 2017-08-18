@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 
 ext {
     SUPPORT_VERSION = "26.0.1"
-    GMS_VERSION = "11.0.4"
+    GMS_VERSION = "11.2.0"
     DAGGER_VERSION = "2.10"
     RETROFIT_VERSION = "2.1.0"
 }
@@ -79,14 +79,14 @@ dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile 'com.facebook.android:facebook-android-sdk:4.25.0'
 
     // Retrofit + okhttp
     compile "com.squareup.retrofit2:retrofit:${RETROFIT_VERSION}"
     compile "com.squareup.retrofit2:adapter-rxjava:${RETROFIT_VERSION}"
     compile "com.squareup.retrofit2:converter-gson:${RETROFIT_VERSION}"
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
 
     // dagger
@@ -101,7 +101,7 @@ dependencies {
     compile 'com.jakewharton.rxbinding:rxbinding-kotlin:1.0.1'
     compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
 
-    compile 'com.jakewharton.timber:timber:4.1.2'
+    compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'javax.annotation:jsr250-api:1.0'
     compile 'com.avast:android-styled-dialogs:2.3.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
