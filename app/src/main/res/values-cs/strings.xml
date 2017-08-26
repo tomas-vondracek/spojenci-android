@@ -22,6 +22,7 @@
 	<string name="login_prompt_password">Heslo</string>
 	<string name="login_status_connected">Přihlášen přes %1$s</string>
 	<string name="login_expired">Přihlášení vypršelo, chcete se přihlásit znovu?</string>
+	<string name="login_again">Přihlásit znovu</string>
 	<string name="login_user_profile_failed">Nastala chyba při načítání profilu</string>
 	<string name="login_disconnect_ask">Chcete se odhlásit?</string>
 	<string name="error_field_required">Toto pole je povinné</string>

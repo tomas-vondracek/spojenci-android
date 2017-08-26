@@ -186,7 +186,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 								.setRequestCode(RC_LOGIN_EXPIRED)
 								.setMessage(R.string.login_expired)
 								.setTitle(R.string.login_user_profile_failed)
-								.setPositiveButtonText(R.string.ok)
+								.setPositiveButtonText(R.string.login_again)
 								.setNegativeButtonText(R.string.close)
 								.show()
 					} else {

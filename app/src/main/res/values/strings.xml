@@ -24,6 +24,7 @@
 	<string name="login_action_sign_in_short">Sign in</string>
 	<string name="login_in_process">Signing in…</string>
 	<string name="login_expired">Login has expired, do you want to sign in again?</string>
+	<string name="login_again">Sign in again</string>
 	<string name="login_user_profile_failed">Failed to load user profile</string>
 	<string name="error_invalid_email">This email address is invalid</string>
 	<string name="error_invalid_password">This password is too short</string>
