@@ -38,6 +38,8 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
     fun challengeDetail(challengeId: String): Observable<ChallengeDetail> =
             endpoint.challenge(challengeId)
 
-    fun postChallengeActivity(challengeId: String, activityValue: String): Observable<Void> =
-            endpoint.challengeUpdate(ChallengeUpdate(challengeId, "SPORT", activityValue, null))
+    fun postChallengeActivity(challengeId: String, activityValue: String, comment: String): Observable<Void> {
+	    val type = if (activityValue.isNotEmpty()) "SPORT" else "COMMENT"
+	    return endpoint.challengeUpdate(ChallengeUpdate(challengeId, type, activityValue, comment))
+    }
 }

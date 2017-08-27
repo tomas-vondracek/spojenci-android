@@ -40,7 +40,7 @@ class FitDetailPresenter @Inject constructor(private val context: Context,
 
 	fun attachFitActivity(action: FitAttachAction): Observable<FitAttachViewModel> {
 
-		return challengesRepo.postChallengeActivity(challengeId = action.challengeId, activityValue = action.fitValue)
+		return challengesRepo.postChallengeActivity(challengeId = action.challengeId, activityValue = action.fitValue, comment = action.fitName)
 				.map { FitAttachViewModel.success() }
 				.doOnNext {
 					try {
@@ -87,4 +87,4 @@ data class FitAttachViewModel(val isAttaching: Boolean, val finished: Boolean, v
 
 	}
 }
-data class FitAttachAction(val fitActivityId: String, val fitValue: String, val challengeId: String)
+data class FitAttachAction(val fitActivityId: String, val fitValue: String, val challengeId: String, val fitName: String)

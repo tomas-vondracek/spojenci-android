@@ -26,11 +26,12 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 
 	companion object {
 
-		fun startFromChallengeForResult(context: Activity, challengeId: String, challengeUnit: String, requestCode: Int) {
+		fun startFromChallengeForResult(context: Activity, challengeId: String, challengeUnit: String, challengeName: String, requestCode: Int) {
 
 			val intent = Intent(context, UpdateChallengeActivity::class.java)
 			intent.putExtra("CHALLENGE_ID", challengeId)
 			intent.putExtra("CHALLENGE_UNIT", challengeUnit)
+			intent.putExtra("CHALLENGE_NAME", challengeName)
 			context.startActivityForResult(intent, requestCode)
 		}
 	}
@@ -38,6 +39,8 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 	override val valueText: Observable<CharSequence>
 		get() = binding.updateValue.textChanges()
 
+	override val commentText: Observable<CharSequence>
+		get() = binding.updateComment.textChanges()
 
 	@Inject lateinit var presenter: UpdateChallengePresenter
 
@@ -48,13 +51,17 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 		injectSelf()
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_update_challenge)
+		setSupportActionBar(binding.toolbar)
+		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		binding.updateSend.setOnClickListener {
 			sendUpdate()
 		}
 
 		val challengeId = intent.getStringExtra("CHALLENGE_ID")
 		val unit = intent.getStringExtra("CHALLENGE_UNIT")
+		val name = intent.getStringExtra("CHALLENGE_NAME")
 		presenter.startFrom(view = this, challengeId = challengeId, unit = unit)
+		supportActionBar?.title = getString(R.string.title_activity_update_challenge_with_name, name)
 	}
 
 	private fun sendUpdate() {

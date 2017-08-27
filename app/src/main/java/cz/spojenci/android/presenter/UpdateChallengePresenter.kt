@@ -12,6 +12,7 @@ import javax.inject.Inject
 interface UpdateChallengePresentable {
 
 	val valueText: Observable<CharSequence>
+	val commentText: Observable<CharSequence>
 
 	fun updateActivityForm(form: CreateActivityForm)
 	fun showValidationMessage()
@@ -23,12 +24,13 @@ interface UpdateChallengePresentable {
 class UpdateChallengePresenter @Inject constructor(private val context: Context,
                                                    private val repository: ChallengesRepository): Presenter() {
 
-	private val form: CreateActivityForm = CreateActivityForm("", "")
+	private val form: CreateActivityForm = CreateActivityForm("", "", "")
 
 	private lateinit var challengeId: String
 	private lateinit var view: UpdateChallengePresentable
 
-	private var textSubscription: Subscription? = null
+	private var valueTextSubscription: Subscription? = null
+	private var commentTextSubscription: Subscription? = null
 
 	fun startFrom(view: UpdateChallengePresentable, challengeId: String, unit: String) {
 		this.challengeId = challengeId
@@ -36,11 +38,13 @@ class UpdateChallengePresenter @Inject constructor(private val context: Context,
 
 		this.form.unit = unit
 		this.view.updateActivityForm(form)
-		this.textSubscription = this.view.valueText.subscribe { form.activityValue = it.toString() }
+		this.valueTextSubscription = this.view.valueText.subscribe { form.activityValue = it.toString() }
+		this.commentTextSubscription = this.view.commentText.subscribe { form.comment = it.toString() }
 	}
 
 	fun stop() {
-		this.textSubscription?.unsubscribe()
+		this.valueTextSubscription?.unsubscribe()
+		this.commentTextSubscription?.unsubscribe()
 	}
 
 	fun sendActivity(): Observable<SendActivityViewModel> {
@@ -49,7 +53,7 @@ class UpdateChallengePresenter @Inject constructor(private val context: Context,
 
 			return Observable.empty()
 		}
-		return repository.postChallengeActivity(challengeId, form.activityValue)
+		return repository.postChallengeActivity(challengeId, form.activityValue, form.comment)
 				.map<SendActivityViewModel> { SendActivityViewModel.Success() }
 				.doOnError { Timber.e(it, "failed to send activity") }
 				.onErrorReturn { SendActivityViewModel.Error(translateApiRequestError(context, it)) }
@@ -57,7 +61,7 @@ class UpdateChallengePresenter @Inject constructor(private val context: Context,
 	}
 
 	fun canSendActivity(): Boolean {
-		return form.activityValue.isNotEmpty()
+		return form.activityValue.isNotEmpty() || form.comment.isNotEmpty()
 	}
 
 }
@@ -69,7 +73,7 @@ sealed class SendActivityViewModel {
 	data class Error(val message: String): SendActivityViewModel()
 }
 
-data class CreateActivityForm(var activityValue: String, var unit: String) : Parcelable {
+data class CreateActivityForm(var activityValue: String, var unit: String, var comment: String) : Parcelable {
 
 	@Suppress("unused")
 	companion object {
@@ -79,12 +83,13 @@ data class CreateActivityForm(var activityValue: String, var unit: String) : Par
 		}
 	}
 
-	constructor(source: Parcel) : this(source.readString(), source.readString())
+	constructor(source: Parcel) : this(source.readString(), source.readString(), source.readString())
 
 	override fun describeContents() = 0
 
 	override fun writeToParcel(dest: Parcel?, flags: Int) {
 		dest?.writeString(activityValue)
 		dest?.writeString(unit)
+		dest?.writeString(comment)
 	}
 }

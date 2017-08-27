@@ -8,7 +8,8 @@
 	<string name="title_about">O aplikaci</string>
 	<string name="title_activity_login">Účet</string>
 	<string name="title_activity_challenge_detail">Výzva</string>
-	<string name="title_activity_update_challenge">Aktualizovat výzvu</string>
+	<string name="title_activity_update_challenge">Výkaz aktivity</string>
+	<string name="title_activity_update_challenge_with_name">Výkaz aktivity - %1$s</string>
 	<string name="title_activity_fit_detail">Aktivita z Google Fit</string>
 
 	<!-- login page -->
@@ -56,9 +57,11 @@
 	<string name="challenge_detail_to_pay">K zaplacení</string>
 
 	<string name="update_challenge_send">Odeslat</string>
-	<string name="update_challenge_activity_validation">Vyplňte aktivitu</string>
+	<string name="update_challenge_activity_validation">Vyplňte aktivitu nebo komentář</string>
 	<string name="update_challenge_sent">Aktivita byla odeslána</string>
-    <string name="update_challenge_activity_value">Zadejte Vaši aktivitu</string>
+    <string name="update_challenge_description">Zadejte Vaši aktivitu nebo komentář nebo obé</string>
+    <string name="update_challenge_activity_value">Počet</string>
+	<string name="update_challenge_comment">Komentář</string>
 
 	<string name="fit_detail_attach_to_challenge">Vykázat aktivitu</string>
 	<string name="fit_detail_attached_to_challenge">Vykázáno k výzvě %1$s</string>

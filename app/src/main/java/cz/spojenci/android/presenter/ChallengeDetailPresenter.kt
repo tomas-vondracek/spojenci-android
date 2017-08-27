@@ -63,8 +63,8 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 	}
 
 	fun createChallengeActivity(context: Activity, requestCode: Int) {
-		challengeDetail?.let { detail ->
-			UpdateChallengeActivity.startFromChallengeForResult(context, detail.id, detail.unit, requestCode)
+		challengeDetail?.let { (id, name, unit) ->
+			UpdateChallengeActivity.startFromChallengeForResult(context, id, unit, name, requestCode)
 		}
 	}
 

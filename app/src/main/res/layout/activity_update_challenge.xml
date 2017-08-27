@@ -9,91 +9,142 @@
 			type="cz.spojenci.android.presenter.CreateActivityForm"/>
 	</data>
 
-	<android.support.constraint.ConstraintLayout
+	<ScrollView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:minHeight="228dp">
+		android:fillViewport="true">
 
-		<TextView android:id="@+id/update_title"
-			android:text="@string/update_challenge_activity_value"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/dialog_horizontal_margin"
-			android:layout_marginStart="@dimen/dialog_horizontal_margin"
-			android:labelFor="@+id/update_value"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintTop_toTopOf="parent"/>
-
-		<EditText
-			android:id="@+id/update_value"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:inputType="numberDecimal"
-			android:gravity="end"
-			android:ems="10"
-			android:text="@{form.activityValue}"
-			android:layout_marginTop="@dimen/padding_large"
-			app:layout_constraintTop_toBottomOf="@+id/update_title"
-			app:layout_constraintLeft_toLeftOf="@+id/update_title"/>
-
-		<TextView android:id="@+id/update_unit"
-			tools:text="Unit"
-			android:text="@{form.unit}"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			app:layout_constraintBaseline_toBaselineOf="@+id/update_value"
-			app:layout_constraintLeft_toRightOf="@+id/update_value"
-			android:layout_marginStart="@dimen/padding"/>
-
-		<Button android:id="@+id/update_send"
-			style="?android:borderlessButtonStyle"
-			android:text="@string/update_challenge_send"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding_large"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintTop_toBottomOf="@+id/update_value"
-			app:layout_constraintVertical_bias="1.0"
-			tools:layout_constraintTop_creator="1"
-			tools:layout_constraintRight_creator="1"
-			tools:layout_constraintLeft_creator="1"/>
-
-		<ProgressBar android:id="@+id/update_progress"
-			style="?android:attr/progressBarStyleHorizontal"
+		<android.support.constraint.ConstraintLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding_large"
-			android:layout_marginBottom="@dimen/padding"
-			android:visibility="gone"
-			android:indeterminate="true"
-			tools:visibility="visible"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintBottom_toTopOf="@+id/update_send"
-			app:layout_constraintTop_toBottomOf="@+id/update_value"
-			tools:layout_constraintRight_creator="1"
-			tools:layout_constraintBottom_creator="1"
-			tools:layout_constraintLeft_creator="1"/>
+			android:minHeight="228dp">
 
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:background="?attr/colorPrimary"
+				app:popupTheme="@style/AppTheme.PopupOverlay"
+				android:textAppearance="@android:style/TextAppearance.Material.Medium"
+				tools:text="Title"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"/>
 
-		<TextView android:id="@+id/update_error_message"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="@dimen/padding_large"
-			android:layout_marginBottom="@dimen/padding"
-			android:visibility="gone"
-			android:textColor="@color/colorWarning"
-			tools:visibility="visible"
-			tools:text="Error"
-			app:layout_constraintTop_toBottomOf="@+id/update_value"
-			app:layout_constraintLeft_toLeftOf="@+id/update_value"
-			app:layout_constraintBottom_toTopOf="@+id/update_send"
-			app:layout_constraintVertical_bias="0.0" />
+			<TextView android:id="@+id/update_title"
+				android:text="@string/update_challenge_description"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/padding_large"
+				android:layout_marginStart="@dimen/dialog_horizontal_margin"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				app:layout_constraintLeft_toLeftOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
-	</android.support.constraint.ConstraintLayout>
+			<android.support.design.widget.TextInputLayout
+				android:id="@+id/update_value_container"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="@dimen/dialog_horizontal_margin"
+				android:layout_marginEnd="@dimen/padding_large"
+				android:layout_marginTop="@dimen/padding_large"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/update_title"
+				app:layout_constraintEnd_toStartOf="@+id/update_unit">
+
+				<android.support.design.widget.TextInputEditText
+					android:id="@+id/update_value"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:text="@{form.activityValue}"
+					android:inputType="numberDecimal"
+					android:maxLines="1"
+					android:ems="10"
+					android:hint="@string/update_challenge_activity_value"/>
+
+			</android.support.design.widget.TextInputLayout>
+
+			<android.support.design.widget.TextInputLayout
+				android:id="@+id/update_comment_container"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/padding_large"
+				android:layout_marginEnd="@dimen/dialog_horizontal_margin"
+				app:layout_constraintTop_toBottomOf="@+id/update_value_container"
+				app:layout_constraintStart_toStartOf="@+id/update_value_container"
+				app:layout_constraintEnd_toEndOf="parent">
+
+				<android.support.design.widget.TextInputEditText
+					android:id="@+id/update_comment"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:text="@{form.comment}"
+					android:maxLines="3"
+					android:ems="10"
+					android:hint="@string/update_challenge_comment"/>
+
+			</android.support.design.widget.TextInputLayout>
+
+			<TextView android:id="@+id/update_unit"
+				tools:text="Unit"
+				android:text="@{form.unit}"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="10dp"
+				android:layout_marginEnd="@dimen/dialog_horizontal_margin"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				app:layout_constraintBottom_toBottomOf="@+id/update_value_container"
+				app:layout_constraintEnd_toEndOf="parent"/>
+
+			<ProgressBar android:id="@+id/update_progress"
+				style="?android:attr/progressBarStyleHorizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/padding_large"
+				android:layout_marginBottom="@dimen/padding"
+				android:visibility="gone"
+				android:indeterminate="true"
+				tools:visibility="visible"
+				app:layout_constraintRight_toRightOf="parent"
+				app:layout_constraintLeft_toLeftOf="parent"
+				app:layout_constraintBottom_toTopOf="@+id/update_send"
+				app:layout_constraintTop_toBottomOf="@+id/update_comment_container"
+				tools:layout_constraintRight_creator="1"
+				tools:layout_constraintBottom_creator="1"
+				tools:layout_constraintLeft_creator="1"/>
+
+			<TextView android:id="@+id/update_error_message"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/padding_large"
+				android:layout_marginBottom="@dimen/padding"
+				android:visibility="gone"
+				android:textColor="@color/colorWarning"
+				tools:visibility="visible"
+				tools:text="Error"
+				app:layout_constraintTop_toBottomOf="@+id/update_comment_container"
+				app:layout_constraintLeft_toLeftOf="@+id/update_comment_container"
+				app:layout_constraintBottom_toTopOf="@+id/update_send"
+				app:layout_constraintVertical_bias="0.0"/>
+
+			<Button android:id="@+id/update_send"
+				style="?android:buttonBarButtonStyle"
+				android:text="@string/update_challenge_send"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/padding_large"
+				app:layout_constraintRight_toRightOf="parent"
+				app:layout_constraintLeft_toLeftOf="parent"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintHorizontal_bias="0.5"
+				app:layout_constraintTop_toBottomOf="@+id/update_comment_container"
+				app:layout_constraintVertical_bias="1.0"
+				tools:layout_constraintTop_creator="1"
+				tools:layout_constraintRight_creator="1"
+				tools:layout_constraintLeft_creator="1"/>
+
+		</android.support.constraint.ConstraintLayout>
+	</ScrollView>
+
 </layout>
