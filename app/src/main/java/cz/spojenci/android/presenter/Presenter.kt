@@ -29,7 +29,8 @@ open class Presenter {
 		}
 
 		private fun translateHttp(ex: HttpException): Int {
-			when (ex.code()) {
+			val httpCode = ex.code()
+			when (httpCode) {
 				401, 403 -> {
 					return R.string.error_auth
 				}

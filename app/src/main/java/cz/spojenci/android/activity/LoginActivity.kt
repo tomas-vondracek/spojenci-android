@@ -36,6 +36,7 @@ import cz.spojenci.android.presenter.Presenter
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
+import retrofit2.adapter.rxjava.HttpException
 import rx.Observable
 import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
@@ -327,7 +328,18 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 					updateUI(user)
 				}, { ex ->
 					Timber.e(ex, "Login failed")
-					snackbar(Presenter.translateApiRequestError(this, ex))
+					if (Presenter.isAuthError(ex)) {
+						val serverMessage = (ex as? HttpException)?.response()?.errorBody()?.string() ?: ""
+						FirebaseCrash.report(Exception("user login failed - " + serverMessage, ex))
+
+						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
+								.setMessage(getString(R.string.error_login, serverMessage))
+								.setPositiveButtonText(R.string.ok)
+								.show()
+					} else {
+						FirebaseCrash.report(Exception("user login failed", ex))
+						snackbar(Presenter.translateApiRequestError(this, ex))
+					}
 
 					signOutFromProvider(loginType)
 					updateUI(null)
