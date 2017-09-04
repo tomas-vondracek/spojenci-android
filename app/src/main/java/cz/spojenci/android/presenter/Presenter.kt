@@ -30,19 +30,23 @@ open class Presenter {
 
 		private fun translateHttp(ex: HttpException): Int {
 			val httpCode = ex.code()
-			when (httpCode) {
+			return when (httpCode) {
 				401, 403 -> {
-					return R.string.error_auth
+					R.string.error_auth
 				}
 				503, 500 -> {
-					return R.string.error_server_error
+					R.string.error_server_error
 				}
 				else -> {
-					return R.string.error_bad_request
+					R.string.error_bad_request
 				}
 			}
 		}
 
 		fun isAuthError(ex: Throwable) = ex is HttpException && ex.code() == 401
+
+		fun extractErrorMessage(ex: Throwable): String? {
+			return (ex as? HttpException)?.response()?.errorBody()?.string()
+		}
 	}
 }

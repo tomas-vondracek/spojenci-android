@@ -36,7 +36,6 @@ import cz.spojenci.android.presenter.Presenter
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
-import retrofit2.adapter.rxjava.HttpException
 import rx.Observable
 import rx.lang.kotlin.subscribeBy
 import timber.log.Timber
@@ -182,7 +181,9 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 					updateUI(service.user)
 
 					if (Presenter.isAuthError(ex)) {
-						FirebaseCrash.report(Exception("user login expired", ex))
+						val serverMessage = Presenter.extractErrorMessage(ex) ?: ""
+						Timber.e(serverMessage)
+						FirebaseCrash.report(Exception("user login expired - $serverMessage", ex))
 						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
 								.setRequestCode(RC_LOGIN_EXPIRED)
 								.setMessage(R.string.login_expired)
@@ -329,7 +330,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 				}, { ex ->
 					Timber.e(ex, "Login failed")
 					if (Presenter.isAuthError(ex)) {
-						val serverMessage = (ex as? HttpException)?.response()?.errorBody()?.string() ?: ""
+						val serverMessage = Presenter.extractErrorMessage(ex) ?: ""
 						FirebaseCrash.report(Exception("user login failed - " + serverMessage, ex))
 
 						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
