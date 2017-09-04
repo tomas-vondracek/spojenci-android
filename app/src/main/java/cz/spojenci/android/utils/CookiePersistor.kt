@@ -39,6 +39,10 @@ class CookiePersistor(private val sharedPreferences: SharedPreferences) : Cookie
 		editor.apply()
 	}
 
+	fun findCookie(name: String): Cookie? {
+		return loadAll().find { cookie -> cookie.name() == name }
+	}
+
 	private fun createCookieKey(cookie: Cookie): String {
 		val protocol = if (cookie.secure()) "https" else "http"
 		return "$protocol://${cookie.domain()}${cookie.path()}|${cookie.name()}"

@@ -33,8 +33,14 @@ class ServerModule {
 
 	@Provides
 	@Singleton
-	fun provideCookieJar(context: Context): ClearableCookieJar {
-		return PersistentCookieJar(SetCookieCache(), CookiePersistor(context))
+	fun provideCookiePersistor(context: Context): CookiePersistor {
+		return CookiePersistor(context)
+	}
+
+	@Provides
+	@Singleton
+	fun provideCookieJar(persistor: CookiePersistor): ClearableCookieJar {
+		return PersistentCookieJar(SetCookieCache(), persistor)
 	}
 
 	@Provides

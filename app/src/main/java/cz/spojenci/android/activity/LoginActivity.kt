@@ -23,6 +23,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crash.FirebaseCrash
 import com.squareup.picasso.Picasso
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
@@ -33,6 +34,7 @@ import cz.spojenci.android.data.User
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.databinding.ActivityLoginBinding
 import cz.spojenci.android.presenter.Presenter
+import cz.spojenci.android.utils.CookiePersistor
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
@@ -56,6 +58,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 	}
 
 	@Inject lateinit var service: UserService
+	@Inject lateinit var cookieStorage: CookiePersistor
 
 	private lateinit var googleApiClient: GoogleApiClient
 	private lateinit var binding: ActivityLoginBinding
@@ -182,8 +185,9 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 					if (Presenter.isAuthError(ex)) {
 						val serverMessage = Presenter.extractErrorMessage(ex) ?: ""
-						Timber.e(serverMessage)
-						FirebaseCrash.report(Exception("user login expired - $serverMessage", ex))
+						val sessionCookie = cookieStorage.findCookie("session_id")
+						Timber.e("Message: $serverMessage\nCookie: $sessionCookie")
+						FirebaseCrash.report(Exception("user login expired - $serverMessage for $sessionCookie", ex))
 						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
 								.setRequestCode(RC_LOGIN_EXPIRED)
 								.setMessage(R.string.login_expired)
@@ -237,6 +241,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 			service.signOut().withSchedulers()
 				.subscribe({
+					FirebaseAnalytics.getInstance(this).setUserProperty("session_id", null)
 					updateUI(null)
 				}, { ex ->
 					Timber.e(ex, "Sign Out failed")
@@ -322,6 +327,13 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 	private fun doSignInOnServer(signInObservable: Observable<User>, loginType: LoginType) {
 		signInObservable
+				.doOnNext {
+					val sessionCookie = cookieStorage.findCookie("session_id")
+					Timber.d("session cookie: $sessionCookie")
+					sessionCookie?.apply {
+						FirebaseAnalytics.getInstance(this@LoginActivity).setUserProperty("session_id", value())
+					}
+				}
 				.withSchedulers()
 				.subscribe({ user ->
 					Timber.i("Successfully signed in as user %s", user)
