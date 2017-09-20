@@ -76,7 +76,8 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 			name = pattern.matcher(name).replaceAll("").toLowerCase()
 
 			val identifier = "$name-${detail.id}"
-			val url = "http://www.spojenci.cz/transakce/$identifier/dir/Transaction/"
+			val url = "https://www.darujme.cz/dar/index.php?template=darujme&page=checkout&currency=CZK&client=09121402" +
+					"&project=98372636&payment_data____SKV_campaign_ID=$identifier&payment_data____var_symb=$identifier&transaction_type_id=2"
 			WebViewActivity.start(activity, url)
 		}
 	}
