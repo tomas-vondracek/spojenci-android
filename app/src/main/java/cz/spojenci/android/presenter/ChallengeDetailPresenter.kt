@@ -2,8 +2,11 @@ package cz.spojenci.android.presenter
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
+import android.support.customtabs.CustomTabsIntent
+import android.support.v4.app.ActivityCompat
+import cz.spojenci.android.R
 import cz.spojenci.android.activity.UpdateChallengeActivity
-import cz.spojenci.android.activity.WebViewActivity
 import cz.spojenci.android.data.ChallengeDetail
 import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserActivity
@@ -17,6 +20,8 @@ import java.math.BigDecimal
 import java.text.Normalizer
 import java.util.regex.Pattern
 import javax.inject.Inject
+
+
 
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 25/03/17.
@@ -78,7 +83,12 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 			val identifier = "$name-${detail.id}"
 			val url = "https://www.darujme.cz/dar/index.php?template=darujme&page=checkout&currency=CZK&client=09121402" +
 					"&project=98372636&payment_data____SKV_campaign_ID=$identifier&payment_data____var_symb=$identifier&transaction_type_id=2"
-			WebViewActivity.start(activity, url)
+
+			val builder = CustomTabsIntent.Builder()
+			builder.setToolbarColor(ActivityCompat.getColor(activity, R.color.colorPrimary))
+			builder.setShowTitle(true)
+			val customTabsIntent = builder.build()
+			customTabsIntent.launchUrl(activity, Uri.parse(url))
 		}
 	}
 
