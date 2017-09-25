@@ -1,6 +1,7 @@
 package cz.spojenci.android.dagger
 
 import android.content.Context
+import android.os.Build
 import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
@@ -47,6 +48,14 @@ class ServerModule {
 	@Singleton
 	fun provideRetrofit(cookieJar: ClearableCookieJar): Retrofit {
 		val httpClient = OkHttpClient.Builder()
+				.addInterceptor { chain ->
+					val originalRequest = chain.request()
+					val requestWithUserAgent = originalRequest.newBuilder()
+							.header("User-Agent", "Spojenci (Android; ${Build.PRODUCT})")
+							.build()
+
+					chain.proceed(requestWithUserAgent)
+				}
 				.addInterceptor(log)
 				.cookieJar(cookieJar)
 				.build()
