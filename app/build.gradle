@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.firebase-perf'
+//apply plugin: 'com.google.firebase.firebase-perf'     // TODO enable when it is working again
 apply plugin: 'kotlin-android'
 
 ext {
