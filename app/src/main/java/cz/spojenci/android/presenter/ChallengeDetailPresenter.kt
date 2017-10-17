@@ -2,11 +2,8 @@ package cz.spojenci.android.presenter
 
 import android.app.Activity
 import android.content.Context
-import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.app.ActivityCompat
-import cz.spojenci.android.R
 import cz.spojenci.android.activity.UpdateChallengeActivity
+import cz.spojenci.android.activity.WebViewActivity
 import cz.spojenci.android.data.ChallengeDetail
 import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserActivity
@@ -82,11 +79,12 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 					"&project=98372636&payment_data____SKV_campaign_ID=$identifier&payment_data____var_symb=$identifier&transaction_type_id=2" +
 					"&payment_data____jmeno=${user.name}&payment_data____prijmeni=${user.surname}&payment_data____email=${user.email}"
 
-			val builder = CustomTabsIntent.Builder()
-			builder.setToolbarColor(ActivityCompat.getColor(activity, R.color.colorPrimary))
-			builder.setShowTitle(true)
-			val customTabsIntent = builder.build()
-			customTabsIntent.launchUrl(activity, Uri.parse(url))
+			WebViewActivity.start(activity, url)
+//			val builder = CustomTabsIntent.Builder()
+//			builder.setToolbarColor(ActivityCompat.getColor(activity, R.color.colorPrimary))
+//			builder.setShowTitle(true)
+//			val customTabsIntent = builder.build()
+//			customTabsIntent.launchUrl(activity, Uri.parse(url))
 		}
 	}
 

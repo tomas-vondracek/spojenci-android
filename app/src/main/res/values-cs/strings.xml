@@ -4,6 +4,7 @@
 	<string name="reload">Načíst znovu</string>
 	<string name="ok">OK</string>
 	<string name="close">Zavřít</string>
+	<string name="cancel">Storno</string>
 
 	<string name="title_about">O aplikaci</string>
 	<string name="title_activity_login">Účet</string>
@@ -68,4 +69,7 @@
 	<string name="fit_detail_attach_to_challenge">Vykázat aktivitu</string>
 	<string name="fit_detail_attached_to_challenge">Vykázáno k výzvě %1$s</string>
 	<string name="fit_detail_pick_challenge">Vyberte výzvu:</string>
+
+	<string name="payment_notification_title">Probíha platba</string>
+	<string name="payment_notification_message">Platba probíhá, tapněte pro návrat</string>
 </resources>
