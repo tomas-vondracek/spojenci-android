@@ -7,18 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.databinding.DataBindingUtil
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.view.MenuItem
-import android.webkit.CookieManager
-import android.webkit.CookieSyncManager
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import cz.spojenci.android.PaymentKeepAliveService
 import cz.spojenci.android.R
 import cz.spojenci.android.databinding.ActivityWebViewBinding
 import cz.spojenci.android.utils.CookiePersistor
+import cz.spojenci.android.utils.visible
 import timber.log.Timber
 
 
@@ -59,23 +58,36 @@ class WebViewActivity : BaseActivity() {
 	private val serviceIntent by lazy { Intent(this, PaymentKeepAliveService::class.java) }
 	private var paymentService: PaymentKeepAliveService? = null
 
+	private lateinit var binding: ActivityWebViewBinding
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		val binding: ActivityWebViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_web_view)
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_web_view)
 		setSupportActionBar(binding.toolbar)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 		val url: String? = intent.getStringExtra("URL")
 
+		binding.progressBar.max = 100
+
 		val webView = binding.webView
 		webView.webViewClient = object : WebViewClient() {
+			override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+				binding.progressBar.visible = true
+			}
+
 			override fun onPageFinished(view: WebView?, url: String?) {
 				super.onPageFinished(view, url)
 				supportActionBar?.title = view?.title
+				binding.progressBar.visible = false
 			}
+		}
+		webView.webChromeClient = object : WebChromeClient() {
 
-
+			override fun onProgressChanged(view: WebView?, newProgress: Int) {
+				binding.progressBar.progress = newProgress
+			}
 		}
 		webView.settings.javaScriptEnabled = true
 
@@ -87,6 +99,14 @@ class WebViewActivity : BaseActivity() {
 		}
 
 		startService(serviceIntent)
+	}
+
+	override fun onBackPressed() {
+		if (binding.webView.canGoBack()) {
+			binding.webView.goBack()
+		} else {
+			super.onBackPressed()
+		}
 	}
 
 	override fun onNewIntent(intent: Intent) {
@@ -133,7 +153,7 @@ class WebViewActivity : BaseActivity() {
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		if (item.itemId == android.R.id.home) {
-			onBackPressed()
+			finish()
 		}
 
 		return super.onOptionsItemSelected(item)
