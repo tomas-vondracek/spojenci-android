@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crash.FirebaseCrash
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
@@ -65,7 +67,7 @@ class FitDetailActivity : BaseActivity() {
 					.bindToLifecycle(this)
 					.withSchedulers()
 					.subscribeBy(
-							onNext = { (isAttaching, finished, errorMessage) ->
+							onNext = { (isAttaching, finished, errorMessage, exception) ->
 								binding.fitDetailSendProgress.visible = isAttaching
 								binding.fitDetailAttach.isEnabled = !isAttaching
 
@@ -73,8 +75,14 @@ class FitDetailActivity : BaseActivity() {
 								binding.fitDetailError.text = errorMessage
 
 								if (finished) {
+									val bundle = Bundle()
+									bundle.putString(FirebaseAnalytics.Param.ITEM_ID, challengeItem.id)
+									FirebaseAnalytics.getInstance(this).logEvent("attach_activity", bundle)
+
 									setResult(Activity.RESULT_OK)
 									finish()
+								} else if (exception != null) {
+									FirebaseCrash.report(exception)
 								}
 							},
 							onError = { ex ->

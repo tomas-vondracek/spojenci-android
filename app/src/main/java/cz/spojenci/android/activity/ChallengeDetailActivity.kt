@@ -14,13 +14,16 @@ import cz.spojenci.android.R
 import cz.spojenci.android.dagger.injectSelf
 import cz.spojenci.android.databinding.ActivityChallengeDetailBinding
 import cz.spojenci.android.databinding.ItemChallengeActivityBinding
-import cz.spojenci.android.presenter.*
+import cz.spojenci.android.presenter.ChallengeDetailPresenter
+import cz.spojenci.android.presenter.ChallengeDetailViewModel
+import cz.spojenci.android.presenter.ChallengeItemModel
+import cz.spojenci.android.presenter.UserActivityItemViewModel
 import cz.spojenci.android.utils.*
 import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
-class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
+class ChallengeDetailActivity : BaseActivity() {
 
 	companion object {
 
@@ -61,7 +64,6 @@ class ChallengeDetailActivity : BaseActivity(), ChallengeDetailPresentable {
 			loadChallengeDetail()
 		}
 
-		presenter.startFrom(this)
 		observableChallengeDetail = presenter.challengeDetailFor(challengeId, challengeName)
 				.withSchedulers()
 				.bindToLifecycle(this)

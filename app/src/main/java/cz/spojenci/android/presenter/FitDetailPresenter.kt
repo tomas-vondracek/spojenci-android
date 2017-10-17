@@ -39,6 +39,9 @@ class FitDetailPresenter @Inject constructor(private val context: Context,
 			.onErrorReturn { FitDetailViewModel.error(translateApiRequestError(context, it)) }
 			.startWith(FitDetailViewModel.inProgress())
 
+	/**
+	 * Attach fit activity to an existing challenge
+	 */
 	fun attachFitActivity(action: FitAttachAction): Observable<FitAttachViewModel> {
 		return userService.observableUser.firstOrNull()
 				.flatMap { user ->
@@ -63,7 +66,7 @@ class FitDetailPresenter @Inject constructor(private val context: Context,
 					}
 				}
 				.doOnError { Timber.e(it, "failed to attach fit activity") }
-				.onErrorReturn { FitAttachViewModel.error(translateApiRequestError(context, it)) }
+				.onErrorReturn { FitAttachViewModel.error(translateApiRequestError(context, it), it) }
 				.startWith(FitAttachViewModel.attaching())
 	}
 }
@@ -89,11 +92,11 @@ data class FitDetailViewModel(val challenges: List<ChallengeItemModel>,
 	}
 }
 
-data class FitAttachViewModel(val isAttaching: Boolean, val finished: Boolean, val error: String) {
+data class FitAttachViewModel(val isAttaching: Boolean, val finished: Boolean, val error: String, val ex: Throwable? = null) {
 
 	companion object {
 		fun success(): FitAttachViewModel = FitAttachViewModel(false, true,  "")
-		fun error(errorMessage: String): FitAttachViewModel = FitAttachViewModel(false, false, errorMessage)
+		fun error(errorMessage: String, ex: Throwable): FitAttachViewModel = FitAttachViewModel(false, false, errorMessage, ex)
 		fun attaching(): FitAttachViewModel = FitAttachViewModel(true, false, "")
 
 	}

@@ -2,6 +2,8 @@ package cz.spojenci.android.presenter
 
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
+import com.google.firebase.analytics.FirebaseAnalytics
 import cz.spojenci.android.activity.UpdateChallengeActivity
 import cz.spojenci.android.activity.WebViewActivity
 import cz.spojenci.android.data.ChallengeDetail
@@ -18,25 +20,14 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 
-
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 25/03/17.
  */
-
-interface ChallengeDetailPresentable {
-
-}
-
 class ChallengeDetailPresenter @Inject constructor(private val context: Context,
                                                    private val userService: UserService,
                                                    private val challengesRepo: ChallengesRepository): Presenter() {
 
 	private var challengeDetail: ChallengeDetail? = null
-	private lateinit var view: ChallengeDetailPresentable
-
-	fun startFrom(view: ChallengeDetailPresentable) {
-		this.view = view
-	}
 
 	fun challengeDetailFor(id: String, challengeName: String): Observable<ChallengeDetailViewModel> {
 		return challengesRepo.challengeDetail(id)
@@ -72,6 +63,11 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 
 	fun openPayment(activity: Activity) {
 		challengeDetail?.let { detail ->
+
+			val bundle = Bundle()
+			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, detail.id)
+			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, detail.name)
+			FirebaseAnalytics.getInstance(activity).logEvent("open_payment", bundle)
 
 			val user = userService.user ?: return
 			val identifier = detail.id

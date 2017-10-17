@@ -54,23 +54,23 @@ class UpdateChallengePresenter @Inject constructor(private val context: Context,
 			return Observable.empty()
 		}
 		return repository.postChallengeActivity(challengeId, form.activityValue, form.comment)
-				.map<SendActivityViewModel> { SendActivityViewModel.Success() }
+				.map<SendActivityViewModel> {
+					SendActivityViewModel.Success(challengeId, form.activityValue.isNotEmpty(), form.comment.isNotEmpty())
+				}
 				.doOnError { Timber.e(it, "failed to send activity") }
-				.onErrorReturn { SendActivityViewModel.Error(translateApiRequestError(context, it)) }
+				.onErrorReturn { SendActivityViewModel.Error(translateApiRequestError(context, it), it) }
 				.startWith(SendActivityViewModel.InProgress())
 	}
 
-	fun canSendActivity(): Boolean {
-		return form.activityValue.isNotEmpty() || form.comment.isNotEmpty()
-	}
+	private fun canSendActivity(): Boolean = form.activityValue.isNotEmpty() || form.comment.isNotEmpty()
 
 }
 
 sealed class SendActivityViewModel {
 
-	class Success : SendActivityViewModel()
+	class Success(val challengeId: String, val containsValue: Boolean, val containsComment: Boolean) : SendActivityViewModel()
 	class InProgress : SendActivityViewModel()
-	data class Error(val message: String): SendActivityViewModel()
+	data class Error(val message: String, val cause: Throwable): SendActivityViewModel()
 }
 
 data class CreateActivityForm(var activityValue: String, var unit: String, var comment: String) : Parcelable {

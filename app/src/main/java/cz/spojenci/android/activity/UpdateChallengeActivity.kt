@@ -6,6 +6,8 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.widget.Toast
 import com.avast.android.dialogs.fragment.SimpleDialogFragment
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crash.FirebaseCrash
 import com.jakewharton.rxbinding.widget.textChanges
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.R
@@ -72,6 +74,12 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 						onNext = { vm ->
 							when (vm) {
 								is SendActivityViewModel.Success -> {
+
+									val bundle = Bundle()
+									bundle.putString(FirebaseAnalytics.Param.ITEM_ID, vm.challengeId)
+									bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, if (vm.containsValue) "value" else "comment")
+									FirebaseAnalytics.getInstance(this).logEvent("update_challenge", bundle)
+
 									Toast.makeText(this, R.string.update_challenge_sent, Toast.LENGTH_LONG).show()
 									setResult(Activity.RESULT_OK)
 									finish()
@@ -89,11 +97,14 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 
 									binding.updateErrorMessage.visible = true
 									binding.updateErrorMessage.text = vm.message
+
+									FirebaseCrash.report(vm.cause)
 								}
 							}
 						},
 						onError = { ex ->
 							Timber.e(ex, "failed to process the challenge update")
+							FirebaseCrash.report(ex)
 						})
 	}
 

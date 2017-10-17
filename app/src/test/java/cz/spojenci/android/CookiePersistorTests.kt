@@ -4,6 +4,7 @@ import cz.spojenci.android.utils.CookiePersistor
 import okhttp3.Cookie
 import okhttp3.HttpUrl
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -22,7 +23,10 @@ class CookiePersistorTests {
 	fun testLoadAll() {
 		val persistor = CookiePersistor(RuntimeEnvironment.application)
 		val cookie = Cookie.parse(HttpUrl.parse("http://spojenci.cz"), "session_id=3e45668706606a2556c82615f93fac67; path=/; httponly")
-		persistor.saveAll(setOf(cookie))
+		assertNotNull(cookie)
+
+		val cookiesSet: Set<Cookie> = setOf(cookie!!)
+		persistor.saveAll(cookiesSet)
 
 		val newPersistor = CookiePersistor(RuntimeEnvironment.application)
 		val cookies = newPersistor.loadAll()
