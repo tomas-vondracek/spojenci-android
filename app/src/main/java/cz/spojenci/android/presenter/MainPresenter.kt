@@ -37,9 +37,12 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 	val isUserSignedIn: Boolean
 		get() = userService.isSignedIn
 
-	private fun challengesFromRepo(forceRefresh: Boolean): Observable<List<Challenge>> = userService.observableUser
+	private fun challengesFromRepo(forceRefresh: Boolean): Observable<Pair<User?, List<Challenge>>> = userService.observableUser
 			.flatMap { user ->
-				if (user != null) challengesRepo.challengesForUser(user.id, forceRefresh = forceRefresh) else emptyChallenges
+				val observable: Observable<List<Challenge>> =
+						if (user != null) challengesRepo.challengesForUser(user.id, forceRefresh = forceRefresh)
+						else emptyChallenges
+				observable.map({ list -> user to list})
 			}
 
 
@@ -51,13 +54,13 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 
 			if (challengesWithCache == null) {
 				challengesWithCache = challengesFromRepo(forceRefresh = forceRefresh)
-						.map { list ->
+						.map { (user, list) ->
 							val contributions =
 									if (list.isNotEmpty()) {
 										list.map { it.paid ?: BigDecimal.ZERO }.reduce { paid1, paid2 -> paid1 + paid2 }
 									} else BigDecimal.ZERO
 							val items = list.map { ChallengeItemModel.fromChallenge(it) }
-							ChallengesViewModel(userService.user, items, contributions)
+							ChallengesViewModel(user, items, contributions)
 						}
 						.replay(1)
 						.autoConnect()
@@ -138,13 +141,13 @@ data class FitItemModel(val id: String, val description: String, val time: Strin
 
 data class FitViewModel(val status: Status, val items: List<FitItemModel>)
 
-data class ChallengeItemModel(val id: String, val name: String, val value: String) {
+data class ChallengeItemModel(val id: String, val name: String, val value: String, val userId: String) {
 
 	companion object Factory {
 
 		fun fromChallenge(item: Challenge): ChallengeItemModel {
 			val value = item.activity_amount ?: "0"
-			return ChallengeItemModel(item.id, item.name, "$value ${item.unit}")
+			return ChallengeItemModel(item.id, item.name, "$value ${item.unit}", item.owner.user_id)
 		}
 	}
 

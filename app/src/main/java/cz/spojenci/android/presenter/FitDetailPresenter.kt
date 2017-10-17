@@ -5,6 +5,7 @@ import cz.spojenci.android.data.ChallengesRepository
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.data.local.FitActivityDatabase
 import rx.Observable
+import rx.lang.kotlin.firstOrNull
 import timber.log.Timber
 import java.sql.SQLException
 import javax.inject.Inject
@@ -39,8 +40,18 @@ class FitDetailPresenter @Inject constructor(private val context: Context,
 			.startWith(FitDetailViewModel.inProgress())
 
 	fun attachFitActivity(action: FitAttachAction): Observable<FitAttachViewModel> {
-
-		return challengesRepo.postChallengeActivity(challengeId = action.challengeId, activityValue = action.fitValue, comment = action.fitName)
+		return userService.observableUser.firstOrNull()
+				.flatMap { user ->
+					when {
+						user == null ->
+							Observable.error(UserException("user is unavailable"))
+						user.id != action.userId ->
+							Observable.error(UserException("Invalid user id ${action.userId}, expected ${user.id}"))
+						else ->
+							challengesRepo.postChallengeActivity(challengeId = action.challengeId, activityValue = action.fitValue, comment = action.fitName)
+								.map { user }
+					}
+				}
 				.map { FitAttachViewModel.success() }
 				.doOnNext {
 					try {
@@ -87,4 +98,4 @@ data class FitAttachViewModel(val isAttaching: Boolean, val finished: Boolean, v
 
 	}
 }
-data class FitAttachAction(val fitActivityId: String, val fitValue: String, val challengeId: String, val fitName: String)
+data class FitAttachAction(val fitActivityId: String, val fitValue: String, val challengeId: String, val fitName: String, val userId: String)

@@ -35,6 +35,7 @@
 	<string name="error_internet">Je problém s připojením k internetu</string>
 	<string name="error_general">Někde se stala chyba</string>
 	<string name="error_auth">Přihlášení vypršelo, přihlašte se prosím znovu</string>
+	<string name="error_invalid_user">Neplatný uživatel</string>
 	<string name="error_login">Přihlášení selhalo\n %1$s</string>
 	<string name="error_bad_request">Bad request</string>
 	<string name="error_server_error">Server error occurred, please try again later</string>

@@ -18,6 +18,9 @@ open class Presenter {
 						is HttpException -> {
 							translateHttp(ex)
 						}
+						is UserException -> {
+							R.string.error_invalid_user
+						}
 						is IOException -> {
 							R.string.error_internet
 						}
@@ -45,8 +48,8 @@ open class Presenter {
 
 		fun isAuthError(ex: Throwable) = ex is HttpException && ex.code() == 401
 
-		fun extractErrorMessage(ex: Throwable): String? {
-			return (ex as? HttpException)?.response()?.errorBody()?.string()
-		}
+		fun extractErrorMessage(ex: Throwable): String? = (ex as? HttpException)?.response()?.errorBody()?.string()
 	}
 }
+
+class UserException(message: String): Exception(message)

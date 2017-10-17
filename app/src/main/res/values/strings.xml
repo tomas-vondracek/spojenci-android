@@ -36,6 +36,7 @@
 	<string name="error_internet">There seems to be a connectivity problem</string>
 	<string name="error_general">Something went wrong</string>
 	<string name="error_auth">Login has expired, please sign in again</string>
+	<string name="error_invalid_user">Invalid user</string>
 	<string name="error_login">Failed to login the user\n %1$s</string>
 	<string name="error_bad_request">Bad request</string>
 	<string name="error_server_error">Server error occurred, please try again later</string>

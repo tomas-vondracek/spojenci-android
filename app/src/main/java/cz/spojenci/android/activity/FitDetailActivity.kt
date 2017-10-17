@@ -60,7 +60,8 @@ class FitDetailActivity : BaseActivity() {
 		binding.fitDetailAttach.setOnClickListener {
 			val challengeItem = binding.fitDetailChallengePicker.selectedItem as ChallengeItemModel
 
-			presenter.attachFitActivity(FitAttachAction(fitActivityModel.id, fitActivityModel.value, challengeItem.id, fitActivityModel.description))
+			val action = FitAttachAction(fitActivityModel.id, fitActivityModel.value, challengeItem.id, fitActivityModel.description, challengeItem.userId)
+			presenter.attachFitActivity(action)
 					.bindToLifecycle(this)
 					.withSchedulers()
 					.subscribeBy(

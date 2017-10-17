@@ -28,14 +28,10 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		}
 
 	val isSignedIn: Boolean
-		get() {
-			return prefs.user != null
-		}
+		get() = prefs.user != null
 
 	var user: User?
-		get() {
-			return prefs.user
-		}
+		get() = prefs.user
 		private set(value) {
 			prefs.user = value
 			userSubject.onNext(value)
@@ -70,14 +66,9 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		return signIn(signInRequest, type)
 	}
 
-	fun userOnlineProfile(): Observable<User> {
-		return endpoint.me()
-	}
-
 	private fun signIn(request: Observable<LoginResponse>, type: LoginType): Observable<User> {
 		return request
 				.flatMap { endpoint.me() }
-//				.map { it.user }
 				.doOnNext { user ->
 					if (user == null || user.id.isNullOrEmpty()) {
 						throw IllegalArgumentException("illegal user $user")
