@@ -1,6 +1,8 @@
 package cz.spojenci.android.activity
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
@@ -8,6 +10,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
@@ -19,6 +22,8 @@ import cz.spojenci.android.databinding.ActivityWebViewBinding
 import cz.spojenci.android.utils.CookiePersistor
 import cz.spojenci.android.utils.visible
 import timber.log.Timber
+
+
 
 
 
@@ -128,6 +133,8 @@ class WebViewActivity : BaseActivity() {
 		if (isFinishing) {
 			stopService(serviceIntent)
 		} else {
+			setupNotificationChannel()
+
 			// start service to stay alive until user returns
 			val openActivityPendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 			val cancelIntent = Intent(this, WebViewActivity::class.java)
@@ -141,6 +148,7 @@ class WebViewActivity : BaseActivity() {
 					.setContentIntent(openActivityPendingIntent)
 					.setTicker(getText(R.string.challenge_detail_pay))
 					.addAction(R.drawable.ic_close, getString(R.string.cancel), cancelPendingIntent)
+					.setChannelId("service")
 					.build()
 			paymentService?.startForeground(1, notification)
 		}
@@ -170,5 +178,20 @@ class WebViewActivity : BaseActivity() {
 			cookieManager.setCookie(url, cookieString)
 		}
 		CookieSyncManager.getInstance().sync()
+	}
+
+	private fun setupNotificationChannel() {
+		if (Build.VERSION.SDK_INT < 26) {
+			return
+		}
+		val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+		if (notificationManager.getNotificationChannel("service") != null) {
+			return
+		}
+
+		val channel = NotificationChannel("service","Foreground service",
+				NotificationManager.IMPORTANCE_DEFAULT)
+		channel.description = "Foreground service channel"
+		notificationManager.createNotificationChannel(channel)
 	}
 }
