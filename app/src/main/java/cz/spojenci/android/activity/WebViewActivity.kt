@@ -190,7 +190,7 @@ class WebViewActivity : BaseActivity() {
 		}
 
 		val channel = NotificationChannel("service","Foreground service",
-				NotificationManager.IMPORTANCE_DEFAULT)
+				NotificationManager.IMPORTANCE_LOW)
 		channel.description = "Foreground service channel"
 		notificationManager.createNotificationChannel(channel)
 	}
