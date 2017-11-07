@@ -91,12 +91,12 @@ class MainActivity : BaseActivity() {
 
 		adapter = CombinedDataAdapter(this)
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-		setSupportActionBar(binding.mainToolbar.toolbar)
+		setSupportActionBar(binding.mainToolbar?.toolbar)
 
 		binding.mainChallengesList.layoutManager = LinearLayoutManager(this)
 		binding.mainChallengesList.adapter = adapter
 		binding.mainChallengesList.itemAnimator = DefaultItemAnimator()
-		binding.mainFitConnect.fitConnect.setOnClickListener {
+		binding.mainFitConnect?.fitConnect?.setOnClickListener {
 			connectFitApiClient()
 		}
 
@@ -147,19 +147,21 @@ class MainActivity : BaseActivity() {
 	override fun onResume() {
 		super.onResume()
 		val isFitConnected = appPrefs.isFitConnected
-		binding.mainFitConnect.fitContainer.visible = !isFitConnected && presenter.isUserSignedIn
+		binding.mainFitConnect?.fitContainer?.visible = !isFitConnected && presenter.isUserSignedIn
 
 		if (isFitConnected) {
 			connectFitApiClient()
 		} else if (presenter.isUserSignedIn) {
-			binding.mainFitConnect.fitConnect.visible = true
+			binding.mainFitConnect?.fitConnect?.visible = true
 			// slide in
 			val height = resources.getDimension(R.dimen.bottom_bar_height)
-			binding.mainFitConnect.fitContainer.translationY = height
-			binding.mainFitConnect.fitContainer.animate()
-					.setStartDelay(200)
-					.translationY(0f)
-					.withLayer()
+			binding.mainFitConnect?.apply {
+				fitContainer.translationY = height
+				fitContainer.animate()
+						.setStartDelay(200)
+						.translationY(0f)
+						.withLayer()
+			}
 		}
 
 		loadChallenges()
@@ -246,8 +248,10 @@ class MainActivity : BaseActivity() {
 
 	private fun connectFitApiClient() {
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-			binding.mainFitConnect.fitConnect.visible = false
-			binding.mainFitConnect.fitProgress.visible = true
+			binding.mainFitConnect?.apply {
+				fitConnect.visible = false
+				fitProgress.visible = true
+			}
 			apiClient.connect()
 		} else {
 			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -267,8 +271,10 @@ class MainActivity : BaseActivity() {
 				.bindToLifecycle(this)
 				.withSchedulers()
 				.subscribe({ (status, items) ->
-					binding.mainFitConnect.fitProgress.visible = false
-					binding.mainFitConnect.fitContainer.visible = false
+					binding.mainFitConnect?.apply {
+						fitProgress.visible = false
+						fitContainer.visible = false
+					}
 					if (!status.isSuccess) {
 						Timber.i("no data from Fit: " + status)
 						if (status.hasResolution()) {
@@ -279,22 +285,22 @@ class MainActivity : BaseActivity() {
 					adapter.fitItems = items
 					adapter.notifyDataSetChanged()
 				}, { throwable ->
-					binding.mainFitConnect.fitProgress.visible = false
+					binding.mainFitConnect?.fitProgress?.visible = false
 					Timber.e(throwable, "failed to read from google fit")
 					snackbar("Failed to read data from Google Fit")
 				})
 	}
 
 	private fun onFitAccessFailed(result: ConnectionResult) {
-		val message: String
-		if (result.errorCode == ConnectionResult.CANCELED) {
-			message = "Access to Google Fit canceled"
-		} else {
-			message = "Failed to access Google Fit: ${result.errorMessage}"
+		val message: String = when {
+			result.errorCode == ConnectionResult.CANCELED -> "Access to Google Fit canceled"
+			else -> "Failed to access Google Fit: ${result.errorMessage}"
 		}
 
-		binding.mainFitConnect.fitConnect.visible = true
-		binding.mainFitConnect.fitProgress.visible = false
+		binding.mainFitConnect?.apply {
+			fitConnect.visible = true
+			fitProgress.visible = false
+		}
 		snackbar(message)
 	}
 }
@@ -321,35 +327,31 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
 	private val inflater = LayoutInflater.from(context)
 
 	private val fitViewsCount: Int
-		get() {
-			return Math.max(fitItems.size, 1) + 1
-		}
+		get() = Math.max(fitItems.size, 1) + 1
 
 	private val challengesViewCount: Int
-		get() {
-			return Math.max(challenges.size, 1) + 1
-		}
+		get() = Math.max(challenges.size, 1) + 1
 
 	private fun <B : ViewDataBinding> bindingForLayout(layoutId: Int, parent: ViewGroup): B {
 		return DataBindingUtil.inflate(inflater, layoutId, parent, false)
 	}
 
-	override fun getItemCount(): Int {
-		return fitViewsCount + challengesViewCount
-	}
+	override fun getItemCount(): Int = fitViewsCount + challengesViewCount
 
 	override fun getItemViewType(position: Int): Int {
-		when {
+		return when {
 			position == 0 ->
 				// challenges header
-				return R.layout.item_header
+				R.layout.item_header
 			position < challengesViewCount ->
-				return if (challenges.isEmpty()) R.layout.item_empty else R.layout.item_challenge
+				if (challenges.isEmpty()) R.layout.item_empty else R.layout.item_challenge
 			position == challengesViewCount ->
 				// fit header
-				return R.layout.item_header
+				R.layout.item_header
+			fitItems.isEmpty() ->
+				R.layout.item_empty
 			else ->
-				return if (fitItems.isEmpty()) R.layout.item_empty else R.layout.item_fit_activity
+				R.layout.item_fit_activity
 		}
 	}
 

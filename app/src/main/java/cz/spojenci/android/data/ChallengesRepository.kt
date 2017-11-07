@@ -26,7 +26,7 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
 
         val challengesOnServer = endpoint.challengesForUser(userId)
                 .flatMap { Observable.from(it) }
-                .filter { it != null && it.id != null && it.name != null }
+                .filter { it?.id != null && it.name != null }
                 .toList()
                 .compose(logSource("SERVER"))
                 .doOnNext { challengesInMemory.put(userId, it) }

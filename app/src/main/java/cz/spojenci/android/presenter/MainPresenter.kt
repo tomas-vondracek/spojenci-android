@@ -97,7 +97,7 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 
 data class ChallengesViewModel(val user: User?,
                                val challenges: List<ChallengeItemModel>,
-                               val contributions: BigDecimal) {
+                               private val contributions: BigDecimal) {
 
 	fun contributions(currency: String): String = contributions.formatAsPrice(currency)
 }

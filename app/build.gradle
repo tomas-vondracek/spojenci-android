@@ -115,7 +115,7 @@ dependencies {
     }
 
     // Data Binding
-    kapt 'com.android.databinding:compiler:2.3.0'
+    kapt 'com.android.databinding:compiler:3.0.0'
 }
 
 apply plugin: 'kotlin-kapt'
