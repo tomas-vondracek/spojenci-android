@@ -5,9 +5,7 @@ import com.google.gson.Gson
 import cz.spojenci.android.data.LoginType
 import cz.spojenci.android.data.User
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class UserPreferences @Inject constructor(context: Context) : Preferences(context, "user") {
 
 	private val gson: Gson = Gson()

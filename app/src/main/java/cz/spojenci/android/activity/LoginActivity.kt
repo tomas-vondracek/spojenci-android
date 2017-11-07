@@ -18,6 +18,7 @@ import com.facebook.FacebookException
 import com.facebook.FacebookSdk
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
+import com.franmontiel.persistentcookiejar.persistence.CookiePersistor
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
@@ -34,7 +35,7 @@ import cz.spojenci.android.data.User
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.databinding.ActivityLoginBinding
 import cz.spojenci.android.presenter.Presenter
-import cz.spojenci.android.utils.CookiePersistor
+import cz.spojenci.android.utils.findCookie
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers

@@ -5,8 +5,8 @@ apply plugin: 'kotlin-android'
 ext {
     SUPPORT_VERSION = "26.1.0"
     GMS_VERSION = "11.4.2"
-    DAGGER_VERSION = "2.10"
-    RETROFIT_VERSION = "2.1.0"
+    DAGGER_VERSION = "2.13"
+    RETROFIT_VERSION = "2.3.0"
 }
 
 android {

@@ -2,13 +2,13 @@ package cz.spojenci.android.dagger
 
 import android.content.Context
 import android.os.Build
-import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.CookiePersistor
 import cz.spojenci.android.BuildConfig
 import cz.spojenci.android.data.remote.IChallengesEndpoint
 import cz.spojenci.android.data.remote.IUserEndpoint
-import cz.spojenci.android.utils.CookiePersistor
+import cz.spojenci.android.utils.PreferencesCookiePersistor
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @Module
 class ServerModule {
 
-	val log: HttpLoggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
+	private val log: HttpLoggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
 		Timber.d(it)
 	}).setLevel(
 			if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
@@ -35,18 +35,13 @@ class ServerModule {
 	@Provides
 	@Singleton
 	fun provideCookiePersistor(context: Context): CookiePersistor {
-		return CookiePersistor(context)
+		return PreferencesCookiePersistor(context)
 	}
 
 	@Provides
 	@Singleton
-	fun provideCookieJar(persistor: CookiePersistor): ClearableCookieJar {
-		return PersistentCookieJar(SetCookieCache(), persistor)
-	}
-
-	@Provides
-	@Singleton
-	fun provideRetrofit(cookieJar: ClearableCookieJar): Retrofit {
+	fun provideRetrofit(persistor: CookiePersistor): Retrofit {
+		val cookieJar = PersistentCookieJar(SetCookieCache(), persistor)
 		val httpClient = OkHttpClient.Builder()
 				.addInterceptor { chain ->
 					val originalRequest = chain.request()

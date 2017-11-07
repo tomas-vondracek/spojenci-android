@@ -19,7 +19,7 @@ import android.webkit.*
 import cz.spojenci.android.PaymentKeepAliveService
 import cz.spojenci.android.R
 import cz.spojenci.android.databinding.ActivityWebViewBinding
-import cz.spojenci.android.utils.CookiePersistor
+import cz.spojenci.android.utils.PreferencesCookiePersistor
 import cz.spojenci.android.utils.visible
 import timber.log.Timber
 
@@ -168,7 +168,7 @@ class WebViewActivity : BaseActivity() {
 	}
 
 	private fun setupCookies(url: String?) {
-		val cookies = CookiePersistor(this).loadAll()
+		val cookies = PreferencesCookiePersistor(this).loadAll()
 
 		val cookieManager = CookieManager.getInstance()
 		cookieManager.removeSessionCookie()

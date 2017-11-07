@@ -12,7 +12,7 @@ import timber.log.Timber
  *
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 24/03/17.
  */
-class CookiePersistor(private val sharedPreferences: SharedPreferences) : CookiePersistor {
+class PreferencesCookiePersistor(private val sharedPreferences: SharedPreferences) : CookiePersistor {
 
 	constructor(context: Context) : this(context.getSharedPreferences("Cookies", Context.MODE_PRIVATE))
 
@@ -39,10 +39,6 @@ class CookiePersistor(private val sharedPreferences: SharedPreferences) : Cookie
 		editor.apply()
 	}
 
-	fun findCookie(name: String): Cookie? {
-		return loadAll().find { cookie -> cookie.name() == name }
-	}
-
 	private fun createCookieKey(cookie: Cookie): String {
 		val protocol = if (cookie.secure()) "https" else "http"
 		return "$protocol://${cookie.domain()}${cookie.path()}|${cookie.name()}"
@@ -52,3 +48,5 @@ class CookiePersistor(private val sharedPreferences: SharedPreferences) : Cookie
 		sharedPreferences.edit().clear().apply()
 	}
 }
+
+fun CookiePersistor.findCookie(name: String): Cookie? = loadAll().find { cookie -> cookie.name() == name }

@@ -2,7 +2,6 @@ package cz.spojenci.android
 
 import android.app.Application
 import cz.spojenci.android.dagger.AppComponent
-import cz.spojenci.android.dagger.AppModule
 import cz.spojenci.android.dagger.DaggerAppComponent
 import cz.spojenci.android.dagger.UiComponent
 import timber.log.Timber
@@ -20,7 +19,7 @@ class Application : Application() {
 		Timber.plant(Timber.DebugTree())
 
 		appComponent = DaggerAppComponent.builder()
-				.appModule(AppModule(this))
+				.appContext(this)
 				.build()
 
 		uiComponent = appComponent.uiComponent()

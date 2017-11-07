@@ -1,7 +1,6 @@
 package cz.spojenci.android.dagger
 
 import android.content.Context
-import android.database.sqlite.SQLiteOpenHelper
 import com.squareup.sqlbrite.BriteDatabase
 import com.squareup.sqlbrite.SqlBrite
 import cz.spojenci.android.data.local.FitActivitySqlHelper
@@ -19,17 +18,11 @@ import javax.inject.Singleton
 @Module
 class DbModule {
 
-	@Provides @Singleton internal fun provideOpenHelper(context: Context): SQLiteOpenHelper {
-		return FitActivitySqlHelper(context)
-	}
-
-	@Provides @Singleton internal fun provideSqlBrite(): SqlBrite {
-		return SqlBrite.Builder()
+	@Provides @Singleton internal fun provideBriteDatabase(context: Context): BriteDatabase {
+		val sqlBrite = SqlBrite.Builder()
 				.logger { message -> Timber.tag("Database").v(message) }
 				.build()
-	}
-
-	@Provides @Singleton internal fun provideBriteDatabase(sqlBrite: SqlBrite, helper: SQLiteOpenHelper): BriteDatabase {
+		val helper = FitActivitySqlHelper(context)
 		val db = sqlBrite.wrapDatabaseHelper(helper, Schedulers.io())
 		db.setLoggingEnabled(true)
 		return db
