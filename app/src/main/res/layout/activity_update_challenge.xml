@@ -32,13 +32,15 @@
 
 			<TextView android:id="@+id/update_title"
 				android:text="@string/update_challenge_description"
-				android:layout_width="wrap_content"
+				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="@dimen/padding_large"
 				android:layout_marginStart="@dimen/dialog_horizontal_margin"
+				android:layout_marginEnd="@dimen/dialog_horizontal_margin"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				app:layout_constraintLeft_toLeftOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+				app:layout_constraintTop_toBottomOf="@+id/toolbar"
+				app:layout_constraintEnd_toEndOf="parent"/>
 
 			<android.support.design.widget.TextInputLayout
 				android:id="@+id/update_value_container"
