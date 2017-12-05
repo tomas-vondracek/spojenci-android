@@ -96,9 +96,8 @@ class WebViewActivity : BaseActivity() {
 		}
 		webView.settings.javaScriptEnabled = true
 
-		setupCookies(url)
-
 		url?.apply {
+			setupCookies(url)
 			Timber.d("Opening url $this")
 			webView.loadUrl(this)
 		}
@@ -167,7 +166,7 @@ class WebViewActivity : BaseActivity() {
 		return super.onOptionsItemSelected(item)
 	}
 
-	private fun setupCookies(url: String?) {
+	private fun setupCookies(url: String) {
 		val cookies = PreferencesCookiePersistor(this).loadAll()
 
 		val cookieManager = CookieManager.getInstance()

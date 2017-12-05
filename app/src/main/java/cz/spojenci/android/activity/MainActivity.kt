@@ -23,6 +23,7 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import com.google.firebase.crash.FirebaseCrash
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
 import com.squareup.picasso.Picasso
@@ -295,6 +296,9 @@ class MainActivity : BaseActivity() {
 		val message: String = when {
 			result.errorCode == ConnectionResult.CANCELED -> "Access to Google Fit canceled"
 			else -> "Failed to access Google Fit: ${result.errorMessage}"
+		}
+		if (result.errorCode != ConnectionResult.CANCELED) {
+			FirebaseCrash.report(Exception("failed to access Google Fit with result $result"))
 		}
 
 		binding.mainFitConnect?.apply {

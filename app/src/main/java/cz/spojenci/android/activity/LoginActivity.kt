@@ -110,6 +110,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 			override fun onError(error: FacebookException?) {
 				Timber.w(error, "Facebook login failed")
 				snackbar(error?.message ?: "Facebook error")
+				FirebaseCrash.report(Exception("Facebook login failed", error))
 				updateUI(null)
 			}
 
@@ -164,6 +165,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 	}
 
 	override fun onConnectionFailed(result: ConnectionResult) {
+		FirebaseCrash.report(Exception("Google Play services connection failed. Cause: $result"))
 		Timber.i("Google Play services connection failed. Cause: %s", result.toString())
 		Snackbar.make(
 				findViewById<View>(R.id.activity_container),
@@ -228,7 +230,10 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 				status.hasResolution() -> status.startResolutionForResult(this, RC_GOOGLE_RESOLUTION)
 				status.isCanceled -> snackbar("Google sign in request canceled")
 				status.isInterrupted -> snackbar("Google sign in request interrupted")
-				else -> snackbar(status.statusMessage ?: "Google sign in failed; error code: ${status.statusCode}")
+				else -> {
+					snackbar(status.statusMessage ?: "Google sign in failed; error code: ${status.statusCode}")
+					FirebaseCrash.report(Exception("Google sign in failed; error message:${status.statusMessage};error code: ${status.statusCode}"))
+				}
 			}
 			// Signed out, show unauthenticated UI.
 			updateUI(null)
@@ -338,6 +343,8 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 				.withSchedulers()
 				.subscribe({ user ->
 					Timber.i("Successfully signed in as user %s", user)
+					FirebaseAnalytics.getInstance(this).setUserId(user.id)
+					FirebaseAnalytics.getInstance(this).setUserProperty("loginType", user.loginType)
 
 					updateUI(user)
 				}, { ex ->
