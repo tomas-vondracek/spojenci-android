@@ -219,6 +219,8 @@ class MainActivity : BaseActivity() {
 
 				}, onError = { ex ->
 					Timber.e(ex, "Failed to load challenges")
+					FirebaseCrash.report(Exception("failed to load challenges data", ex))
+
 					snackbar(Presenter.translateApiRequestError(this, ex))
 					binding.mainChallengesProgress.visible = false
 					binding.mainChallengesList.visible = false
@@ -287,6 +289,8 @@ class MainActivity : BaseActivity() {
 					adapter.notifyDataSetChanged()
 				}, { throwable ->
 					binding.mainFitConnect?.fitProgress?.visible = false
+					FirebaseCrash.report(Exception("failed to fetch Google Fit data", throwable))
+
 					Timber.e(throwable, "failed to read from google fit")
 					snackbar("Failed to read data from Google Fit")
 				})

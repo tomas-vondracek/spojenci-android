@@ -46,7 +46,7 @@ class FitRepository : IFitRepository {
 					}.filter { (_, dataSet) ->
 						dataSet.isNotEmpty() && dataSet.first().dataPoints.isNotEmpty()
 					}.map { (session, dataSet) ->
-						val description = session.name
+						val description = session.name ?: ""
 						val value = dataSet.firstOrNull()?.dataPoints?.firstOrNull()?.getValue(Field.FIELD_DISTANCE)
 
 						val startTime = session.getStartTime(TimeUnit.MILLISECONDS)
