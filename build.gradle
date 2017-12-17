@@ -30,3 +30,13 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// Creates versionCode from number of commits in GIT
+project.ext.createGitVersionCode = {
+    def p = Runtime.getRuntime().exec("git rev-list HEAD")
+    def result = p.waitFor()
+    if (result != 0) {
+        throw new RuntimeException("git rev-list HEAD failed")
+    }
+    return p.getInputStream().readLines().size()
+}
