@@ -59,7 +59,7 @@ class MainActivity : BaseActivity() {
 	@Inject lateinit var appPrefs: AppPreferences
 	@Inject lateinit var presenter: MainPresenter
 
-	private val isGoogleFitConnected get() = appPrefs.isFitConnected && presenter.hasGoogleFitPermissions(this)
+	private val isGoogleFitConnected get() = appPrefs.isLegacyFitConnected && presenter.hasGoogleFitPermissions(this)
 
 	private lateinit var binding: ActivityMainBinding
 	private lateinit var adapter: CombinedDataAdapter
@@ -108,7 +108,7 @@ class MainActivity : BaseActivity() {
 				REQUEST_GOOGLE_FIT_PERMISSIONS -> {
 					Timber.i("Google Fit permissions have been granted")
 					FirebaseAnalytics.getInstance(this).logEvent("fit_connected", Bundle())
-					appPrefs.isFitConnected = true
+					appPrefs.isLegacyFitConnected = true
 					connectFitApi()
 				}
 				REQUEST_FIT_DETAIL -> {
@@ -140,6 +140,9 @@ class MainActivity : BaseActivity() {
 		binding.mainFitConnect?.fitContainer?.visible = !isFitConnected && presenter.isUserSignedIn
 
 		if (isFitConnected) {
+			connectFitApi()
+		} else if (appPrefs.isLegacyFitConnected) {
+			// migrate from old Google Fit sign in to new API, should be done without user input
 			connectFitApi()
 		} else if (presenter.isUserSignedIn) {
 			binding.mainFitConnect?.fitConnect?.visible = true
@@ -263,7 +266,7 @@ class MainActivity : BaseActivity() {
 				.subscribe({
 					Timber.d("Disconnected Google Fit")
 					FirebaseAnalytics.getInstance(this).logEvent("fit_disconnect", Bundle())
-					appPrefs.isFitConnected = false
+					appPrefs.isLegacyFitConnected = false
 					binding.mainFitConnect?.fitConnect?.visible = true
 					binding.mainFitConnect?.fitProgress?.visible = false
 				}, { ex ->
@@ -271,7 +274,7 @@ class MainActivity : BaseActivity() {
 					Timber.e(ex, message)
 					FirebaseCrash.report(Exception(message, ex))
 
-					appPrefs.isFitConnected = false
+					appPrefs.isLegacyFitConnected = false
 					binding.mainFitConnect?.fitConnect?.visible = true
 					binding.mainFitConnect?.fitProgress?.visible = false
 				})
@@ -280,12 +283,12 @@ class MainActivity : BaseActivity() {
 	private fun connectFitApi() {
 		if (!checkLocationPermission()) {
 			Timber.i("app doesn't have location permission")
-			appPrefs.isFitConnected = false
+			appPrefs.isLegacyFitConnected = false
 			return
 		}
 
 		if (!presenter.hasGoogleFitPermissions(this)) {
-			appPrefs.isFitConnected = false
+			appPrefs.isLegacyFitConnected = false
 
 			binding.mainFitConnect?.apply {
 				fitConnect.visible = false
@@ -296,7 +299,7 @@ class MainActivity : BaseActivity() {
 			FirebaseAnalytics.getInstance(this).logEvent("fit_request_permissions", Bundle())
 			presenter.requestGoogleFitPermissions(this, REQUEST_GOOGLE_FIT_PERMISSIONS)
 		} else {
-			appPrefs.isFitConnected = true
+			appPrefs.isLegacyFitConnected = true
 
 			loadFitSessions()
 		}
