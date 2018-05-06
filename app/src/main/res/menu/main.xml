@@ -6,6 +6,9 @@
 		android:id="@+id/menu_main_reload"
 		android:title="@string/reload"
 		android:visible="true"/>
+	<item android:id="@+id/menu_main_disconnect_fit"
+		android:visible="false"
+		android:title="@string/main_disconnect_google_fit"/>
 	<item
 		android:id="@+id/menu_main_about_project"
 		android:title="@string/main_about_project"

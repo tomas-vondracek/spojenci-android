@@ -1,9 +1,9 @@
 package cz.spojenci.android.activity
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
@@ -18,11 +18,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Toast
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.Scopes
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.Scope
-import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.fitness.FitnessStatusCodes
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crash.FirebaseCrash
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
@@ -50,38 +50,16 @@ import javax.inject.Inject
 class MainActivity : BaseActivity() {
 
 	companion object {
-		const val REQUEST_PERMISSION_LOCATION = 1
-		const val REQUEST_FIT_RESOLUTION = 2
-		const val REQUEST_FIT_DETAIL = 3
+		private const val REQUEST_PERMISSION_LOCATION = 1
+		private const val REQUEST_FIT_RESOLUTION = 2
+		private const val REQUEST_FIT_DETAIL = 3
+		private const val REQUEST_GOOGLE_FIT_PERMISSIONS = 4
 	}
 
 	@Inject lateinit var appPrefs: AppPreferences
 	@Inject lateinit var presenter: MainPresenter
 
-	private val apiClient: GoogleApiClient by lazy {
-		GoogleApiClient.Builder(this)
-				.addApi(Fitness.SESSIONS_API)
-				.addScope(Scope(Scopes.FITNESS_ACTIVITY_READ))
-				.addScope(Scope(Scopes.FITNESS_LOCATION_READ))
-				.addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
-					override fun onConnectionSuspended(reason: Int) {
-						appPrefs.isFitConnected = false
-						Timber.d("Fit API suspended with reason $reason. FIT disconnected.")
-					}
-
-					override fun onConnected(bundle: Bundle?) {
-						Timber.d("Fit API connected")
-						appPrefs.isFitConnected = true
-						onFitAccessAvailable()
-					}
-				})
-				.enableAutoManage(this, 0, { result ->
-					Timber.w("Google Play services connection failed. FIT disconnected. Cause: $result")
-					appPrefs.isFitConnected = false
-					onFitAccessFailed(result)
-				})
-				.build()
-	}
+	private val isGoogleFitConnected get() = appPrefs.isFitConnected && presenter.hasGoogleFitPermissions(this)
 
 	private lateinit var binding: ActivityMainBinding
 	private lateinit var adapter: CombinedDataAdapter
@@ -98,7 +76,7 @@ class MainActivity : BaseActivity() {
 		binding.mainChallengesList.adapter = adapter
 		binding.mainChallengesList.itemAnimator = DefaultItemAnimator()
 		binding.mainFitConnect?.fitConnect?.setOnClickListener {
-			connectFitApiClient()
+			connectFitApi()
 		}
 
 		adapter.challengeItemsClicks.bindToLifecycle(this).subscribe { challenge ->
@@ -124,11 +102,22 @@ class MainActivity : BaseActivity() {
 		super.onActivityResult(requestCode, resultCode, data)
 		Timber.d("Activity result: $resultCode for request $requestCode")
 
-		if (requestCode == REQUEST_FIT_RESOLUTION && resultCode == RESULT_OK) {
-			onFitAccessAvailable()
-		} else if (requestCode == REQUEST_FIT_DETAIL && resultCode == Activity.RESULT_OK) {
-			loadChallenges(forceRefresh = true)
-			loadFitSessions()
+		if (resultCode == RESULT_OK) {
+			when (requestCode) {
+				REQUEST_FIT_RESOLUTION -> loadFitSessions()
+				REQUEST_GOOGLE_FIT_PERMISSIONS -> {
+					Timber.i("Google Fit permissions have been granted")
+					FirebaseAnalytics.getInstance(this).logEvent("fit_connected", Bundle())
+					appPrefs.isFitConnected = true
+					connectFitApi()
+				}
+				REQUEST_FIT_DETAIL -> {
+					loadChallenges(forceRefresh = true)
+					loadFitSessions()
+				}
+			}
+		} else {
+			Timber.w("request $requestCode resulted with $resultCode")
 		}
 	}
 
@@ -136,7 +125,7 @@ class MainActivity : BaseActivity() {
 		if (requestCode == REQUEST_PERMISSION_LOCATION) {
 			if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				Timber.d("location permission has been granted, connecting the Google Fit")
-				connectFitApiClient()
+				connectFitApi()
 			} else {
 				snackbar(getString(R.string.main_permission_location_denied))
 			}
@@ -147,11 +136,11 @@ class MainActivity : BaseActivity() {
 
 	override fun onResume() {
 		super.onResume()
-		val isFitConnected = appPrefs.isFitConnected
+		val isFitConnected = isGoogleFitConnected
 		binding.mainFitConnect?.fitContainer?.visible = !isFitConnected && presenter.isUserSignedIn
 
 		if (isFitConnected) {
-			connectFitApiClient()
+			connectFitApi()
 		} else if (presenter.isUserSignedIn) {
 			binding.mainFitConnect?.fitConnect?.visible = true
 			// slide in
@@ -173,6 +162,12 @@ class MainActivity : BaseActivity() {
 		return super.onCreateOptionsMenu(menu)
 	}
 
+	override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+		val disconnectFitItem = menu?.findItem(R.id.menu_main_disconnect_fit)
+		disconnectFitItem?.isVisible = isGoogleFitConnected
+		return super.onPrepareOptionsMenu(menu)
+	}
+
 	override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 		when (item?.itemId) {
 			R.id.menu_main_reload -> {
@@ -182,6 +177,7 @@ class MainActivity : BaseActivity() {
 			R.id.menu_main_about_project -> {
 				val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.spojenci.cz"))
 				startActivity(intent)
+				return true
 			}
 			R.id.menu_main_about -> {
 				LibsBuilder()
@@ -191,6 +187,12 @@ class MainActivity : BaseActivity() {
 						.withActivityTitle(getString(R.string.title_about))
 						.withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
 						.start(this)
+				return true
+			}
+			R.id.menu_main_disconnect_fit -> {
+				disconnectFitApi()
+
+				return true
 			}
 		}
 		return super.onOptionsItemSelected(item)
@@ -249,28 +251,77 @@ class MainActivity : BaseActivity() {
 
 	}
 
-	private fun connectFitApiClient() {
+	private fun disconnectFitApi() {
+		binding.mainFitConnect?.fitContainer?.visible = true
+		binding.mainFitConnect?.fitProgress?.visible = true
+		binding.mainFitConnect?.fitConnect?.visible = false
+		adapter.fitItems = listOf()
+		adapter.notifyDataSetChanged()
+
+		presenter.disconnectGoogleFit(this)
+				.bindToLifecycle(this)
+				.subscribe({
+					Timber.d("Disconnected Google Fit")
+					FirebaseAnalytics.getInstance(this).logEvent("fit_disconnect", Bundle())
+					appPrefs.isFitConnected = false
+					binding.mainFitConnect?.fitConnect?.visible = true
+					binding.mainFitConnect?.fitProgress?.visible = false
+				}, { ex ->
+					val message = "failed to disconnect from google fit"
+					Timber.e(ex, message)
+					FirebaseCrash.report(Exception(message, ex))
+
+					appPrefs.isFitConnected = false
+					binding.mainFitConnect?.fitConnect?.visible = true
+					binding.mainFitConnect?.fitProgress?.visible = false
+				})
+	}
+
+	private fun connectFitApi() {
+		if (!checkLocationPermission()) {
+			Timber.i("app doesn't have location permission")
+			appPrefs.isFitConnected = false
+			return
+		}
+
+		if (!presenter.hasGoogleFitPermissions(this)) {
+			appPrefs.isFitConnected = false
+
+			binding.mainFitConnect?.apply {
+				fitConnect.visible = false
+				fitProgress.visible = true
+			}
+
+			Timber.i("requesting google fit permission")
+			FirebaseAnalytics.getInstance(this).logEvent("fit_request_permissions", Bundle())
+			presenter.requestGoogleFitPermissions(this, REQUEST_GOOGLE_FIT_PERMISSIONS)
+		} else {
+			appPrefs.isFitConnected = true
+
+			loadFitSessions()
+		}
+
+	}
+
+	private fun checkLocationPermission(): Boolean {
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 			binding.mainFitConnect?.apply {
 				fitConnect.visible = false
 				fitProgress.visible = true
 			}
-			apiClient.connect()
+			return true
 		} else {
 			if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 				Toast.makeText(this, R.string.main_permission_location_rationale, Toast.LENGTH_LONG)
 						.show()
 			}
-			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION);
+			ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
+			return false
 		}
 	}
 
-	private fun onFitAccessAvailable() {
-		loadFitSessions()
-	}
-
 	private fun loadFitSessions() {
-		presenter.fitActivity(apiClient)
+		presenter.fitActivity(this)
 				.bindToLifecycle(this)
 				.withSchedulers()
 				.subscribe({ (status, items) ->
@@ -289,27 +340,25 @@ class MainActivity : BaseActivity() {
 					adapter.notifyDataSetChanged()
 				}, { throwable ->
 					binding.mainFitConnect?.fitProgress?.visible = false
-					FirebaseCrash.report(Exception("failed to fetch Google Fit data", throwable))
-
 					Timber.e(throwable, "failed to read from google fit")
-					snackbar("Failed to read data from Google Fit")
+
+					if (throwable is ResolvableApiException && throwable.statusCode == FitnessStatusCodes.NEEDS_OAUTH_PERMISSIONS) {
+						try {
+							throwable.startResolutionForResult(this, REQUEST_FIT_RESOLUTION)
+						} catch (intentException: IntentSender.SendIntentException) {
+							Timber.e(intentException, "failed to start Google Fit resolution")
+							FirebaseCrash.report(Exception("failed to start Google Fit resolution", intentException))
+						}
+					} else if (throwable is ApiException && throwable.statusCode == CommonStatusCodes.SIGN_IN_REQUIRED) {
+						FirebaseCrash.report(Exception("Sign in for Google Fit required", throwable))
+
+						snackbar("You need to sign in to Google Fit")
+					} else {
+						FirebaseCrash.report(Exception("failed to fetch Google Fit data", throwable))
+
+						snackbar("Failed to read data from Google Fit")
+					}
 				})
-	}
-
-	private fun onFitAccessFailed(result: ConnectionResult) {
-		val message: String = when {
-			result.errorCode == ConnectionResult.CANCELED -> "Access to Google Fit canceled"
-			else -> "Failed to access Google Fit: ${result.errorMessage}"
-		}
-		if (result.errorCode != ConnectionResult.CANCELED) {
-			FirebaseCrash.report(Exception("failed to access Google Fit with result $result"))
-		}
-
-		binding.mainFitConnect?.apply {
-			fitConnect.visible = true
-			fitProgress.visible = false
-		}
-		snackbar(message)
 	}
 }
 
@@ -365,10 +414,10 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
 
 	override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
 		when (holder) {
-            is FitViewHolder -> {
+			is FitViewHolder -> {
 				val fitItem = fitItems[position - 1 - challengesViewCount]
 				holder.binding.item = fitItem
-	            holder.binding.itemActivityIcon.setImageResource(fitItem.iconId)
+				holder.binding.itemActivityIcon.setImageResource(fitItem.iconId)
 				holder.binding.itemActivityContainer.setOnClickListener {
 					fitClickSubject.onNext(fitItem)
 				}
