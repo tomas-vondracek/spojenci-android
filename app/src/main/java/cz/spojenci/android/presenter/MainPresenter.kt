@@ -3,19 +3,24 @@ package cz.spojenci.android.presenter
 import android.app.Activity
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessActivities
+import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataType
 import cz.spojenci.android.R
 import cz.spojenci.android.activity.ChallengeDetailActivity
 import cz.spojenci.android.activity.FitDetailActivity
 import cz.spojenci.android.data.*
 import cz.spojenci.android.data.local.FitActivityDatabase
+import cz.spojenci.android.utils.asObservable
 import cz.spojenci.android.utils.formatAsDateTime
 import cz.spojenci.android.utils.formatAsDistance
 import cz.spojenci.android.utils.formatAsPrice
 import rx.Emitter
 import rx.Observable
+import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,6 +33,13 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
                                         private val fitRepo: IFitRepository,
                                         private val db: FitActivityDatabase,
                                         private val userService: UserService): Presenter() {
+
+	private val fitnessOptions: FitnessOptions = FitnessOptions.builder()
+			.addDataType(DataType.TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
+			.addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+			.build()
+
+	private var fitDisconnectRequestIssued: Boolean = false
 
 	private val emptyChallenges: Observable<List<Challenge>> =
 			Observable.create ({ emitter -> emitter.onNext(emptyList())}, Emitter.BackpressureMode.NONE)
@@ -69,14 +81,19 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 		}
 	}
 
-	fun fitActivity(apiClient: GoogleApiClient): Observable<FitViewModel> {
+	fun fitActivity(activity: Activity): Observable<FitViewModel> {
+		if (!hasGoogleFitPermissions(activity)) {
+			Timber.w("cannot retrieve fit activity, app doesn't have permissions")
+			return Observable.empty()
+		}
+
 		val attachedFitActivity = userService.observableUser.flatMap {
 			db.fitActivityForUser(it?.id ?: "").map {
 				it.map { it.fitActivityId } .toHashSet()
 			}
 		}
 
-		val viewModels = fitRepo.sessions(apiClient).map { (status, sessions) ->
+		val viewModels = fitRepo.sessions(activity).map { (status, sessions) ->
 			FitViewModel(status, sessions.map { FitItemModel.fromFitSession(it) })
 		}
 
@@ -84,6 +101,38 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 			viewModel.items.forEach { item -> item.isAttached = activities.contains(item.id) }
 			viewModel
 		}
+	}
+
+	fun hasGoogleFitPermissions(activity: Activity): Boolean {
+		if (fitDisconnectRequestIssued) {
+			// after call to Fitness.getConfigClient(..).disableFit()
+			// GoogleSignIn.hasPermissions(..) still returns true, which is weird
+			// and causes errors later on
+			return false
+		}
+		val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity)
+		return GoogleSignIn.hasPermissions(lastSignedInAccount, fitnessOptions)
+	}
+
+	/**
+	 * Ask Play Services for Google Fit permissions. Result is delivered to activity with given request code
+	 */
+	fun requestGoogleFitPermissions(activity: Activity, requestCode: Int) {
+		fitDisconnectRequestIssued = false
+
+		val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity)
+		GoogleSignIn.requestPermissions(activity, requestCode, lastSignedInAccount, fitnessOptions)
+	}
+
+	fun disconnectGoogleFit(activity: Activity): Observable<Void> {
+		fitDisconnectRequestIssued = true
+
+		val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity)
+				?: return Observable.empty<Void>()
+
+		return Fitness.getConfigClient(activity, lastSignedInAccount)
+				.disableFit()
+				.asObservable()
 	}
 
 	fun openFitDetail(activity: Activity, fitItem: FitItemModel, requestCode: Int) {

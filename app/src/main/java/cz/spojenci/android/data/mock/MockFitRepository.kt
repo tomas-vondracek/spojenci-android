@@ -1,6 +1,6 @@
 package cz.spojenci.android.data.mock
 
-import com.google.android.gms.common.api.GoogleApiClient
+import android.app.Activity
 import com.google.android.gms.common.api.Status
 import cz.spojenci.android.data.FitReadResult
 import cz.spojenci.android.data.FitSession
@@ -18,7 +18,7 @@ class MockFitRepository: IFitRepository {
 		FitSession("id2", "Mock session2", Date().time, 6230.1F, "running")
 	)
 
-	override fun sessions(apiClient: GoogleApiClient): Observable<FitReadResult> {
+	override fun sessions(activity: Activity): Observable<FitReadResult> {
 		return Observable.just(FitReadResult(Status(0), sessions))
 	}
 }

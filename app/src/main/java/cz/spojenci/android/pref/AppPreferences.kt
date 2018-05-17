@@ -7,7 +7,7 @@ import javax.inject.Singleton
 @Singleton
 class AppPreferences @Inject constructor(context: Context) : Preferences(context, "app") {
 
-	var isFitConnected: Boolean
+	var isLegacyFitConnected: Boolean
 		get() = pref.getBoolean("fit_connected", false)
 		set(isConnected) = pref.edit { setBoolean ("fit_connected" to isConnected) }
 

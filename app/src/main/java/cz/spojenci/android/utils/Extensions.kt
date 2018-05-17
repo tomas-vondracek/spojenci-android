@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
 import android.view.View
 import cz.spojenci.android.R
+import rx.Emitter
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -76,4 +77,19 @@ private val distanceNumberFormat = NumberFormat.getNumberInstance()
 
 fun Float.formatAsDistance(): String {
 	return distanceNumberFormat.format(this)
+}
+
+fun <T> com.google.android.gms.tasks.Task<T>.asObservable(): Observable<T> {
+	return Observable.create({ emitter ->
+
+		this.addOnSuccessListener { response ->
+			emitter.onNext(response)
+		}
+		this.addOnFailureListener { ex ->
+			emitter.onError(ex)
+		}
+		this.addOnCompleteListener {
+			emitter.onCompleted()
+		}
+	}, Emitter.BackpressureMode.NONE)
 }
