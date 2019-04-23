@@ -9,7 +9,7 @@
 		android:focusableInTouchMode="true"
 		android:orientation="vertical">
 
-		<android.support.v7.widget.Toolbar
+		<androidx.appcompat.widget.Toolbar
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
@@ -92,7 +92,7 @@
 						android:padding="@dimen/padding"
 						android:text="@string/login_email_description" />
 
-					<android.support.design.widget.TextInputLayout
+					<com.google.android.material.textfield.TextInputLayout
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content">
 
@@ -105,9 +105,9 @@
 							android:maxLines="1"
 							android:singleLine="true" />
 
-					</android.support.design.widget.TextInputLayout>
+					</com.google.android.material.textfield.TextInputLayout>
 
-					<android.support.design.widget.TextInputLayout
+					<com.google.android.material.textfield.TextInputLayout
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content">
 
@@ -122,7 +122,7 @@
 							android:inputType="textPassword"
 							android:maxLines="1" />
 
-					</android.support.design.widget.TextInputLayout>
+					</com.google.android.material.textfield.TextInputLayout>
 
 					<Button
 						android:id="@+id/login_email_sign_in_button"

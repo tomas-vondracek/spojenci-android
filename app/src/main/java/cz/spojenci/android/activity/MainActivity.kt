@@ -5,14 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -255,9 +255,9 @@ class MainActivity : BaseActivity() {
 	}
 
 	private fun disconnectFitApi() {
-		binding.mainFitConnect?.fitContainer?.visible = true
-		binding.mainFitConnect?.fitProgress?.visible = true
-		binding.mainFitConnect?.fitConnect?.visible = false
+		binding.mainFitConnect.fitContainer.visible = true
+		binding.mainFitConnect.fitProgress.visible = true
+		binding.mainFitConnect.fitConnect.visible = false
 		adapter.fitItems = listOf()
 		adapter.notifyDataSetChanged()
 
@@ -267,16 +267,16 @@ class MainActivity : BaseActivity() {
 					Timber.d("Disconnected Google Fit")
 					FirebaseAnalytics.getInstance(this).logEvent("fit_disconnect", Bundle())
 					appPrefs.isLegacyFitConnected = false
-					binding.mainFitConnect?.fitConnect?.visible = true
-					binding.mainFitConnect?.fitProgress?.visible = false
+					binding.mainFitConnect.fitConnect.visible = true
+					binding.mainFitConnect.fitProgress.visible = false
 				}, { ex ->
 					val message = "failed to disconnect from google fit"
 					Timber.e(ex, message)
 					FirebaseCrash.report(Exception(message, ex))
 
 					appPrefs.isLegacyFitConnected = false
-					binding.mainFitConnect?.fitConnect?.visible = true
-					binding.mainFitConnect?.fitProgress?.visible = false
+					binding.mainFitConnect.fitConnect.visible = true
+					binding.mainFitConnect.fitProgress.visible = false
 				})
 	}
 

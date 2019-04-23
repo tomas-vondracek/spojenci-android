@@ -5,7 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.squareup.sqlbrite.BriteDatabase
 import cz.spojenci.android.data.local.FitActivitySqlHelper.Companion.tableNameActivity
 import cz.spojenci.android.presenter.FitAttachAction

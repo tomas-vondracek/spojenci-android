@@ -15,18 +15,18 @@
 			type="Boolean"/>
 	</data>
 
-	<android.support.design.widget.CoordinatorLayout
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:id="@+id/activity_container"
 		tools:context="cz.spojenci.android.activity.ChallengeDetailActivity">
 
-		<android.support.design.widget.AppBarLayout
+		<com.google.android.material.appbar.AppBarLayout
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
 			android:theme="@style/AppTheme.AppBarOverlay">
 
-			<android.support.v7.widget.Toolbar
+			<androidx.appcompat.widget.Toolbar
 				android:id="@+id/toolbar"
 				android:layout_width="match_parent"
 				android:layout_height="?attr/actionBarSize"
@@ -34,7 +34,7 @@
 				android:title="@{challenge.name}"
 				app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-			<android.support.constraint.ConstraintLayout
+			<androidx.constraintlayout.widget.ConstraintLayout
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:paddingBottom="@dimen/padding_large"
@@ -107,11 +107,11 @@
 					tools:layout_constraintRight_creator="1"
 					tools:layout_constraintLeft_creator="1"/>
 
-			</android.support.constraint.ConstraintLayout>
+			</androidx.constraintlayout.widget.ConstraintLayout>
 
-		</android.support.design.widget.AppBarLayout>
+		</com.google.android.material.appbar.AppBarLayout>
 
-		<android.support.design.widget.FloatingActionButton
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:id="@+id/fab"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
 			android:layout_margin="@dimen/padding_large"
 			android:indeterminate="true"/>
 
-		<android.support.v7.widget.RecyclerView
+		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/challenge_detail_list"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -160,5 +160,5 @@
 				android:text="@string/reload"/>
 		</LinearLayout>
 
-	</android.support.design.widget.CoordinatorLayout>
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

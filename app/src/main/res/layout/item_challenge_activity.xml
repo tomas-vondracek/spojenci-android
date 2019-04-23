@@ -11,7 +11,7 @@
 			type="UserActivityItemViewModel"/>
 	</data>
 
-	<android.support.v7.widget.CardView
+	<androidx.cardview.widget.CardView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="@dimen/padding_small"
@@ -20,7 +20,7 @@
 		android:layout_marginBottom="@dimen/padding_small"
 		app:cardUseCompatPadding="true">
 
-		<android.support.constraint.ConstraintLayout android:id="@+id/item_challenge_activity_container"
+		<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/item_challenge_activity_container"
 			android:orientation="vertical"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
 				app:layout_constraintHorizontal_bias="0.434"
 				tools:text="100CZK"/>
 
-		</android.support.constraint.ConstraintLayout>
-	</android.support.v7.widget.CardView>
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</androidx.cardview.widget.CardView>
 
 </layout>
