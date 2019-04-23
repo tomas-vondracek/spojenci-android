@@ -2,6 +2,7 @@ package cz.spojenci.android.activity
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.trello.rxlifecycle.ActivityEvent
 import com.trello.rxlifecycle.ActivityLifecycleProvider
 import com.trello.rxlifecycle.LifecycleTransformer
@@ -13,6 +14,10 @@ import rx.subjects.BehaviorSubject
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 08/06/16.
  */
 open class BaseActivity : AppCompatActivity(), ActivityLifecycleProvider {
+
+	protected val firebaseAnalytics: FirebaseAnalytics by lazy {
+		FirebaseAnalytics.getInstance(this)
+	}
 
 	private val lifecycleSubject: BehaviorSubject<ActivityEvent> = BehaviorSubject.create()
 

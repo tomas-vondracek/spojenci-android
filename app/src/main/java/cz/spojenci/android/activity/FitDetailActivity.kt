@@ -77,7 +77,7 @@ class FitDetailActivity : BaseActivity() {
 								if (finished) {
 									val bundle = Bundle()
 									bundle.putString(FirebaseAnalytics.Param.ITEM_ID, challengeItem.id)
-									FirebaseAnalytics.getInstance(this).logEvent("attach_activity", bundle)
+									firebaseAnalytics.logEvent("attach_activity", bundle)
 
 									setResult(Activity.RESULT_OK)
 									finish()

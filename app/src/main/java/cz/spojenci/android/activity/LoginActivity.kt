@@ -247,7 +247,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 			service.signOut().withSchedulers()
 				.subscribe({
-					FirebaseAnalytics.getInstance(this).setUserProperty("session_id", null)
+					firebaseAnalytics.setUserProperty("session_id", null)
 					updateUI(null)
 				}, { ex ->
 					Timber.e(ex, "Sign Out failed")
@@ -343,8 +343,8 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 				.withSchedulers()
 				.subscribe({ user ->
 					Timber.i("Successfully signed in as user %s", user)
-					FirebaseAnalytics.getInstance(this).setUserId(user.id)
-					FirebaseAnalytics.getInstance(this).setUserProperty("loginType", user.loginType)
+					firebaseAnalytics.setUserId(user.id)
+					firebaseAnalytics.setUserProperty("loginType", user.loginType)
 
 					updateUI(user)
 				}, { ex ->

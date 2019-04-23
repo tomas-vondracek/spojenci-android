@@ -23,14 +23,14 @@ import javax.inject.Inject
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 25/03/17.
  */
-class ChallengeDetailPresenter @Inject constructor(private val context: Context,
-                                                   private val userService: UserService,
-                                                   private val challengesRepo: ChallengesRepository): Presenter() {
+class ChallengeDetailPresenter @Inject constructor(context: Context,
+												   private val userService: UserService,
+												   private val repo: ChallengesRepository) : Presenter(context) {
 
 	private var challengeDetail: ChallengeDetail? = null
 
 	fun challengeDetailFor(id: String, challengeName: String): Observable<ChallengeDetailViewModel> {
-		return challengesRepo.challengeDetail(id)
+		return repo.challengeDetail(id)
 				.observeOn(AndroidSchedulers.mainThread())
 				.doOnNext { detail ->
 					challengeDetail = detail
@@ -67,7 +67,7 @@ class ChallengeDetailPresenter @Inject constructor(private val context: Context,
 			val bundle = Bundle()
 			bundle.putString(FirebaseAnalytics.Param.ITEM_ID, detail.id)
 			bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, detail.name)
-			FirebaseAnalytics.getInstance(activity).logEvent("open_payment", bundle)
+			firebaseAnalytics.logEvent("open_payment", bundle)
 
 			val user = userService.user ?: return
 			val identifier = detail.id

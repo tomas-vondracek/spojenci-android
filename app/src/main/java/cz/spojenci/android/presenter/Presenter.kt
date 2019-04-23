@@ -1,6 +1,7 @@
 package cz.spojenci.android.presenter
 
 import android.content.Context
+import com.google.firebase.analytics.FirebaseAnalytics
 import cz.spojenci.android.R
 import retrofit2.adapter.rxjava.HttpException
 import java.io.IOException
@@ -8,7 +9,11 @@ import java.io.IOException
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 27/05/17.
  */
-open class Presenter {
+open class Presenter(protected val context: Context) {
+
+	protected val firebaseAnalytics: FirebaseAnalytics by lazy {
+		FirebaseAnalytics.getInstance(context)
+	}
 
 	companion object {
 

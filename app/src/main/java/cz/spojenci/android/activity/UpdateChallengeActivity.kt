@@ -78,7 +78,7 @@ class UpdateChallengeActivity : BaseActivity(), UpdateChallengePresentable {
 									val bundle = Bundle()
 									bundle.putString(FirebaseAnalytics.Param.ITEM_ID, vm.challengeId)
 									bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, if (vm.containsValue) "value" else "comment")
-									FirebaseAnalytics.getInstance(this).logEvent("update_challenge", bundle)
+									firebaseAnalytics.logEvent("update_challenge", bundle)
 
 									Toast.makeText(this, R.string.update_challenge_sent, Toast.LENGTH_LONG).show()
 									setResult(Activity.RESULT_OK)

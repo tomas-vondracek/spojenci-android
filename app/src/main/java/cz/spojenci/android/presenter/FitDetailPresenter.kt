@@ -13,10 +13,10 @@ import javax.inject.Inject
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 25/04/17.
  */
-class FitDetailPresenter @Inject constructor(private val context: Context,
+class FitDetailPresenter @Inject constructor(context: Context,
                                              private val challengesRepo: ChallengesRepository,
                                              private val db: FitActivityDatabase,
-                                             private val userService: UserService): Presenter() {
+                                             private val userService: UserService): Presenter(context) {
 
 	private val challenges: Observable<List<ChallengeItemModel>> = userService.observableUser
 			.flatMap { user ->

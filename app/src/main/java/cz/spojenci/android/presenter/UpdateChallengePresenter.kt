@@ -21,8 +21,8 @@ interface UpdateChallengePresentable {
 /**
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 08/04/17.
  */
-class UpdateChallengePresenter @Inject constructor(private val context: Context,
-                                                   private val repository: ChallengesRepository): Presenter() {
+class UpdateChallengePresenter @Inject constructor(context: Context,
+                                                   private val repository: ChallengesRepository): Presenter(context) {
 
 	private val form: CreateActivityForm = CreateActivityForm("", "", "")
 

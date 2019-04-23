@@ -1,6 +1,7 @@
 package cz.spojenci.android.presenter
 
 import android.app.Activity
+import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -29,10 +30,11 @@ import javax.inject.Singleton
  * @author Tomáš Vondráček (tomas.vondracek@gmail.com) on 31/03/17.
  */
 @Singleton
-class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRepository,
-                                        private val fitRepo: IFitRepository,
-                                        private val db: FitActivityDatabase,
-                                        private val userService: UserService): Presenter() {
+class MainPresenter @Inject constructor(context: Context,
+										private val challengesRepo: ChallengesRepository,
+										private val fitRepo: IFitRepository,
+										private val db: FitActivityDatabase,
+										private val userService: UserService): Presenter(context) {
 
 	private val fitnessOptions: FitnessOptions = FitnessOptions.builder()
 			.addDataType(DataType.TYPE_DISTANCE_DELTA, FitnessOptions.ACCESS_READ)
@@ -54,7 +56,7 @@ class MainPresenter @Inject constructor(private val challengesRepo: ChallengesRe
 				val observable: Observable<List<Challenge>> =
 						if (user != null) challengesRepo.challengesForUser(user.id, forceRefresh = forceRefresh)
 						else emptyChallenges
-				observable.map({ list -> user to list})
+				observable.map { list -> user to list}
 			}
 
 
