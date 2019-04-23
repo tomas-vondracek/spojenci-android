@@ -415,7 +415,7 @@ class CombinedDataAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.
 		}
 	}
 
-	override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+	override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 		when (holder) {
 			is FitViewHolder -> {
 				val fitItem = fitItems[position - 1 - challengesViewCount]

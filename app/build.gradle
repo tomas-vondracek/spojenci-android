@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 ext {
-    SUPPORT_VERSION = "26.1.0"
+    SUPPORT_VERSION = "28.0.0"
     DAGGER_VERSION = "2.13"
     RETROFIT_VERSION = "2.3.0"
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
 
     dataBinding {
         enabled true
@@ -107,5 +107,4 @@ dependencies {
     }
 }
 
-apply plugin: 'kotlin-kapt'
 apply plugin: "com.google.gms.google-services"
