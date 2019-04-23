@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 
 ext {
     SUPPORT_VERSION = "28.0.0"
-    DAGGER_VERSION = "2.13"
+    DAGGER_VERSION = "2.22.1"
     RETROFIT_VERSION = "2.3.0"
 }
 
@@ -100,11 +100,11 @@ dependencies {
     implementation 'com.jakewharton.rxbinding:rxbinding-kotlin:1.0.1'
     implementation 'com.squareup.sqlbrite:sqlbrite:1.1.1'
 
-    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'com.jakewharton.timber:timber:4.7.0'
     implementation 'com.avast:android-styled-dialogs:2.3.3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
-    implementation('com.mikepenz:aboutlibraries:6.0.1@aar') {
+    implementation('com.mikepenz:aboutlibraries:6.1.1@aar') {
         transitive = true
     }
 }
