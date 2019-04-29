@@ -399,7 +399,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 			val size = resources.getDimensionPixelSize(R.dimen.profile_photo_size)
 			photo_url?.let { url ->
-				Picasso.with(this@LoginActivity)
+				Picasso.get()
 						.load(url)
 						.noFade()
 						.resize(size, size)

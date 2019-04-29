@@ -26,6 +26,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crash.FirebaseCrash
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.LibsBuilder
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import cz.spojenci.android.BR
@@ -244,12 +245,18 @@ class MainActivity : BaseActivity() {
 
 		val size = resources.getDimensionPixelSize(R.dimen.profile_photo_size)
 		user?.photo_url?.let { url ->
-			Picasso.with(this)
+			Picasso.get()
 					.load(url)
 					.noFade()
 					.resize(size, size)
 					.placeholder(R.drawable.user_silhouette)
-					.into(binding.mainUserPhoto)
+					.into(binding.mainUserPhoto, object: Callback.EmptyCallback() {
+
+						override fun onError(e: java.lang.Exception?) {
+							Timber.e(e, "Failed to load user profile image")
+							FirebaseCrash.report(Exception("Failed to load user profile image", e))
+						}
+					})
 		}
 
 	}
