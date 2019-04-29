@@ -24,6 +24,11 @@ before_script:
   - set +o pipefail
   - yes | android-sdk-linux/tools/bin/sdkmanager --licenses
   - set -o pipefail
+  # fake keystore info
+  - export SPOJENCI_KEYSTORE="keystore.key"
+  - export SPOJENCI_SIGN_ALIAS="alias"
+  - export SPOJENCI_PASSWORD_STORE="very_secret"
+  - export SPOJENCI_PASSWORD_KEY="very_secret"
 
 stages:
   - build
