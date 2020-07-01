@@ -14,14 +14,12 @@ android {
     dataBinding {
         enabled true
     }
-
     defaultConfig {
         applicationId "cz.spojenci.android"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode createGitVersionCode()
         versionName "1.0.2"
-        multiDexEnabled true
     }
     signingConfigs {
         release {
@@ -38,9 +36,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-    }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
     }
 
     flavorDimensions "environment"
