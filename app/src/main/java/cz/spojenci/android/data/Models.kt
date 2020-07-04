@@ -20,7 +20,21 @@ data class ChallengeUpdate(val id: String, val type: String, val value: String?,
 // responses:
 data class UserResponse(val user: User)
 
-data class LoginResponse(val newRegistration: Boolean)
+data class LoginResponse(val session: LoginSession) {
+	val sessionId: String
+		get() = session.ses_id
+}
+data class LoginSession (
+	val ses_id: String,
+	val ses_iplock: String,
+	val ses_userid: String,
+	val ses_tstamp: Long,
+	val ses_data: Any,
+	val ses_permanent: Int
+)
+
+data class ChallengesResponse(val campaigns: List<Challenge>)
+data class ChallengeDetailResponse(val campaign: ChallengeDetail)
 
 // requests:
 
@@ -29,13 +43,11 @@ data class Social(val token: String, val type: String)
 data class LoginRequest private constructor(val account: AccountLogin?, val social: Social?) {
 
 	companion object {
-		fun account(login: String, password: String): LoginRequest {
-			return LoginRequest(AccountLogin(login, password), null)
-		}
+		fun account(login: String, password: String): LoginRequest =
+				LoginRequest(AccountLogin(login, password), null)
 
-		fun social(token: String, type: LoginType): LoginRequest {
-			return LoginRequest(null, Social(token, type.name))
-		}
+		fun social(token: String, type: LoginType): LoginRequest =
+				LoginRequest(null, Social(token, type.name))
 	}
 }
 
