@@ -1,10 +1,9 @@
 package cz.spojenci.android.data
 
-import com.franmontiel.persistentcookiejar.persistence.CookiePersistor
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import cz.spojenci.android.data.remote.IUserEndpoint
 import cz.spojenci.android.pref.UserPreferences
-import okhttp3.Cookie
-import okhttp3.HttpUrl
+import cz.spojenci.android.utils.saveSessionIdCookie
 import rx.Observable
 import rx.subjects.BehaviorSubject
 import timber.log.Timber
@@ -20,7 +19,7 @@ enum class LoginType {
 @Singleton
 class UserService @Inject constructor(private val endpoint: IUserEndpoint,
                                       private val prefs: UserPreferences,
-                                      private val cookieStorage: CookiePersistor) {
+                                      private val cookieJar: ClearableCookieJar) {
 
 	var userLoginType: LoginType?
 		get() = prefs.loginType
@@ -71,9 +70,7 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 	private fun signIn(request: Observable<LoginResponse>, type: LoginType): Observable<User> {
 		return request
 				.doOnNext { response ->
-					val cookie = Cookie.parse(HttpUrl.parse("http://www.spojenci.cz"),
-							"session_id=${response.sessionId}; path=/; httponly")
-					cookieStorage.saveAll(listOf(cookie))
+					cookieJar.saveSessionIdCookie(response.sessionId)
 				}
 				.flatMap { endpoint.me() }
 				.map { response -> response.user }
@@ -108,7 +105,7 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		user = null
 		userLoginType = null
 		prefs.clear()
-		cookieStorage.clear()
+		cookieJar.clear()
 	}
 
 }

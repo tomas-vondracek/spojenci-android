@@ -1,9 +1,9 @@
 package cz.spojenci.android.utils
 
 import android.app.Activity
+import android.view.View
 import androidx.annotation.LayoutRes
 import com.google.android.material.snackbar.Snackbar
-import android.view.View
 import cz.spojenci.android.R
 import rx.Emitter
 import rx.Observable

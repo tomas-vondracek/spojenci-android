@@ -48,5 +48,3 @@ class PreferencesCookiePersistor(private val sharedPreferences: SharedPreference
 		sharedPreferences.edit().clear().apply()
 	}
 }
-
-fun CookiePersistor.findCookie(name: String): Cookie? = loadAll().find { cookie -> cookie.name() == name }
