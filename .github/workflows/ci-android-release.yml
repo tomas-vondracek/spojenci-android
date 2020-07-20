@@ -1,0 +1,44 @@
+name: CI Android Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'A branch to build.'
+        required: true
+        default: 'master'
+  release:
+    types: [created]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Build with Gradle
+      env:
+        SPOJENCI_SIGN_ALIAS: ${{ secrets.SPOJENCI_SIGN_ALIAS }}
+        SPOJENCI_PASSWORD_STORE: ${{ secrets.SPOJENCI_PASSWORD_STORE }}
+        SPOJENCI_PASSWORD_KEY: ${{ secrets.SPOJENCI_PASSWORD_KEY }}
+      run: ./gradlew assembleProdRelease
+
+    - name: Sign the app
+      uses: r0adkll/sign-android-release@v1
+      with:
+        releaseDirectory: app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY_base64 }}
+        alias: ${{ secrets.SPOJENCI_SIGN_ALIAS }}
+        keyStorePassword: ${{ secrets.SPOJENCI_PASSWORD_STORE }}
+        keyPassword: ${{ secrets.SPOJENCI_PASSWORD_KEY }}
+
+    - name: upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-signed
+        path: app/build/outputs/apk/release/*.apk
