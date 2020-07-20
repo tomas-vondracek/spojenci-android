@@ -21,20 +21,11 @@ android {
         versionCode createGitVersionCode()
         versionName "1.0.2"
     }
-    signingConfigs {
-        release {
-            storeFile file(SPOJENCI_KEYSTORE)
-            keyAlias SPOJENCI_SIGN_ALIAS
-            storePassword SPOJENCI_PASSWORD_STORE
-            keyPassword SPOJENCI_PASSWORD_KEY
-        }
-    }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 
