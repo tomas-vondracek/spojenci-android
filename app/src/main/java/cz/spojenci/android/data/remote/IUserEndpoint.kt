@@ -20,7 +20,7 @@ interface IUserEndpoint {
 	fun login(@Body request: LoginRequest): Observable<LoginResponse>
 
 	@GET("user/me")
-	fun me(): Observable<User>
+	fun me(): Observable<UserResponse>
 
 	@POST("user/logout")
 	fun logout(): Observable<Void>

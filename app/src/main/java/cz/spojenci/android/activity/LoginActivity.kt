@@ -18,7 +18,7 @@ import com.facebook.FacebookException
 import com.facebook.FacebookSdk
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.franmontiel.persistentcookiejar.persistence.CookiePersistor
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.auth.api.signin.GoogleSignInResult
@@ -35,7 +35,7 @@ import cz.spojenci.android.data.User
 import cz.spojenci.android.data.UserService
 import cz.spojenci.android.databinding.ActivityLoginBinding
 import cz.spojenci.android.presenter.Presenter
-import cz.spojenci.android.utils.findCookie
+import cz.spojenci.android.utils.appSessionIdCookie
 import cz.spojenci.android.utils.snackbar
 import cz.spojenci.android.utils.visible
 import cz.spojenci.android.utils.withSchedulers
@@ -59,7 +59,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 	}
 
 	@Inject lateinit var service: UserService
-	@Inject lateinit var cookieStorage: CookiePersistor
+	@Inject lateinit var cookieJar: ClearableCookieJar
 
 	private lateinit var googleApiClient: GoogleApiClient
 	private lateinit var binding: ActivityLoginBinding
@@ -188,7 +188,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 					if (Presenter.isAuthError(ex)) {
 						val serverMessage = Presenter.extractErrorMessage(ex) ?: ""
-						val sessionCookie = cookieStorage.findCookie("session_id")
+						val sessionCookie = cookieJar.appSessionIdCookie
 						Timber.e("Message: $serverMessage\nCookie: $sessionCookie")
 						FirebaseCrash.report(Exception("user login expired - $serverMessage for $sessionCookie", ex))
 						SimpleDialogFragment.createBuilder(this, supportFragmentManager)
@@ -217,7 +217,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 
 	private fun handleGoogleSignInResult(result: GoogleSignInResult) {
 		val status = result.status
-		Timber.d("handleSignInResult:" + status)
+		Timber.d("handleSignInResult:%s", status)
 		val idToken = result.signInAccount?.idToken
 		if (result.isSuccess && idToken != null) {
 			// Signed in successfully, show authenticated UI.
@@ -334,7 +334,7 @@ class LoginActivity : BaseActivity(), GoogleApiClient.OnConnectionFailedListener
 	private fun doSignInOnServer(signInObservable: Observable<User>, loginType: LoginType) {
 		signInObservable
 				.doOnNext {
-					val sessionCookie = cookieStorage.findCookie("session_id")
+					val sessionCookie = cookieJar.appSessionIdCookie
 					Timber.d("session cookie: $sessionCookie")
 					sessionCookie?.apply {
 						FirebaseAnalytics.getInstance(this@LoginActivity).setUserProperty("session_id", value())

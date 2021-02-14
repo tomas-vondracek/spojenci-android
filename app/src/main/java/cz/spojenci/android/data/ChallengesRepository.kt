@@ -15,16 +15,17 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
 
     @Suppress("SENSELESS_COMPARISON")
     fun challengesForUser(userId: String, forceRefresh: Boolean = false): Observable<List<Challenge>> {
-        val cachedChallenges: Observable<List<Challenge>>
-        if (forceRefresh) {
-            challengesInMemory.remove(userId)
-            cachedChallenges = Observable.empty()
-        } else {
-            cachedChallenges = Observable.fromCallable { challengesInMemory[userId] }
-                    .compose(logSource("MEMORY"))
-        }
+        val cachedChallenges: Observable<List<Challenge>> =
+                if (forceRefresh) {
+                    challengesInMemory.remove(userId)
+                    Observable.empty()
+                } else {
+                    Observable.fromCallable { challengesInMemory[userId] }
+                            .compose(logSource("MEMORY"))
+                }
 
         val challengesOnServer = endpoint.challengesForUser(userId)
+                .map { it.campaigns }
                 .flatMap { Observable.from(it) }
                 .filter { it?.id != null && it.name != null }
                 .toList()
@@ -37,6 +38,7 @@ class ChallengesRepository @Inject constructor(private val endpoint: IChallenges
 
     fun challengeDetail(challengeId: String): Observable<ChallengeDetail> =
             endpoint.challenge(challengeId)
+                    .map { it.campaign }
 
     fun postChallengeActivity(challengeId: String, activityValue: String, comment: String): Observable<Void> {
 	    val type = if (activityValue.isNotEmpty()) "SPORT" else "COMMENT"

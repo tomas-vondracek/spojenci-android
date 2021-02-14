@@ -1,8 +1,6 @@
 package cz.spojenci.android.data.remote
 
-import cz.spojenci.android.data.Challenge
-import cz.spojenci.android.data.ChallengeDetail
-import cz.spojenci.android.data.ChallengeUpdate
+import cz.spojenci.android.data.*
 import retrofit2.http.*
 import rx.Observable
 
@@ -12,13 +10,13 @@ import rx.Observable
 interface IChallengesEndpoint {
 
 	@GET("challenges/user/{userId}")
-	fun challengesForUser(@Path("userId") userId: String): Observable<List<Challenge>>
+	fun challengesForUser(@Path("userId") userId: String): Observable<ChallengesResponse>
 
 	@GET("challenges/all")
 	fun challengesForAll(): Observable<List<Challenge>>
 
 	@GET("challenges/id/{id}")
-	fun challenge(@Path("id") challengeId: String): Observable<ChallengeDetail>
+	fun challenge(@Path("id") challengeId: String): Observable<ChallengeDetailResponse>
 
 	@Headers("Content-Type: application/json")
 	@POST("challenges/activity")

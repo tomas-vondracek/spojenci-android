@@ -1,8 +1,9 @@
 package cz.spojenci.android.data
 
-import com.franmontiel.persistentcookiejar.persistence.CookiePersistor
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
 import cz.spojenci.android.data.remote.IUserEndpoint
 import cz.spojenci.android.pref.UserPreferences
+import cz.spojenci.android.utils.saveSessionIdCookie
 import rx.Observable
 import rx.subjects.BehaviorSubject
 import timber.log.Timber
@@ -18,7 +19,7 @@ enum class LoginType {
 @Singleton
 class UserService @Inject constructor(private val endpoint: IUserEndpoint,
                                       private val prefs: UserPreferences,
-                                      private val cookieStorage: CookiePersistor) {
+                                      private val cookieJar: ClearableCookieJar) {
 
 	var userLoginType: LoginType?
 		get() = prefs.loginType
@@ -59,16 +60,20 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 			throw IllegalArgumentException("illegal login type $type for social login")
 		}
 		val signInRequest = endpoint.login(LoginRequest.social(token, type))
-				.doOnNext({ response ->
+				.doOnNext { response ->
 					Timber.d("login response: $response")
-				})
+				}
 
 		return signIn(signInRequest, type)
 	}
 
 	private fun signIn(request: Observable<LoginResponse>, type: LoginType): Observable<User> {
 		return request
+				.doOnNext { response ->
+					cookieJar.saveSessionIdCookie(response.sessionId)
+				}
 				.flatMap { endpoint.me() }
+				.map { response -> response.user }
 				.doOnNext { user ->
 					if (user == null || user.id.isNullOrEmpty()) {
 						throw IllegalArgumentException("illegal user $user")
@@ -79,7 +84,6 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 				}
 	}
 
-
 	fun signOut(): Observable<Void> {
 		return endpoint.logout()
 				.doOnError { ex -> Timber.w(ex, "Log out failed") }
@@ -89,6 +93,7 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 
 	fun updateUserProfile(): Observable<User> {
 		return endpoint.me()
+				.map { response -> response.user }
 				.doOnNext { user ->
 					if (user != null && !user.id.isNullOrEmpty()) {
 						this.user = user
@@ -100,7 +105,7 @@ class UserService @Inject constructor(private val endpoint: IUserEndpoint,
 		user = null
 		userLoginType = null
 		prefs.clear()
-		cookieStorage.clear()
+		cookieJar.clear()
 	}
 
 }
